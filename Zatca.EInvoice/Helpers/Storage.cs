@@ -1,0 +1,216 @@
+using System;
+using System.IO;
+using System.Text;
+using Zatca.EInvoice.Exceptions;
+
+namespace Zatca.EInvoice.Helpers
+{
+    /// <summary>
+    /// File I/O utility class for reading and writing files.
+    /// </summary>
+    public class Storage
+    {
+        private static string _basePath;
+
+        /// <summary>
+        /// Gets or sets the base storage path.
+        /// </summary>
+        public static string BasePath
+        {
+            get => _basePath;
+            set => _basePath = value?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Storage"/> class.
+        /// </summary>
+        /// <param name="basePath">Root directory for storage. Set to null if you want to handle files with a full path.</param>
+        public Storage(string basePath = null)
+        {
+            if (!string.IsNullOrEmpty(basePath))
+            {
+                BasePath = basePath;
+            }
+        }
+
+        /// <summary>
+        /// Writes data to a file, creating directories if necessary.
+        /// </summary>
+        /// <param name="path">Relative or full path of the file.</param>
+        /// <param name="content">Content to write.</param>
+        /// <exception cref="ZatcaStorageException">Thrown if the file cannot be written.</exception>
+        public void Write(string path, string content)
+        {
+            var fullPath = GetFullPath(path);
+            var directory = Path.GetDirectoryName(fullPath);
+
+            EnsureDirectoryExists(directory);
+
+            try
+            {
+                File.WriteAllText(fullPath, content, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                throw new ZatcaStorageException("Failed to write to file.", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "path", fullPath }
+                }, ex);
+            }
+        }
+
+        /// <summary>
+        /// Appends data to a file, creating directories if necessary.
+        /// </summary>
+        /// <param name="path">Relative or full path of the file.</param>
+        /// <param name="content">Content to append.</param>
+        /// <exception cref="ZatcaStorageException">Thrown if the file cannot be written.</exception>
+        public void Append(string path, string content)
+        {
+            var fullPath = GetFullPath(path);
+            var directory = Path.GetDirectoryName(fullPath);
+
+            EnsureDirectoryExists(directory);
+
+            try
+            {
+                File.AppendAllText(fullPath, content, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                throw new ZatcaStorageException("Failed to append to file.", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "path", fullPath }
+                }, ex);
+            }
+        }
+
+        /// <summary>
+        /// Reads content from a file.
+        /// </summary>
+        /// <param name="path">Relative or full path of the file.</param>
+        /// <returns>The file contents.</returns>
+        /// <exception cref="ZatcaStorageException">Thrown if the file does not exist or cannot be read.</exception>
+        public string Read(string path)
+        {
+            var fullPath = GetFullPath(path);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new ZatcaStorageException("File not found.", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "path", fullPath }
+                });
+            }
+
+            try
+            {
+                return File.ReadAllText(fullPath, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                throw new ZatcaStorageException("Failed to read file.", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "path", fullPath }
+                }, ex);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a file exists.
+        /// </summary>
+        /// <param name="path">Relative or full path of the file.</param>
+        /// <returns>True if the file exists, false otherwise.</returns>
+        public bool Exists(string path)
+        {
+            var fullPath = GetFullPath(path);
+            return File.Exists(fullPath);
+        }
+
+        /// <summary>
+        /// Deletes a file if it exists.
+        /// </summary>
+        /// <param name="path">Relative or full path of the file.</param>
+        /// <exception cref="ZatcaStorageException">Thrown if the file cannot be deleted.</exception>
+        public void Delete(string path)
+        {
+            var fullPath = GetFullPath(path);
+
+            if (!File.Exists(fullPath))
+            {
+                return;
+            }
+
+            try
+            {
+                File.Delete(fullPath);
+            }
+            catch (Exception ex)
+            {
+                throw new ZatcaStorageException("Failed to delete file.", new System.Collections.Generic.Dictionary<string, object>
+                {
+                    { "path", fullPath }
+                }, ex);
+            }
+        }
+
+        /// <summary>
+        /// Returns the full path of a file.
+        /// </summary>
+        /// <param name="file">Relative or full path of the file.</param>
+        /// <returns>Absolute path to the file.</returns>
+        private string GetFullPath(string file)
+        {
+            if (string.IsNullOrEmpty(file))
+            {
+                throw new ArgumentNullException(nameof(file), "File path cannot be null or empty.");
+            }
+
+            if (!string.IsNullOrEmpty(BasePath))
+            {
+                return Path.Combine(BasePath, file);
+            }
+
+            return file;
+        }
+
+        /// <summary>
+        /// Ensures the directory exists, creates it if needed.
+        /// </summary>
+        /// <param name="path">Directory path.</param>
+        /// <exception cref="ZatcaStorageException">Thrown if the directory cannot be created.</exception>
+        private void EnsureDirectoryExists(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            if (Directory.Exists(path))
+            {
+                // Check if directory is writable
+                try
+                {
+                    var testFile = Path.Combine(path, Path.GetRandomFileName());
+                    using (File.Create(testFile, 1, FileOptions.DeleteOnClose)) { }
+                }
+                catch
+                {
+                    throw new ZatcaStorageException("Directory exists but is not writable.",
+                        new System.Collections.Generic.Dictionary<string, object> { { "path", path } });
+                }
+                return;
+            }
+
+            try
+            {
+                Directory.CreateDirectory(path);
+            }
+            catch (Exception ex)
+            {
+                throw new ZatcaStorageException("Failed to create directory.",
+                    new System.Collections.Generic.Dictionary<string, object> { { "path", path } }, ex);
+            }
+        }
+    }
+}
