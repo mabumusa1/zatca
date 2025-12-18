@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(xargs -I {} bash -c 'echo \"\"\"\"=== {} ===\"\"\"\" && grep \"\"\"\"public class\\\\|public void\\\\|public async Task\"\"\"\" {}')",
+      "Bash(cat:*)"
+    ]
+  }
+}
