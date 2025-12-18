@@ -364,10 +364,10 @@ namespace Zatca.EInvoice.Certificates
             var extensionOid = new DerObjectIdentifier("1.2.840.113549.1.9.14"); // extensionRequest
             var extensionRequest = new DerSequence(
                 extensionOid,
-                new DerSet(new DerSequence(extensions.ToArray()))
+                new DerSet((Asn1Encodable)new DerSequence(extensions.ToArray()))
             );
 
-            return new DerSet(extensionRequest);
+            return new DerSet((Asn1Encodable)extensionRequest);
         }
 
         private DerSequence CreateSubjectAlternativeNameExtension()

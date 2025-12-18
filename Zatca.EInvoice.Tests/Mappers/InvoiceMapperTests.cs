@@ -215,7 +215,7 @@ public class InvoiceMapperTests
 
         // Assert
         invoice.AdditionalDocumentReferences.Should().NotBeNull();
-        invoice.AdditionalDocumentReferences.Should().HaveCountGreaterOrEqualTo(2);
+        invoice.AdditionalDocumentReferences.Should().HaveCountGreaterThanOrEqualTo(2);
 
         var icvDoc = invoice.AdditionalDocumentReferences!.FirstOrDefault(d => d.Id == "ICV");
         icvDoc.Should().NotBeNull();
