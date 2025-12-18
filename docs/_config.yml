@@ -1,0 +1,16 @@
+title: Zatca.EInvoice
+description: A .NET library for generating ZATCA-compliant e-invoices in Saudi Arabia
+theme: jekyll-theme-cayman
+baseurl: "/Zatca.EInvoice"
+url: ""
+show_downloads: true
+google_analytics:
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
