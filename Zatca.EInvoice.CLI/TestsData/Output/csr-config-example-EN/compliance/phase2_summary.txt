@@ -1,0 +1,42 @@
+Phase 2: Compliance Validation
+Completed: Thu Dec 18 11:30:51 PM UTC 2025
+Configuration: csr-config-example-EN
+
+Test Results:
+- Total Tests: 2
+- Passed: 2
+- Failed: 0
+
+Test Details:
+
+--- simplified Invoice ---
+Compliance Check Summary
+Type: simplified
+Completed: Thu Dec 18 11:30:34 PM UTC 2025
+Status: PASSED
+API Status: null
+
+Invoice Details:
+- Hash: lVClWqd14I+VVQZKzqtQs2F/B4ZE52/fKNAhVzK4f8w=
+- UUID: de9a247c-1a70-4680-8748-cc13ea1e05cf
+
+Warnings:
+
+
+Full response saved in: simplified_compliance_result.json
+
+--- standard Invoice ---
+Compliance Check Summary
+Type: standard
+Completed: Thu Dec 18 11:30:51 PM UTC 2025
+Status: PASSED
+API Status: null
+
+Invoice Details:
+- Hash: Y95uyhqws4L3xzngtX8tBhXmvhhtLQd7Hd5OLzCIRdg=
+- UUID: 54a79761-8929-4b0c-9cd9-a88e0eac8363
+
+Warnings:
+
+
+Full response saved in: standard_compliance_result.json

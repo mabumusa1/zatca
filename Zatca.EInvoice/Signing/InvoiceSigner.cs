@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using Org.BouncyCastle.X509;
 
 namespace Zatca.EInvoice.Signing;
 
@@ -30,6 +31,9 @@ public class InvoiceSigner
 
         // Step 1: Parse the invoice XML
         var invoiceExtension = InvoiceExtension.FromString(xmlInvoice);
+
+        // Extract UUID before any modifications
+        var uuid = invoiceExtension.GetUuid();
 
         // Step 2: Remove elements that should not be included in the hash
         invoiceExtension
@@ -68,9 +72,10 @@ public class InvoiceSigner
         var qrCodeGenerator = QrCodeGenerator.CreateFromTags(qrTags);
         var qrCode = qrCodeGenerator.EncodeBase64();
 
-        // Step 8: Insert UBL Extension and QR Code into the original XML
+        // Step 8: Insert UBL Extension and QR Code into the ORIGINAL XML
+        // Important: We use the original xmlInvoice, not invoiceExtension which was modified for hashing
         var signedXml = InsertSignatureAndQrCode(
-            invoiceExtension.GetDocument().ToString(),
+            xmlInvoice,
             ublExtensionXml,
             qrCode
         );
@@ -83,7 +88,8 @@ public class InvoiceSigner
             SignedXml = signedXml,
             Hash = hash,
             QrCode = qrCode,
-            DigitalSignature = digitalSignature
+            DigitalSignature = digitalSignature,
+            Uuid = uuid
         };
     }
 
@@ -120,15 +126,20 @@ public class InvoiceSigner
     }
 
     /// <summary>
-    /// Extracts the certificate signature bytes.
+    /// Extracts the certificate signature bytes from the X509 certificate.
+    /// This extracts the actual digital signature value from the certificate structure,
+    /// not the certificate hash.
     /// </summary>
     /// <param name="certificate">The X509Certificate2.</param>
     /// <returns>Certificate signature bytes.</returns>
     private static byte[] ExtractCertificateSignature(X509Certificate2 certificate)
     {
-        // The certificate signature is available via GetCertHash() or parsing the certificate
-        // For ZATCA requirements, we need the signature bytes from the certificate
-        return certificate.GetCertHash();
+        // Use BouncyCastle to parse the certificate and extract the signature value
+        var parser = new X509CertificateParser();
+        var bcCert = parser.ReadCertificate(certificate.RawData);
+
+        // Get the signature bytes from the certificate
+        return bcCert.GetSignature();
     }
 
     /// <summary>
@@ -157,16 +168,38 @@ public class InvoiceSigner
         }
 
         // Insert UBL Extension before cbc:ProfileID
-        signedXml = signedXml.Replace(
-            "<cbc:ProfileID>",
-            $"<ext:UBLExtensions>{ublExtension}</ext:UBLExtensions>\n    <cbc:ProfileID>"
+        // IMPORTANT: Do NOT add extra whitespace between UBLExtensions and ProfileID
+        // When ZATCA removes UBLExtensions, no extra whitespace should remain
+        signedXml = Regex.Replace(
+            signedXml,
+            @"(<cbc:ProfileID>)",
+            $"<ext:UBLExtensions>{ublExtension}</ext:UBLExtensions>$1"
         );
 
-        // Insert QR code and signature before cac:AccountingSupplierParty
-        signedXml = signedXml.Replace(
-            "<cac:AccountingSupplierParty>",
-            $"{qrNode}\n    <cac:AccountingSupplierParty>"
-        );
+        // Insert QR code AdditionalDocumentReference before the existing cac:Signature element
+        // IMPORTANT: Do NOT add extra whitespace between QR and Signature
+        // When ZATCA removes QR, no extra whitespace should remain
+        if (signedXml.Contains("<cac:Signature>"))
+        {
+            signedXml = Regex.Replace(
+                signedXml,
+                @"(<cac:Signature>)",
+                $"{qrNode}$1"
+            );
+        }
+        else
+        {
+            // If no Signature element exists, insert both QR and Signature before AccountingSupplierParty
+            signedXml = signedXml.Replace(
+                "<cac:AccountingSupplierParty>",
+                $@"{qrNode}
+    <cac:Signature>
+        <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>
+        <cbc:SignatureMethod>urn:oasis:names:specification:ubl:dsig:enveloped:xades</cbc:SignatureMethod>
+    </cac:Signature>
+    <cac:AccountingSupplierParty>"
+            );
+        }
 
         return signedXml;
     }
@@ -183,11 +216,7 @@ public class InvoiceSigner
         <cac:Attachment>
             <cbc:EmbeddedDocumentBinaryObject mimeCode=""text/plain"">{qrCode}</cbc:EmbeddedDocumentBinaryObject>
         </cac:Attachment>
-    </cac:AdditionalDocumentReference>
-    <cac:Signature>
-        <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>
-        <cbc:SignatureMethod>urn:oasis:names:specification:ubl:dsig:enveloped:xades</cbc:SignatureMethod>
-    </cac:Signature>";
+    </cac:AdditionalDocumentReference>";
     }
 
     /// <summary>

@@ -1,0 +1,15 @@
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/compliance.crt
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/secret.txt
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/request_id.txt
+{
+  "success": true,
+  "error": null,
+  "requestId": "1234567890123",
+  "certificate": "MIICOzCCAeCgAwIBAgIGAZszhOEkMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCmVJbnZvaWNpbmcwHhcNMjUxMjE4MjIxMTQwWhcNMzAxMjE4MjEwMDAwWjByMQswCQYDVQQGEwJTQTETMBEGA1UECwwKMzk5OTk5OTk5OTEmMCQGA1UECgwdTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQxJjAkBgNVBAMMHVRTVC04ODY0MzExNDUtMzk5OTk5OTk5OTAwMDAzMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEeOkVZ\u002BZzFsDM8pjLyd8OyDtKj\u002B0eDaeWDDIUnzKsArHigxVonEdLUz0up8EsNV5u3LS3K7AuTlp2veADmc/tZqOBwTCBvjAMBgNVHRMBAf8EAjAAMIGtBgNVHREEgaUwgaKkgZ8wgZwxOzA5BgNVBAQMMjEtVFNUfDItVFNUfDMtZWQyMmYxZDgtZTZhMi0xMTE4LTliNTgtZDlhOGYxMWU0NDVmMR8wHQYKCZImiZPyLGQBAQwPMzk5OTk5OTk5OTEwMDAzMQ0wCwYDVQQMDAQxMTAwMREwDwYDVQQaDAhSUlJEMjkyOTEaMBgGA1UEDwwRU3VwcGx5IGFjdGl2aXRpZXMwCgYIKoZIzj0EAwIDSQAwRgIhAPFM\u002BSwVJMVtnHOMDYvfPK6Xjgb1tyi1t48WFkjeZgscAiEAv\u002BTHtfya9ZnYb7FbdOnP3DkdJOH3eqKVPIq1fYIb/pM=",
+  "secret": "5SOTsev/9rV7Pgl48f1pb5naUrMpREcO7M28855Tvwo=",
+  "files": {
+    "certificate": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/compliance.crt",
+    "secret": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/secret.txt"
+  },
+  "warnings": []
+}

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -92,14 +93,34 @@ namespace Zatca.EInvoice.Xml
             }
 
             // InvoiceTypeCode
-            if (invoiceData.ContainsKey("invoiceType") && invoiceData["invoiceType"] is Dictionary<string, object> invoiceType)
+            if (invoiceData.ContainsKey("invoiceType"))
             {
-                var typeCode = GetString(invoiceType, "type", "388");
-                var invoiceTypeValue = GetString(invoiceType, "invoice", "standard");
+                var invoiceType = TryGetDictionary(invoiceData["invoiceType"]);
+                if (invoiceType != null)
+                {
+                    // Support both old format (type/invoice) and new ZATCA format (typeCode/name)
+                    var typeCode = GetString(invoiceType, "typeCode", "") != ""
+                        ? GetString(invoiceType, "typeCode")
+                        : GetString(invoiceType, "type", "388");
+                    var invoiceTypeName = GetString(invoiceType, "name", "") != ""
+                        ? GetString(invoiceType, "name")
+                        : GetString(invoiceType, "invoice", "0100000");
 
-                invoice.Add(new XElement(_cbc + "InvoiceTypeCode",
-                    new XAttribute("name", invoiceTypeValue),
-                    typeCode));
+                    // Convert string type codes if necessary
+                    if (!int.TryParse(typeCode, out _))
+                    {
+                        typeCode = typeCode.ToLowerInvariant() switch
+                        {
+                            "credit" => "381",
+                            "debit" => "383",
+                            _ => "388"
+                        };
+                    }
+
+                    invoice.Add(new XElement(_cbc + "InvoiceTypeCode",
+                        new XAttribute("name", invoiceTypeName),
+                        typeCode));
+                }
             }
 
             // Note
@@ -118,117 +139,173 @@ namespace Zatca.EInvoice.Xml
             invoice.Add(new XElement(_cbc + "TaxCurrencyCode", GetString(invoiceData, "taxCurrencyCode", _currencyId)));
 
             // OrderReference
-            if (invoiceData.ContainsKey("orderReference") && invoiceData["orderReference"] is Dictionary<string, object> orderRef)
+            if (invoiceData.ContainsKey("orderReference"))
             {
-                invoice.Add(GenerateOrderReference(orderRef));
+                var orderRef = TryGetDictionary(invoiceData["orderReference"]);
+                if (orderRef != null)
+                {
+                    invoice.Add(GenerateOrderReference(orderRef));
+                }
             }
 
             // BillingReference(s)
-            if (invoiceData.ContainsKey("billingReferences") && invoiceData["billingReferences"] is IList<object> billingRefs)
+            if (invoiceData.ContainsKey("billingReferences"))
             {
-                foreach (var billingRef in billingRefs)
+                var billingRefs = TryGetList(invoiceData["billingReferences"]);
+                if (billingRefs != null)
                 {
-                    if (billingRef is Dictionary<string, object> billingRefDict)
+                    foreach (var billingRef in billingRefs)
                     {
-                        invoice.Add(GenerateBillingReference(billingRefDict));
+                        var billingRefDict = TryGetDictionary(billingRef);
+                        if (billingRefDict != null)
+                        {
+                            invoice.Add(GenerateBillingReference(billingRefDict));
+                        }
                     }
                 }
             }
 
             // ContractDocumentReference
-            if (invoiceData.ContainsKey("contract") && invoiceData["contract"] is Dictionary<string, object> contract)
+            if (invoiceData.ContainsKey("contract"))
             {
-                invoice.Add(GenerateContractReference(contract));
+                var contract = TryGetDictionary(invoiceData["contract"]);
+                if (contract != null)
+                {
+                    invoice.Add(GenerateContractReference(contract));
+                }
             }
 
             // AdditionalDocumentReference(s)
-            if (invoiceData.ContainsKey("additionalDocuments") && invoiceData["additionalDocuments"] is IList<object> additionalDocs)
+            if (invoiceData.ContainsKey("additionalDocuments"))
             {
-                foreach (var doc in additionalDocs)
+                var additionalDocs = TryGetList(invoiceData["additionalDocuments"]);
+                if (additionalDocs != null)
                 {
-                    if (doc is Dictionary<string, object> docDict)
+                    foreach (var doc in additionalDocs)
                     {
-                        invoice.Add(GenerateAdditionalDocumentReference(docDict));
+                        var docDict = TryGetDictionary(doc);
+                        if (docDict != null)
+                        {
+                            invoice.Add(GenerateAdditionalDocumentReference(docDict));
+                        }
                     }
                 }
             }
 
             // Signature
-            if (invoiceData.ContainsKey("signature") && invoiceData["signature"] is Dictionary<string, object> signature)
+            if (invoiceData.ContainsKey("signature"))
             {
-                invoice.Add(GenerateSignature(signature));
+                var signature = TryGetDictionary(invoiceData["signature"]);
+                if (signature != null)
+                {
+                    invoice.Add(GenerateSignature(signature));
+                }
             }
 
             // AccountingSupplierParty
-            if (invoiceData.ContainsKey("supplier") && invoiceData["supplier"] is Dictionary<string, object> supplier)
+            if (invoiceData.ContainsKey("supplier"))
             {
-                invoice.Add(GenerateAccountingSupplierParty(supplier));
+                var supplier = TryGetDictionary(invoiceData["supplier"]);
+                if (supplier != null)
+                {
+                    invoice.Add(GenerateAccountingSupplierParty(supplier));
+                }
             }
 
             // AccountingCustomerParty
-            if (invoiceData.ContainsKey("customer") && invoiceData["customer"] is Dictionary<string, object> customer)
+            if (invoiceData.ContainsKey("customer"))
             {
-                invoice.Add(GenerateAccountingCustomerParty(customer));
+                var customer = TryGetDictionary(invoiceData["customer"]);
+                if (customer != null)
+                {
+                    invoice.Add(GenerateAccountingCustomerParty(customer));
+                }
             }
 
             // Delivery
-            if (invoiceData.ContainsKey("delivery") && invoiceData["delivery"] is Dictionary<string, object> delivery)
+            if (invoiceData.ContainsKey("delivery"))
             {
-                var deliveryElement = GenerateDelivery(delivery);
-                if (deliveryElement != null)
+                var delivery = TryGetDictionary(invoiceData["delivery"]);
+                if (delivery != null)
                 {
-                    invoice.Add(deliveryElement);
+                    var deliveryElement = GenerateDelivery(delivery);
+                    if (deliveryElement != null)
+                    {
+                        invoice.Add(deliveryElement);
+                    }
                 }
             }
 
             // PaymentMeans
-            if (invoiceData.ContainsKey("paymentMeans") && invoiceData["paymentMeans"] is Dictionary<string, object> paymentMeans)
+            if (invoiceData.ContainsKey("paymentMeans"))
             {
-                invoice.Add(GeneratePaymentMeans(paymentMeans));
+                var paymentMeans = TryGetDictionary(invoiceData["paymentMeans"]);
+                if (paymentMeans != null)
+                {
+                    invoice.Add(GeneratePaymentMeans(paymentMeans));
+                }
             }
 
             // AllowanceCharge(s)
-            if (invoiceData.ContainsKey("allowanceCharges") && invoiceData["allowanceCharges"] is IList<object> allowanceCharges)
+            if (invoiceData.ContainsKey("allowanceCharges"))
             {
-                foreach (var allowanceCharge in allowanceCharges)
+                var allowanceCharges = TryGetList(invoiceData["allowanceCharges"]);
+                if (allowanceCharges != null)
                 {
-                    if (allowanceCharge is Dictionary<string, object> acDict)
+                    foreach (var allowanceCharge in allowanceCharges)
                     {
-                        invoice.Add(GenerateAllowanceCharge(acDict));
+                        var acDict = TryGetDictionary(allowanceCharge);
+                        if (acDict != null)
+                        {
+                            invoice.Add(GenerateAllowanceCharge(acDict));
+                        }
                     }
                 }
             }
 
             // TaxTotal
-            if (invoiceData.ContainsKey("taxTotal") && invoiceData["taxTotal"] is Dictionary<string, object> taxTotal)
+            if (invoiceData.ContainsKey("taxTotal"))
             {
-                // First TaxTotal with currency
-                if (taxTotal.ContainsKey("taxAmount"))
+                var taxTotal = TryGetDictionary(invoiceData["taxTotal"]);
+                if (taxTotal != null)
                 {
-                    var taxAmountElement = new XElement(_cac + "TaxTotal",
-                        XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId)
-                    );
-                    invoice.Add(taxAmountElement);
-                }
+                    // First TaxTotal with currency
+                    if (taxTotal.ContainsKey("taxAmount"))
+                    {
+                        var taxAmountElement = new XElement(_cac + "TaxTotal",
+                            XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId)
+                        );
+                        invoice.Add(taxAmountElement);
+                    }
 
-                // Second TaxTotal with subtotals
-                invoice.Add(GenerateTaxTotal(taxTotal));
+                    // Second TaxTotal with subtotals
+                    invoice.Add(GenerateTaxTotal(taxTotal));
+                }
             }
 
             // LegalMonetaryTotal
-            if (invoiceData.ContainsKey("legalMonetaryTotal") && invoiceData["legalMonetaryTotal"] is Dictionary<string, object> lmt)
+            if (invoiceData.ContainsKey("legalMonetaryTotal"))
             {
-                invoice.Add(GenerateLegalMonetaryTotal(lmt));
+                var lmt = TryGetDictionary(invoiceData["legalMonetaryTotal"]);
+                if (lmt != null)
+                {
+                    invoice.Add(GenerateLegalMonetaryTotal(lmt));
+                }
             }
 
             // InvoiceLine(s)
-            if (invoiceData.ContainsKey("invoiceLines") && invoiceData["invoiceLines"] is IList<object> invoiceLines)
+            if (invoiceData.ContainsKey("invoiceLines"))
             {
-                foreach (var line in invoiceLines)
+                var invoiceLines = TryGetList(invoiceData["invoiceLines"]);
+                if (invoiceLines != null)
                 {
-                    if (line is Dictionary<string, object> lineDict)
+                    foreach (var line in invoiceLines)
                     {
-                        invoice.Add(GenerateInvoiceLine(lineDict));
+                        var lineDict = TryGetDictionary(line);
+                        if (lineDict != null)
+                        {
+                            invoice.Add(GenerateInvoiceLine(lineDict));
+                        }
                     }
                 }
             }
@@ -258,16 +335,26 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "BillingReference");
 
-            if (billingRef.ContainsKey("invoiceDocumentReference") &&
-                billingRef["invoiceDocumentReference"] is Dictionary<string, object> invoiceDocRef)
+            if (billingRef.ContainsKey("invoiceDocumentReference"))
+            {
+                var invoiceDocRef = TryGetDictionary(billingRef["invoiceDocumentReference"]);
+                if (invoiceDocRef != null)
+                {
+                    var invoiceDocRefElement = new XElement(_cac + "InvoiceDocumentReference");
+
+                    if (invoiceDocRef.ContainsKey("id"))
+                    {
+                        invoiceDocRefElement.Add(new XElement(_cbc + "ID", GetString(invoiceDocRef, "id")));
+                    }
+
+                    element.Add(invoiceDocRefElement);
+                }
+            }
+            // Also support direct ID for billing reference
+            else if (billingRef.ContainsKey("id"))
             {
                 var invoiceDocRefElement = new XElement(_cac + "InvoiceDocumentReference");
-
-                if (invoiceDocRef.ContainsKey("id"))
-                {
-                    invoiceDocRefElement.Add(new XElement(_cbc + "ID", GetString(invoiceDocRef, "id")));
-                }
-
+                invoiceDocRefElement.Add(new XElement(_cbc + "ID", GetString(billingRef, "id")));
                 element.Add(invoiceDocRefElement);
             }
 
@@ -300,23 +387,25 @@ namespace Zatca.EInvoice.Xml
                 element.Add(new XElement(_cbc + "UUID", GetString(doc, "uuid")));
             }
 
-            if (doc.ContainsKey("attachment") && doc["attachment"] is Dictionary<string, object> attachment)
+            if (doc.ContainsKey("attachment"))
             {
-                var attachmentElement = new XElement(_cac + "Attachment");
-
-                if (attachment.ContainsKey("embeddedDocument"))
+                var attachment = TryGetDictionary(doc["attachment"]);
+                if (attachment != null)
                 {
-                    var embeddedDoc = GetString(attachment, "embeddedDocument");
-                    var mimeCode = GetString(attachment, "mimeCode", "text/plain");
-                    var encoding = GetString(attachment, "encoding", "UTF-8");
+                    var attachmentElement = new XElement(_cac + "Attachment");
 
-                    attachmentElement.Add(new XElement(_cbc + "EmbeddedDocumentBinaryObject",
-                        new XAttribute("mimeCode", mimeCode),
-                        new XAttribute("encoding", encoding),
-                        embeddedDoc));
+                    if (attachment.ContainsKey("embeddedDocument"))
+                    {
+                        var embeddedDoc = GetString(attachment, "embeddedDocument");
+                        var mimeCode = GetString(attachment, "mimeCode", "text/plain");
+
+                        attachmentElement.Add(new XElement(_cbc + "EmbeddedDocumentBinaryObject",
+                            new XAttribute("mimeCode", mimeCode),
+                            embeddedDoc));
+                    }
+
+                    element.Add(attachmentElement);
                 }
-
-                element.Add(attachmentElement);
             }
 
             return element;
@@ -352,11 +441,13 @@ namespace Zatca.EInvoice.Xml
 
         private XElement GenerateAccountingCustomerParty(Dictionary<string, object> customer)
         {
-            var element = new XElement(_cac + "AccountingCustomerParty",
-                new XElement(_cac + "Party",
-                    GenerateParty(customer)
-                )
-            );
+            var element = new XElement(_cac + "AccountingCustomerParty");
+
+            // For simplified invoices, customer may be empty but element is still required
+            if (customer.Count > 0)
+            {
+                element.Add(new XElement(_cac + "Party", GenerateParty(customer)));
+            }
 
             return element;
         }
@@ -381,9 +472,13 @@ namespace Zatca.EInvoice.Xml
             }
 
             // PostalAddress
-            if (party.ContainsKey("address") && party["address"] is Dictionary<string, object> address)
+            if (party.ContainsKey("address"))
             {
-                elements.Add(GenerateAddress(address));
+                var address = TryGetDictionary(party["address"]);
+                if (address != null)
+                {
+                    elements.Add(GenerateAddress(address));
+                }
             }
 
             // PartyTaxScheme
@@ -397,11 +492,16 @@ namespace Zatca.EInvoice.Xml
                 }
 
                 var taxSchemeElement = new XElement(_cac + "TaxScheme");
-                if (party.ContainsKey("taxScheme") && party["taxScheme"] is Dictionary<string, object> taxScheme)
+                if (party.ContainsKey("taxScheme"))
                 {
-                    if (taxScheme.ContainsKey("id"))
+                    var taxScheme = TryGetDictionary(party["taxScheme"]);
+                    if (taxScheme != null && taxScheme.ContainsKey("id"))
                     {
                         taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
+                    }
+                    else
+                    {
+                        taxSchemeElement.Add(new XElement(_cbc + "ID", "VAT"));
                     }
                 }
                 else
@@ -450,9 +550,14 @@ namespace Zatca.EInvoice.Xml
                 element.Add(new XElement(_cbc + "PlotIdentification", GetString(address, "plotIdentification")));
             }
 
+            // Support both citySubdivisionName and subdivision keys
             if (address.ContainsKey("citySubdivisionName"))
             {
                 element.Add(new XElement(_cbc + "CitySubdivisionName", GetString(address, "citySubdivisionName")));
+            }
+            else if (address.ContainsKey("subdivision"))
+            {
+                element.Add(new XElement(_cbc + "CitySubdivisionName", GetString(address, "subdivision")));
             }
 
             if (address.ContainsKey("city"))
@@ -538,6 +643,56 @@ namespace Zatca.EInvoice.Xml
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "Amount", GetDecimal(ac["amount"]), _currencyId));
             }
 
+            // Add TaxCategory for BR-32 compliance
+            if (ac.ContainsKey("taxCategories"))
+            {
+                var taxCategories = TryGetList(ac["taxCategories"]);
+                if (taxCategories != null)
+                {
+                    foreach (var category in taxCategories)
+                    {
+                        var categoryDict = TryGetDictionary(category);
+                        if (categoryDict != null)
+                        {
+                            var taxCategoryElement = new XElement(_cac + "TaxCategory");
+
+                            if (categoryDict.ContainsKey("id"))
+                            {
+                                taxCategoryElement.Add(new XElement(_cbc + "ID",
+                                    new XAttribute("schemeID", "UN/ECE 5305"),
+                                    new XAttribute("schemeAgencyID", "6"),
+                                    GetString(categoryDict, "id")));
+                            }
+
+                            if (categoryDict.ContainsKey("percent"))
+                            {
+                                taxCategoryElement.Add(new XElement(_cbc + "Percent",
+                                    GetDecimal(categoryDict["percent"]).ToString("F2")));
+                            }
+
+                            if (categoryDict.ContainsKey("taxScheme"))
+                            {
+                                var taxScheme = TryGetDictionary(categoryDict["taxScheme"]);
+                                if (taxScheme != null)
+                                {
+                                    var taxSchemeElement = new XElement(_cac + "TaxScheme");
+                                    if (taxScheme.ContainsKey("id"))
+                                    {
+                                        taxSchemeElement.Add(new XElement(_cbc + "ID",
+                                            new XAttribute("schemeID", "UN/ECE 5153"),
+                                            new XAttribute("schemeAgencyID", "6"),
+                                            GetString(taxScheme, "id")));
+                                    }
+                                    taxCategoryElement.Add(taxSchemeElement);
+                                }
+                            }
+
+                            element.Add(taxCategoryElement);
+                        }
+                    }
+                }
+            }
+
             return element;
         }
 
@@ -550,13 +705,18 @@ namespace Zatca.EInvoice.Xml
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId));
             }
 
-            if (taxTotal.ContainsKey("subTotals") && taxTotal["subTotals"] is IList<object> subTotals)
+            if (taxTotal.ContainsKey("subTotals"))
             {
-                foreach (var subTotal in subTotals)
+                var subTotals = TryGetList(taxTotal["subTotals"]);
+                if (subTotals != null)
                 {
-                    if (subTotal is Dictionary<string, object> subTotalDict)
+                    foreach (var subTotal in subTotals)
                     {
-                        element.Add(GenerateTaxSubTotal(subTotalDict));
+                        var subTotalDict = TryGetDictionary(subTotal);
+                        if (subTotalDict != null)
+                        {
+                            element.Add(GenerateTaxSubTotal(subTotalDict));
+                        }
                     }
                 }
             }
@@ -578,43 +738,59 @@ namespace Zatca.EInvoice.Xml
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(subTotal["taxAmount"]), _currencyId));
             }
 
-            if (subTotal.ContainsKey("taxCategory") && subTotal["taxCategory"] is Dictionary<string, object> taxCategory)
+            if (subTotal.ContainsKey("taxCategory"))
             {
-                var taxCategoryElement = new XElement(_cac + "TaxCategory");
-
-                if (taxCategory.ContainsKey("id"))
+                var taxCategory = TryGetDictionary(subTotal["taxCategory"]);
+                if (taxCategory != null)
                 {
-                    taxCategoryElement.Add(new XElement(_cbc + "ID", GetString(taxCategory, "id")));
-                }
+                    var taxCategoryElement = new XElement(_cac + "TaxCategory");
 
-                if (taxCategory.ContainsKey("percent"))
-                {
-                    taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(taxCategory["percent"]).FormatPercent()));
-                }
-
-                if (taxCategory.ContainsKey("taxExemptionReason"))
-                {
-                    taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReason", GetString(taxCategory, "taxExemptionReason")));
-                }
-
-                if (taxCategory.ContainsKey("taxExemptionReasonCode"))
-                {
-                    taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReasonCode", GetString(taxCategory, "taxExemptionReasonCode")));
-                }
-
-                if (taxCategory.ContainsKey("taxScheme") && taxCategory["taxScheme"] is Dictionary<string, object> taxScheme)
-                {
-                    var taxSchemeElement = new XElement(_cac + "TaxScheme");
-
-                    if (taxScheme.ContainsKey("id"))
+                    if (taxCategory.ContainsKey("id"))
                     {
-                        taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
+                        // ZATCA requires schemeID and schemeAgencyID for tax category ID
+                        taxCategoryElement.Add(new XElement(_cbc + "ID",
+                            new XAttribute("schemeID", "UN/ECE 5305"),
+                            new XAttribute("schemeAgencyID", "6"),
+                            GetString(taxCategory, "id")));
                     }
 
-                    taxCategoryElement.Add(taxSchemeElement);
-                }
+                    if (taxCategory.ContainsKey("percent"))
+                    {
+                        taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(taxCategory["percent"]).FormatPercent()));
+                    }
 
-                element.Add(taxCategoryElement);
+                    if (taxCategory.ContainsKey("taxExemptionReasonCode"))
+                    {
+                        taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReasonCode", GetString(taxCategory, "taxExemptionReasonCode")));
+                    }
+
+                    if (taxCategory.ContainsKey("taxExemptionReason"))
+                    {
+                        taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReason", GetString(taxCategory, "taxExemptionReason")));
+                    }
+
+                    if (taxCategory.ContainsKey("taxScheme"))
+                    {
+                        var taxScheme = TryGetDictionary(taxCategory["taxScheme"]);
+                        if (taxScheme != null)
+                        {
+                            var taxSchemeElement = new XElement(_cac + "TaxScheme");
+
+                            if (taxScheme.ContainsKey("id"))
+                            {
+                                // ZATCA requires schemeID and schemeAgencyID for tax scheme ID
+                                taxSchemeElement.Add(new XElement(_cbc + "ID",
+                                    new XAttribute("schemeID", "UN/ECE 5153"),
+                                    new XAttribute("schemeAgencyID", "6"),
+                                    GetString(taxScheme, "id")));
+                            }
+
+                            taxCategoryElement.Add(taxSchemeElement);
+                        }
+                    }
+
+                    element.Add(taxCategoryElement);
+                }
             }
 
             return element;
@@ -683,33 +859,45 @@ namespace Zatca.EInvoice.Xml
             }
 
             // TaxTotal
-            if (line.ContainsKey("taxTotal") && line["taxTotal"] is Dictionary<string, object> taxTotal)
+            if (line.ContainsKey("taxTotal"))
             {
-                var taxTotalElement = new XElement(_cac + "TaxTotal");
-
-                if (taxTotal.ContainsKey("taxAmount"))
+                var taxTotal = TryGetDictionary(line["taxTotal"]);
+                if (taxTotal != null)
                 {
-                    taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId));
-                }
+                    var taxTotalElement = new XElement(_cac + "TaxTotal");
 
-                if (taxTotal.ContainsKey("roundingAmount"))
-                {
-                    taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(taxTotal["roundingAmount"]), _currencyId));
-                }
+                    if (taxTotal.ContainsKey("taxAmount"))
+                    {
+                        taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId));
+                    }
 
-                element.Add(taxTotalElement);
+                    if (taxTotal.ContainsKey("roundingAmount"))
+                    {
+                        taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(taxTotal["roundingAmount"]), _currencyId));
+                    }
+
+                    element.Add(taxTotalElement);
+                }
             }
 
             // Item
-            if (line.ContainsKey("item") && line["item"] is Dictionary<string, object> item)
+            if (line.ContainsKey("item"))
             {
-                element.Add(GenerateItem(item));
+                var item = TryGetDictionary(line["item"]);
+                if (item != null)
+                {
+                    element.Add(GenerateItem(item));
+                }
             }
 
             // Price
-            if (line.ContainsKey("price") && line["price"] is Dictionary<string, object> price)
+            if (line.ContainsKey("price"))
             {
-                element.Add(GeneratePrice(price));
+                var price = TryGetDictionary(line["price"]);
+                if (price != null)
+                {
+                    element.Add(GeneratePrice(price));
+                }
             }
 
             return element;
@@ -724,37 +912,46 @@ namespace Zatca.EInvoice.Xml
                 element.Add(new XElement(_cbc + "Name", GetString(item, "name")));
             }
 
-            if (item.ContainsKey("classifiedTaxCategory") && item["classifiedTaxCategory"] is IList<object> classifiedTaxCategories)
+            if (item.ContainsKey("classifiedTaxCategory"))
             {
-                foreach (var category in classifiedTaxCategories)
+                var classifiedTaxCategories = TryGetList(item["classifiedTaxCategory"]);
+                if (classifiedTaxCategories != null)
                 {
-                    if (category is Dictionary<string, object> categoryDict)
+                    foreach (var category in classifiedTaxCategories)
                     {
-                        var taxCategoryElement = new XElement(_cac + "ClassifiedTaxCategory");
-
-                        if (categoryDict.ContainsKey("id"))
+                        var categoryDict = TryGetDictionary(category);
+                        if (categoryDict != null)
                         {
-                            taxCategoryElement.Add(new XElement(_cbc + "ID", GetString(categoryDict, "id")));
-                        }
+                            var taxCategoryElement = new XElement(_cac + "ClassifiedTaxCategory");
 
-                        if (categoryDict.ContainsKey("percent"))
-                        {
-                            taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(categoryDict["percent"]).FormatPercent()));
-                        }
-
-                        if (categoryDict.ContainsKey("taxScheme") && categoryDict["taxScheme"] is Dictionary<string, object> taxScheme)
-                        {
-                            var taxSchemeElement = new XElement(_cac + "TaxScheme");
-
-                            if (taxScheme.ContainsKey("id"))
+                            if (categoryDict.ContainsKey("id"))
                             {
-                                taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
+                                taxCategoryElement.Add(new XElement(_cbc + "ID", GetString(categoryDict, "id")));
                             }
 
-                            taxCategoryElement.Add(taxSchemeElement);
-                        }
+                            if (categoryDict.ContainsKey("percent"))
+                            {
+                                taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(categoryDict["percent"]).FormatPercent()));
+                            }
 
-                        element.Add(taxCategoryElement);
+                            if (categoryDict.ContainsKey("taxScheme"))
+                            {
+                                var taxScheme = TryGetDictionary(categoryDict["taxScheme"]);
+                                if (taxScheme != null)
+                                {
+                                    var taxSchemeElement = new XElement(_cac + "TaxScheme");
+
+                                    if (taxScheme.ContainsKey("id"))
+                                    {
+                                        taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
+                                    }
+
+                                    taxCategoryElement.Add(taxSchemeElement);
+                                }
+                            }
+
+                            element.Add(taxCategoryElement);
+                        }
                     }
                 }
             }
@@ -785,7 +982,14 @@ namespace Zatca.EInvoice.Xml
         {
             if (dict.ContainsKey(key) && dict[key] != null)
             {
-                return dict[key].ToString();
+                var value = dict[key];
+                if (value is JsonElement jsonElement)
+                {
+                    return jsonElement.ValueKind == JsonValueKind.String
+                        ? jsonElement.GetString() ?? defaultValue
+                        : jsonElement.ToString();
+                }
+                return value.ToString() ?? defaultValue;
             }
             return defaultValue;
         }
@@ -797,9 +1001,19 @@ namespace Zatca.EInvoice.Xml
                 return 0m;
             }
 
-            if (value is decimal d)
+            if (value is JsonElement jsonElement)
             {
-                return d;
+                return jsonElement.ValueKind switch
+                {
+                    JsonValueKind.Number => jsonElement.GetDecimal(),
+                    JsonValueKind.String when decimal.TryParse(jsonElement.GetString(), out var parsed) => parsed,
+                    _ => 0m
+                };
+            }
+
+            if (value is decimal decValue)
+            {
+                return decValue;
             }
 
             if (value is int i)
@@ -837,6 +1051,14 @@ namespace Zatca.EInvoice.Xml
                 return dt;
             }
 
+            if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.String)
+            {
+                if (DateTime.TryParse(jsonElement.GetString(), out DateTime jsonResult))
+                {
+                    return jsonResult;
+                }
+            }
+
             if (value is string str && DateTime.TryParse(str, out DateTime result))
             {
                 return result;
@@ -846,26 +1068,116 @@ namespace Zatca.EInvoice.Xml
         }
 
         /// <summary>
+        /// Tries to get a dictionary from an object, handling JsonElement conversion.
+        /// </summary>
+        private Dictionary<string, object> TryGetDictionary(object value)
+        {
+            if (value is Dictionary<string, object> dict)
+            {
+                return dict;
+            }
+
+            if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Object)
+            {
+                return JsonElementToDictionary(jsonElement);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Tries to get a list from an object, handling JsonElement conversion.
+        /// </summary>
+        private List<object> TryGetList(object value)
+        {
+            if (value is IList<object> list)
+            {
+                return list.ToList();
+            }
+
+            if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
+            {
+                var result = new List<object>();
+                foreach (var item in jsonElement.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.Object)
+                    {
+                        result.Add(JsonElementToDictionary(item));
+                    }
+                    else
+                    {
+                        result.Add(item);
+                    }
+                }
+                return result;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Converts a JsonElement to a Dictionary.
+        /// </summary>
+        private Dictionary<string, object> JsonElementToDictionary(JsonElement element)
+        {
+            var dict = new Dictionary<string, object>();
+            foreach (var property in element.EnumerateObject())
+            {
+                dict[property.Name] = property.Value.ValueKind switch
+                {
+                    JsonValueKind.Object => JsonElementToDictionary(property.Value),
+                    JsonValueKind.Array => JsonElementToList(property.Value),
+                    _ => property.Value
+                };
+            }
+            return dict;
+        }
+
+        /// <summary>
+        /// Converts a JsonElement array to a List.
+        /// </summary>
+        private List<object> JsonElementToList(JsonElement element)
+        {
+            var list = new List<object>();
+            foreach (var item in element.EnumerateArray())
+            {
+                list.Add(item.ValueKind switch
+                {
+                    JsonValueKind.Object => JsonElementToDictionary(item),
+                    JsonValueKind.Array => JsonElementToList(item),
+                    _ => item
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
         /// Formats XML with proper indentation.
         /// </summary>
         /// <param name="element">The XML element to format.</param>
         /// <returns>A formatted XML string.</returns>
         private string FormatXml(XElement element)
         {
+            // Use UTF8 encoding WITHOUT BOM to avoid hash computation issues
+            var utf8NoBom = new UTF8Encoding(false);
+
             var settings = new XmlWriterSettings
             {
                 Indent = true,
                 IndentChars = "    ",
-                Encoding = Encoding.UTF8,
+                Encoding = utf8NoBom,
                 OmitXmlDeclaration = false
             };
 
-            using (var stringWriter = new System.IO.StringWriter())
-            using (var xmlWriter = XmlWriter.Create(stringWriter, settings))
+            // Use MemoryStream with UTF8 without BOM
+            using (var memoryStream = new System.IO.MemoryStream())
             {
-                element.WriteTo(xmlWriter);
-                xmlWriter.Flush();
-                return stringWriter.ToString();
+                using (var xmlWriter = XmlWriter.Create(memoryStream, settings))
+                {
+                    element.WriteTo(xmlWriter);
+                    xmlWriter.Flush();
+                }
+                return utf8NoBom.GetString(memoryStream.ToArray());
             }
         }
     }

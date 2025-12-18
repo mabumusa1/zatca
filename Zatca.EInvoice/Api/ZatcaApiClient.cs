@@ -125,6 +125,7 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
+            headers["Accept-Version"] = "V2";
             headers["Accept-Language"] = "en";
             headers["Content-Type"] = "application/json";
 
@@ -158,6 +159,7 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
+            headers["Accept-Version"] = "V2";
             headers["Content-Type"] = "application/json";
 
             var response = await SendRequestAsync<Dictionary<string, object>>(
@@ -189,6 +191,7 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
+            headers["Accept-Version"] = "V2";
             headers["Clearance-Status"] = "1";
             headers["Accept-Language"] = "en";
 
@@ -221,6 +224,7 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
+            headers["Accept-Version"] = "V2";
             headers["Accept-Language"] = "en";
 
             var response = await SendRequestAsync<Dictionary<string, object>>(
@@ -318,8 +322,36 @@ namespace Zatca.EInvoice.Api
 
         private Dictionary<string, string> CreateAuthHeaders(string certificate, string secret)
         {
-            var cleanCert = certificate.Trim();
-            var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{cleanCert}:{secret}"));
+            // ZATCA Basic Auth format (matching php-zatca-xml implementation):
+            // 1. Get raw certificate content (base64 string from PEM, without headers)
+            // 2. Base64 encode it again: base64(rawCert)
+            // 3. Concatenate with secret: base64(rawCert):secret
+            // 4. Base64 encode the whole thing: base64(base64(rawCert):secret)
+            // Authorization = Basic base64(base64(rawCert):secret)
+
+            var certContent = certificate.Trim();
+            string rawCertificate;
+
+            if (certContent.Contains("-----BEGIN CERTIFICATE-----"))
+            {
+                // Certificate is in PEM format - extract just the base64 content (without headers)
+                rawCertificate = certContent
+                    .Replace("-----BEGIN CERTIFICATE-----", "")
+                    .Replace("-----END CERTIFICATE-----", "")
+                    .Replace("\r", "")
+                    .Replace("\n", "")
+                    .Trim();
+            }
+            else
+            {
+                // Already in base64 format (raw certificate directly)
+                rawCertificate = certContent;
+            }
+
+            // Double base64 encoding as per php-zatca-xml:
+            // base64(base64(rawCert):secret)
+            var encodedCert = Convert.ToBase64String(Encoding.UTF8.GetBytes(rawCertificate));
+            var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{encodedCert}:{secret}"));
 
             return new Dictionary<string, string>
             {

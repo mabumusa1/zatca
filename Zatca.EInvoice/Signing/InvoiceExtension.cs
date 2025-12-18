@@ -201,6 +201,14 @@ public class InvoiceExtension
     }
 
     /// <summary>
+    /// Gets the invoice UUID.
+    /// </summary>
+    public string GetUuid()
+    {
+        return GetElementValue("cbc:UUID");
+    }
+
+    /// <summary>
     /// Gets the invoice issue date.
     /// </summary>
     public string GetIssueDate()

@@ -1,0 +1,12 @@
+Invoice Signing Summary
+Type: standard
+Completed: Thu Dec 18 10:12:07 PM UTC 2025
+Status: SUCCESS
+
+Hash: gntcOGgAExlSyfmUQ3cA2WpznvaGMJmXsdQbEHKyHUI=
+UUID: null
+
+Files:
+- standard_invoice.json (Input JSON)
+- standard_invoice.xml (Unsigned XML)
+- standard_invoice_signed.xml (Signed XML)

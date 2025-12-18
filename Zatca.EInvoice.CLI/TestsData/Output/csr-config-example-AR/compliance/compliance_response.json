@@ -1,0 +1,15 @@
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-AR/compliance/compliance.crt
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-AR/compliance/secret.txt
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-AR/compliance/request_id.txt
+{
+  "success": true,
+  "error": null,
+  "requestId": "1234567890123",
+  "certificate": "MIICfTCCAiSgAwIBAgIGAZszgyY/MAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCmVJbnZvaWNpbmcwHhcNMjUxMjE4MjIwOTQ2WhcNMzAxMjE4MjEwMDAwWjCBrTELMAkGA1UEBhMCU0ExHDAaBgNVBAsME9mB2LHYuSDYp9mE2LHZitin2LYxWDBWBgNVBAoMT9i02LHZg9ipINiq2YjYsdmK2K8g2KfZhNiq2YPZhtmI2YTZiNis2YrYpyDYqNij2YLYtdmJINiz2LHYudipINin2YTZhdit2K/ZiNiv2KkxJjAkBgNVBAMMHVRTVC04ODY0MzExNDUtMzk5OTk5OTk5OTAwMDAzMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEJk1h0G7Oeb0ic9HbNrsnftXwrsJ0YvEgJDQBfm22lnN\u002BLvQYeIts4blzZvkN\u002BdjHZ4iS/\u002Bs\u002BKUn/394eMWifw6OByTCBxjAMBgNVHRMBAf8EAjAAMIG1BgNVHREEga0wgaqkgacwgaQxOzA5BgNVBAQMMjEtVFNUfDItVFNUfDMtZWQyMmYxZDgtZTZhMi0xMTE4LTliNTgtZDlhOGYxMWU0NDVmMR8wHQYKCZImiZPyLGQBAQwPMzk5OTk5OTk5OTAwMDAzMQ0wCwYDVQQMDAQxMTAwMREwDwYDVQQaDAhSUlJEMjkyOTEiMCAGA1UEDwwZ2KPZhti02LfYqSDYqtmI2LHZitiv2KfYqjAKBggqhkjOPQQDAgNHADBEAiAWNoZKvVeN7SFcOf6tRlyN3nlnJewbPYCfUzE9OGWm3QIgDvojPynbFPxaq4H\u002BpwyXUx0lBKfCJ4bNDeMUN9omurU=",
+  "secret": "vAjh2E7LAs2a8GZ7JEAuF9tDNodNH6TFJfIn\u002BswtdDo=",
+  "files": {
+    "certificate": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-AR/compliance/compliance.crt",
+    "secret": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-AR/compliance/secret.txt"
+  },
+  "warnings": []
+}

@@ -1,0 +1,14 @@
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/test_invoices/standard_invoice_signed.xml
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/test_invoices/standard_hash.txt
+{
+  "success": true,
+  "error": null,
+  "hash": "gntcOGgAExlSyfmUQ3cA2WpznvaGMJmXsdQbEHKyHUI=",
+  "qrCode": "AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzM5OTk5OTk5OTkwMDAwMwMUMjAyNS0xMi0xOFQyMjoxMjowMFoEBjExNS4wMAUFMTUuMDAGLGdudGNPR2dBRXhsU3lmbVVRM2NBMldwem52YUdNSm1Yc2RRYkVIS3lIVUk9B1h0S0JvMFlJcENuanVVbnBvTGJTRU9hWWNCNDFRNWl1TmFnaEZWU2VzQzNWUE1SYmlXQ2E1am5xeUxVTkVPY3lWYS9KcW1CSVdjYjQ1TFZNcW15RGR5dz09CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAR46RVn5nMWwMzymMvJ3w7IO0qP7R4Np5YMMhSfMqwCseKDFWicR0tTPS6nwSw1Xm7ctLcrsC5OWna94AOZz\u002B1m",
+  "signedXmlLength": 12849,
+  "files": {
+    "xml": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/test_invoices/standard_invoice_signed.xml",
+    "qr": null,
+    "hash": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN-VAT-group/compliance/test_invoices/standard_hash.txt"
+  }
+}

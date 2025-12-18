@@ -1,9 +1,13 @@
 {
-  "success": false,
-  "error": "Compliance validation failed: API request failed with status code 406",
+  "success": true,
+  "error": null,
   "status": null,
   "clearanceStatus": null,
-  "reportingStatus": null,
-  "warnings": [],
-  "info": []
+  "reportingStatus": "REPORTED",
+  "warnings": [
+    "Warning [invoiceTimeStamp_QRCODE_INVALID]: Time on QR Code does not match with Invoice Issue Time (KSA-25). If ZATCA\u0027s SDK was used to generate QR Code, kindly use the latest version of SDK"
+  ],
+  "info": [
+    "Info [XSD_ZATCA_VALID]: Complied with UBL 2.1 standards in line with ZATCA specifications"
+  ]
 }

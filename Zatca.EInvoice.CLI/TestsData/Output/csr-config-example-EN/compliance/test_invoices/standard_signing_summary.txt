@@ -1,10 +1,10 @@
 Invoice Signing Summary
 Type: standard
-Completed: Thu Dec 18 08:42:06 PM UTC 2025
+Completed: Thu Dec 18 11:30:46 PM UTC 2025
 Status: SUCCESS
 
-Hash: aXpPXzfGv7hBTbFE0CuGK18MMo+5mcRrOMdlPIW6D60=
-UUID: null
+Hash: Y95uyhqws4L3xzngtX8tBhXmvhhtLQd7Hd5OLzCIRdg=
+UUID: 54a79761-8929-4b0c-9cd9-a88e0eac8363
 
 Files:
 - standard_invoice.json (Input JSON)

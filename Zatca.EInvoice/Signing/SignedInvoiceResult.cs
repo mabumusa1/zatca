@@ -24,4 +24,9 @@ public class SignedInvoiceResult
     /// Gets or sets the digital signature (base64 encoded).
     /// </summary>
     public string DigitalSignature { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the invoice UUID extracted from the signed XML.
+    /// </summary>
+    public string Uuid { get; set; } = string.Empty;
 }

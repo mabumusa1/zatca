@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -225,10 +227,11 @@ public class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute hash of signed properties
+        // Compute hash of signed properties in ZATCA format: base64(hex(sha256(...)))
         using var sha256 = SHA256.Create();
         var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(signedPropertiesXml));
-        var digestValue = Convert.ToBase64String(hashBytes);
+        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+        var digestValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
 
         var reference = new XElement(dsNs2 + "Reference",
             new XAttribute("Type", "http://www.w3.org/2000/09/xmldsig#SignatureProperties"),
@@ -287,14 +290,12 @@ public class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute certificate hash
-        using var sha256 = SHA256.Create();
-        var certHashBytes = sha256.ComputeHash(_certificate!.RawData);
-        var certHash = Convert.ToBase64String(certHashBytes);
+        // Compute certificate hash in ZATCA format: base64(hex(sha256(DER)))
+        var certHash = ComputeCertificateHash(_certificate!);
 
-        // Get issuer and serial number
+        // Get issuer and serial number (convert hex to decimal for XML)
         var issuer = _certificate.IssuerName.Name;
-        var serialNumber = _certificate.GetSerialNumberString();
+        var serialNumber = GetSerialNumberAsDecimal(_certificate);
 
         var signedProps = new XElement(xadesNs2 + "SignedProperties",
             new XAttribute(XNamespace.Xmlns + "xades", XadesNs),
@@ -328,14 +329,12 @@ public class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute certificate hash
-        using var sha256 = SHA256.Create();
-        var certHashBytes = sha256.ComputeHash(_certificate!.RawData);
-        var certHash = Convert.ToBase64String(certHashBytes);
+        // Compute certificate hash in ZATCA format: base64(hex(sha256(DER)))
+        var certHash = ComputeCertificateHash(_certificate!);
 
-        // Get issuer and serial number
+        // Get issuer and serial number (convert hex to decimal for XML)
         var issuer = _certificate.IssuerName.Name;
-        var serialNumber = _certificate.GetSerialNumberString();
+        var serialNumber = GetSerialNumberAsDecimal(_certificate);
 
         // Build the XML with exact spacing as per ZATCA requirements
         var template = @"<xades:SignedProperties xmlns:xades=""http://uri.etsi.org/01903/v1.3.2#"" Id=""xadesSignedProperties"">
@@ -361,5 +360,31 @@ public class SignatureBuilder
             .Replace("DIGEST_PLACEHOLDER", certHash)
             .Replace("ISSUER_PLACEHOLDER", issuer)
             .Replace("SERIAL_PLACEHOLDER", serialNumber);
+    }
+
+    /// <summary>
+    /// Gets the certificate serial number as a decimal string.
+    /// X509SerialNumber in XML must be a decimal integer, not hex.
+    /// </summary>
+    private static string GetSerialNumberAsDecimal(X509Certificate2 certificate)
+    {
+        var hexSerial = certificate.GetSerialNumberString();
+        var serialBigInt = BigInteger.Parse(hexSerial, NumberStyles.HexNumber);
+        return serialBigInt.ToString();
+    }
+
+    /// <summary>
+    /// Computes the certificate hash in ZATCA format.
+    /// ZATCA expects: base64(hex(sha256(rawCertificate)))
+    /// where rawCertificate is the base64 content of the certificate (DER bytes).
+    /// </summary>
+    private static string ComputeCertificateHash(X509Certificate2 certificate)
+    {
+        // ZATCA format: base64(hex(sha256(DER)))
+        using var sha256 = SHA256.Create();
+        var hashBytes = sha256.ComputeHash(certificate.RawData);
+        // Convert hash to lowercase hex string, then base64 encode
+        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
     }
 }

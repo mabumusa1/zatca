@@ -1,0 +1,11 @@
+Compliance Check Summary
+Type: simplified
+Completed: Thu Dec 18 10:10:31 PM UTC 2025
+Status: FAILED
+
+Error: Compliance validation failed: API request failed with status code 401
+
+Validation Errors:
+
+
+Full response saved in: simplified_compliance_result.json

@@ -283,6 +283,7 @@ public static class InvoiceCommands
                     success = result.Success,
                     error = result.ErrorMessage,
                     hash = result.Data?.Hash,
+                    uuid = result.Data?.Uuid,
                     qrCode = result.Data?.QrCode,
                     signedXmlLength = result.Data?.SignedXml?.Length,
                     files = new { xml = savedXml, qr = savedQr, hash = savedHash }
@@ -295,6 +296,7 @@ public static class InvoiceCommands
                 if (result.Success)
                 {
                     formatter.WriteSuccess("Invoice signed successfully");
+                    formatter.WriteKeyValue("UUID", result.Data?.Uuid);
                     formatter.WriteKeyValue("Hash", result.Data?.Hash);
                     formatter.WriteKeyValue("QR Code Length", $"{result.Data?.QrCode?.Length} characters");
                     formatter.WriteKeyValue("Signed XML Length", $"{result.Data?.SignedXml?.Length} characters");

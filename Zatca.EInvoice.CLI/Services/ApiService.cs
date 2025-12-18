@@ -76,6 +76,15 @@ public class ApiService : IApiService
 
             return CreateInvoiceSubmissionResult(result);
         }
+        catch (ZatcaApiException apiEx)
+        {
+            var errorMsg = $"Compliance validation failed: {apiEx.Message}";
+            if (!string.IsNullOrEmpty(apiEx.Response))
+            {
+                errorMsg += $"\nResponse: {apiEx.Response}";
+            }
+            return CommandResult<InvoiceSubmissionResult>.Fail(errorMsg);
+        }
         catch (Exception ex)
         {
             return CommandResult<InvoiceSubmissionResult>.Fail($"Compliance validation failed: {ex.Message}");
@@ -117,6 +126,15 @@ public class ApiService : IApiService
 
             return commandResult;
         }
+        catch (ZatcaApiException apiEx)
+        {
+            var errorMsg = $"Production certificate request failed: {apiEx.Message}";
+            if (!string.IsNullOrEmpty(apiEx.Response))
+            {
+                errorMsg += $"\nResponse: {apiEx.Response}";
+            }
+            return CommandResult<ProductionCertificateResult>.Fail(errorMsg);
+        }
         catch (Exception ex)
         {
             return CommandResult<ProductionCertificateResult>.Fail($"Production certificate request failed: {ex.Message}");
@@ -142,6 +160,15 @@ public class ApiService : IApiService
 
             return CreateInvoiceSubmissionResult(result);
         }
+        catch (ZatcaApiException apiEx)
+        {
+            var errorMsg = $"Clearance submission failed: {apiEx.Message}";
+            if (!string.IsNullOrEmpty(apiEx.Response))
+            {
+                errorMsg += $"\nResponse: {apiEx.Response}";
+            }
+            return CommandResult<InvoiceSubmissionResult>.Fail(errorMsg);
+        }
         catch (Exception ex)
         {
             return CommandResult<InvoiceSubmissionResult>.Fail($"Clearance submission failed: {ex.Message}");
@@ -166,6 +193,15 @@ public class ApiService : IApiService
                 signedXml, invoiceHash, uuid, certificate, secret);
 
             return CreateInvoiceSubmissionResult(result);
+        }
+        catch (ZatcaApiException apiEx)
+        {
+            var errorMsg = $"Reporting submission failed: {apiEx.Message}";
+            if (!string.IsNullOrEmpty(apiEx.Response))
+            {
+                errorMsg += $"\nResponse: {apiEx.Response}";
+            }
+            return CommandResult<InvoiceSubmissionResult>.Fail(errorMsg);
         }
         catch (Exception ex)
         {

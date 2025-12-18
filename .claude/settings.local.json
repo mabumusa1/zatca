@@ -8,7 +8,13 @@
       "Bash(./generate-and-verify-certs.sh)",
       "Bash(dotnet run:*)",
       "Bash(dotnet build:*)",
-      "Bash(openssl asn1parse:*)"
+      "Bash(openssl asn1parse:*)",
+      "Bash(jar -tf:*)",
+      "Bash(javap:*)",
+      "WebFetch(domain:sandbox.zatca.gov.sa)",
+      "Bash(./compliance-workflow.sh:*)",
+      "Bash(dotnet script:*)",
+      "Bash(dotnet add:*)"
     ]
   }
 }

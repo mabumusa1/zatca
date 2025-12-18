@@ -1,0 +1,122 @@
+{
+  "uuid": "b6a5ef13-1d3c-4daf-931d-aecb89f51839",
+  "id": "INV-20251218-001",
+  "issueDate": "2025-12-18",
+  "issueTime": "22:11:48",
+  "currencyCode": "SAR",
+  "taxCurrencyCode": "SAR",
+  "invoiceType": {
+    "typeCode": "388",
+    "name": "0200000"
+  },
+  "additionalDocuments": [
+    {
+      "id": "ICV",
+      "uuid": "10"
+    },
+    {
+      "id": "PIH",
+      "attachment": {
+        "embeddedDocument": "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==",
+        "mimeCode": "text/plain"
+      }
+    }
+  ],
+  "signature": {
+    "id": "urn:oasis:names:specification:ubl:signature:Invoice",
+    "signatureMethod": "urn:oasis:names:specification:ubl:dsig:enveloped:xades"
+  },
+  "supplier": {
+    "registrationName": "\u0634\u0631\u0643\u0629 \u062A\u0648\u0631\u064A\u062F \u0627\u0644\u062A\u0643\u0646\u0648\u0644\u0648\u062C\u064A\u0627 \u0628\u0623\u0642\u0635\u0649 \u0633\u0631\u0639\u0629 \u0627\u0644\u0645\u062D\u062F\u0648\u062F\u0629 | Maximum Speed Tech Supply LTD",
+    "taxId": "399999999900003",
+    "partyIdentification": "1010010000",
+    "partyIdentificationId": "CRN",
+    "taxScheme": {
+      "id": "VAT"
+    },
+    "address": {
+      "street": "\u0627\u0644\u0627\u0645\u064A\u0631 \u0633\u0644\u0637\u0627\u0646 | Prince Sultan",
+      "buildingNumber": "2322",
+      "citySubdivisionName": "\u0627\u0644\u0645\u0631\u0628\u0639 | Al-Murabba",
+      "city": "\u0627\u0644\u0631\u064A\u0627\u0636 | Riyadh",
+      "postalZone": "23333",
+      "country": "SA"
+    }
+  },
+  "paymentMeans": {
+    "code": "10"
+  },
+  "taxTotal": {
+    "taxAmount": 15,
+    "subTotals": [
+      {
+        "taxableAmount": 100,
+        "taxAmount": 15,
+        "taxCategory": {
+          "id": "S",
+          "percent": 15,
+          "taxScheme": {
+            "id": "VAT"
+          }
+        }
+      }
+    ]
+  },
+  "legalMonetaryTotal": {
+    "lineExtensionAmount": 100,
+    "taxExclusiveAmount": 100,
+    "taxInclusiveAmount": 115,
+    "prepaidAmount": 0,
+    "payableAmount": 115,
+    "allowanceTotalAmount": 0
+  },
+  "invoiceLines": [
+    {
+      "id": "1",
+      "unitCode": "PCE",
+      "quantity": 1,
+      "lineExtensionAmount": 100,
+      "item": {
+        "name": "Test Product",
+        "classifiedTaxCategory": [
+          {
+            "id": "S",
+            "percent": 15,
+            "taxScheme": {
+              "id": "VAT"
+            }
+          }
+        ]
+      },
+      "price": {
+        "amount": 100,
+        "baseQuantity": 1
+      },
+      "taxTotal": {
+        "taxAmount": 15,
+        "roundingAmount": 115
+      }
+    }
+  ],
+  "customer": {},
+  "note": "Sample invoice for testing",
+  "languageID": "en",
+  "delivery": {
+    "actualDeliveryDate": "2025-12-18"
+  },
+  "allowanceCharges": [
+    {
+      "isCharge": false,
+      "reason": "discount",
+      "amount": 0,
+      "taxCategories": [
+        {
+          "percent": 15,
+          "taxScheme": {
+            "id": "VAT"
+          }
+        }
+      ]
+    }
+  ]
+}

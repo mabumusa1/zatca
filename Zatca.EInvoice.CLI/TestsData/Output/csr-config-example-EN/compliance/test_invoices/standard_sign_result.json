@@ -3,9 +3,10 @@
 {
   "success": true,
   "error": null,
-  "hash": "aXpPXzfGv7hBTbFE0CuGK18MMo\u002B5mcRrOMdlPIW6D60=",
-  "qrCode": "AQACAAMUMjAyNS0xMi0xOFQyMDo0MjowM1oEAAUABixhWHBQWHpmR3Y3aEJUYkZFMEN1R0sxOE1Nbys1bWNSck9NZGxQSVc2RDYwPQdYTytQa25pSTQ5YnlRZ09IZGRaaDZteUpTM3NNVi9VclpCbGtzQlNrWU54NjBXQmhZbHhFTUgzSTFXeWJlN2N2cVhwMXI1dUdNT2cyNXdqaUxmQW5QZFE9PQhYMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEt1OwwEgoY6ADpAeMjum55ywcXBoxgw0h3kcH8O1bODNzbIuLVHvb7lEHSgNyEUcmMYmI\u002BzDlbhKypdQeh\u002BhGcg==",
-  "signedXmlLength": 6516,
+  "hash": "Y95uyhqws4L3xzngtX8tBhXmvhhtLQd7Hd5OLzCIRdg=",
+  "uuid": "54a79761-8929-4b0c-9cd9-a88e0eac8363",
+  "qrCode": "AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzM5OTk5OTk5OTkwMDAwMwMUMjAyNS0xMi0xOFQyMzozMDozOFoEBjExNS4wMAUFMTUuMDAGLFk5NXV5aHF3czRMM3h6bmd0WDh0QmhYbXZoaHRMUWQ3SGQ1T0x6Q0lSZGc9B1h3bm1pbk85Q2FjNmZEUlZ0UFhMaFkzRXhhTVdMRXZCQlQ4NFV4eXhXTm1WSm9FS1c4WHlFWTY0a1hJNDJYc3F0S1FUSWFBYU1kZEcrSjd1VEQvS1VKdz09CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAASqDFbtmNpbVSwbxR3F15ppOk\u002BNb6qOMHax3AQsEvhdzby6cOEAxZ3hjV9amQqOjD44fYzqUBs5aiQ4BjN66P3x",
+  "signedXmlLength": 13403,
   "files": {
     "xml": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN/compliance/test_invoices/standard_invoice_signed.xml",
     "qr": null,

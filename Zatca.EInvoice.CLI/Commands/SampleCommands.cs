@@ -101,22 +101,35 @@ public static class SampleCommands
 
     private static object GenerateInvoiceData(string type, bool full)
     {
+        // Determine invoice type code and name per ZATCA specifications
+        // InvoiceTypeCode: 388 = tax invoice, 381 = credit note, 383 = debit note
+        // Name attribute: 7-character code where:
+        //   Position 1-2: Invoice category (01 = standard B2B, 02 = simplified B2C)
+        //   Position 3: Third-party transactions (0 = no)
+        //   Position 4: Nominal invoice (0 = no)
+        //   Position 5: Export (0 = no)
+        //   Position 6: Summary (0 = no)
+        //   Position 7: Self-billed (0 = no)
+        var isSimplified = type.ToLowerInvariant() == "simplified";
+        var isExport = type.ToLowerInvariant() == "export";
+
+        var invoiceTypeCode = type.ToLowerInvariant() switch
+        {
+            "credit" => "381",
+            "debit" => "383",
+            _ => "388"
+        };
+
+        // Build the 7-character name code
+        var categoryCode = isSimplified ? "02" : "01";
+        var exportFlag = isExport ? "1" : "0";
+        var invoiceTypeName = $"{categoryCode}000{exportFlag}0";
+
         var invoiceType = new Dictionary<string, object>
         {
-            { "invoice", type.ToLowerInvariant() == "simplified" ? "simplified" : "standard" },
-            { "type", type.ToLowerInvariant() switch
-                {
-                    "debit" => "debit",
-                    "credit" => "credit",
-                    "prepayment" => "prepayment",
-                    _ => "invoice"
-                }
-            }
+            { "typeCode", invoiceTypeCode },      // 388, 381, or 383
+            { "name", invoiceTypeName }           // 0200000 for simplified, 0100000 for standard
         };
-        if (type.ToLowerInvariant() == "export")
-        {
-            invoiceType["isExport"] = true;
-        }
 
         var baseInvoice = new Dictionary<string, object>
         {
@@ -129,34 +142,40 @@ public static class SampleCommands
             { "invoiceType", invoiceType },
             { "additionalDocuments", new List<object>
                 {
-                    new Dictionary<string, object> { { "id", "ICV" }, { "uuid", "1" } },
+                    new Dictionary<string, object> { { "id", "ICV" }, { "uuid", "10" } },
                     new Dictionary<string, object>
                     {
                         { "id", "PIH" },
                         { "attachment", new Dictionary<string, object>
                             {
-                                { "content", "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==" },
-                                { "mimeCode", "base64" },
-                                { "mimeType", "text/plain" }
+                                { "embeddedDocument", "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==" },
+                                { "mimeCode", "text/plain" }
                             }
                         }
                     }
                 }
             },
+            // Add signature reference (required by ZATCA)
+            { "signature", new Dictionary<string, object>
+                {
+                    { "id", "urn:oasis:names:specification:ubl:signature:Invoice" },
+                    { "signatureMethod", "urn:oasis:names:specification:ubl:dsig:enveloped:xades" }
+                }
+            },
             { "supplier", new Dictionary<string, object>
                 {
-                    { "registrationName", "Test Supplier LLC" },
+                    { "registrationName", "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD" },
                     { "taxId", "399999999900003" },
-                    { "identificationId", "1010010000" },
-                    { "identificationType", "CRN" },
+                    { "partyIdentification", "1010010000" },
+                    { "partyIdentificationId", "CRN" },
                     { "taxScheme", new Dictionary<string, object> { { "id", "VAT" } } },
                     { "address", new Dictionary<string, object>
                         {
-                            { "street", "King Fahd Road" },
-                            { "buildingNumber", "1234" },
-                            { "subdivision", "Al-Olaya" },
-                            { "city", "Riyadh" },
-                            { "postalZone", "12345" },
+                            { "street", "الامير سلطان | Prince Sultan" },
+                            { "buildingNumber", "2322" },
+                            { "citySubdivisionName", "المربع | Al-Murabba" },
+                            { "city", "الرياض | Riyadh" },
+                            { "postalZone", "23333" },
                             { "country", "SA" }
                         }
                     }
@@ -174,6 +193,7 @@ public static class SampleCommands
                                 { "taxAmount", 15.0 },
                                 { "taxCategory", new Dictionary<string, object>
                                     {
+                                        { "id", "S" },  // S = Standard rate
                                         { "percent", 15.0 },
                                         { "taxScheme", new Dictionary<string, object> { { "id", "VAT" } } }
                                     }
@@ -208,6 +228,7 @@ public static class SampleCommands
                                     {
                                         new Dictionary<string, object>
                                         {
+                                            { "id", "S" },  // S = Standard rate
                                             { "percent", 15.0 },
                                             { "taxScheme", new Dictionary<string, object> { { "id", "VAT" } } }
                                         }
@@ -232,8 +253,8 @@ public static class SampleCommands
             }
         };
 
-        // Add customer for standard invoices
-        if (type != "simplified")
+        // Add customer - simplified invoices have empty customer, standard have full
+        if (type.ToLowerInvariant() != "simplified")
         {
             baseInvoice["customer"] = new Dictionary<string, object>
             {
@@ -244,13 +265,18 @@ public static class SampleCommands
                     {
                         { "street", "Customer Street" },
                         { "buildingNumber", "5678" },
-                        { "subdivision", "Al-Murooj" },
+                        { "citySubdivisionName", "Al-Murooj" },
                         { "city", "Jeddah" },
                         { "postalZone", "23456" },
                         { "country", "SA" }
                     }
                 }
             };
+        }
+        else
+        {
+            // Simplified invoices still need AccountingCustomerParty element but it's empty
+            baseInvoice["customer"] = new Dictionary<string, object>();
         }
 
         // Add billing reference for debit/credit notes
@@ -275,13 +301,14 @@ public static class SampleCommands
             {
                 new Dictionary<string, object>
                 {
-                    { "isCharge", false },
-                    { "reason", "discount" },
+                    { "chargeIndicator", "false" },
+                    { "allowanceChargeReason", "discount" },
                     { "amount", 0.0 },
                     { "taxCategories", new List<object>
                         {
                             new Dictionary<string, object>
                             {
+                                { "id", "S" },  // Standard rate (15%)
                                 { "percent", 15.0 },
                                 { "taxScheme", new Dictionary<string, object> { { "id", "VAT" } } }
                             }

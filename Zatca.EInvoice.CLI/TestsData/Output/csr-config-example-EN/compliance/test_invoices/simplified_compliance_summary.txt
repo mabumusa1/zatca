@@ -1,11 +1,14 @@
 Compliance Check Summary
 Type: simplified
-Completed: Thu Dec 18 08:41:57 PM UTC 2025
-Status: FAILED
+Completed: Thu Dec 18 11:30:34 PM UTC 2025
+Status: PASSED
+API Status: null
 
-Error: Compliance validation failed: API request failed with status code 406
+Invoice Details:
+- Hash: lVClWqd14I+VVQZKzqtQs2F/B4ZE52/fKNAhVzK4f8w=
+- UUID: de9a247c-1a70-4680-8748-cc13ea1e05cf
 
-Validation Errors:
+Warnings:
 
 
 Full response saved in: simplified_compliance_result.json
