@@ -392,7 +392,8 @@ namespace Zatca.EInvoice.Tests.Signing
         {
             // Arrange
             var certificate = CreateMockCertificate();
-            var specialCharXml = TestInvoiceXml.Replace("Test Company", "Test & Company < > \"quoted\"");
+            // Use properly XML-escaped special characters
+            var specialCharXml = TestInvoiceXml.Replace("Test Company", "Test &amp; Company &lt; &gt; \"quoted\"");
 
             // Act
             var result = InvoiceSigner.Sign(specialCharXml, certificate);

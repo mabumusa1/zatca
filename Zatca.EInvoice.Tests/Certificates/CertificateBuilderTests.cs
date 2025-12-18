@@ -26,7 +26,7 @@ namespace Zatca.EInvoice.Tests.Certificates
             _tempFiles.Add(privateKeyPath);
 
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -61,7 +61,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -124,7 +124,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -154,7 +154,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -210,7 +210,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange - Production
             var builderProd = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -223,7 +223,7 @@ namespace Zatca.EInvoice.Tests.Certificates
 
             // Arrange - Testing
             var builderTest = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -278,7 +278,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange & Act
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("Solution@Name!", "Model#123", "Serial$456")
                 .SetCommonName("Test & Common % Name")
                 .SetCountryName("SA")
@@ -304,7 +304,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange
             var builder1 = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -316,7 +316,7 @@ namespace Zatca.EInvoice.Tests.Certificates
                 .SetProduction(false);
 
             var builder2 = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -353,7 +353,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         {
             // Arrange
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -368,7 +368,7 @@ namespace Zatca.EInvoice.Tests.Certificates
 
             // Set all fields except the missing one
             if (missingField != "organizationIdentifier")
-                builderWithMissing.SetOrganizationIdentifier("312345678901234");
+                builderWithMissing.SetOrganizationIdentifier("312345678901233");
             if (missingField != "serialNumber")
                 builderWithMissing.SetSerialNumber("SolutionName", "Model", "Serial123");
             if (missingField != "commonName")
@@ -401,7 +401,7 @@ namespace Zatca.EInvoice.Tests.Certificates
             _tempFiles.Add(csrPath);
 
             var builder = new CertificateBuilder()
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -450,7 +450,7 @@ namespace Zatca.EInvoice.Tests.Certificates
 
             // Act & Assert - Each method should return the builder instance
             var result = builder
-                .SetOrganizationIdentifier("312345678901234")
+                .SetOrganizationIdentifier("312345678901233")
                 .SetSerialNumber("SolutionName", "Model", "Serial123")
                 .SetCommonName("Test Common Name")
                 .SetCountryName("SA")
@@ -499,7 +499,7 @@ namespace Zatca.EInvoice.Tests.Certificates
                 var task = Task.Run(() =>
                 {
                     var builder = new CertificateBuilder()
-                        .SetOrganizationIdentifier("312345678901234")
+                        .SetOrganizationIdentifier("312345678901233")
                         .SetSerialNumber($"Solution{taskNumber}", "Model", $"Serial{taskNumber}")
                         .SetCommonName($"Test Common Name {taskNumber}")
                         .SetCountryName("SA")

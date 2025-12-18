@@ -145,7 +145,15 @@ public class InvoiceExtension
     {
         if (includeDeclaration)
         {
-            return _document.ToString(SaveOptions.DisableFormatting);
+            // Ensure we have a declaration
+            if (_document.Declaration == null)
+            {
+                _document.Declaration = new XDeclaration("1.0", "UTF-8", null);
+            }
+            // Use StringWriter to properly include the declaration
+            using var writer = new System.IO.StringWriter();
+            _document.Save(writer, SaveOptions.DisableFormatting);
+            return writer.ToString();
         }
         else
         {

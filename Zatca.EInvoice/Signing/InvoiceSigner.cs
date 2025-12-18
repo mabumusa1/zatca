@@ -143,8 +143,21 @@ public class InvoiceSigner
         // Create the QR node
         var qrNode = GetQrNode(qrCode);
 
+        // Add ext namespace declaration to Invoice root element if not present
+        var signedXml = xmlInvoice;
+        const string extNamespaceDecl = "xmlns:ext=\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\"";
+        if (!signedXml.Contains("xmlns:ext="))
+        {
+            // Insert ext namespace after the Invoice opening tag's xmlns declarations
+            signedXml = Regex.Replace(
+                signedXml,
+                @"(<Invoice\s+[^>]*)(>)",
+                $"$1 {extNamespaceDecl}$2"
+            );
+        }
+
         // Insert UBL Extension before cbc:ProfileID
-        var signedXml = xmlInvoice.Replace(
+        signedXml = signedXml.Replace(
             "<cbc:ProfileID>",
             $"<ext:UBLExtensions>{ublExtension}</ext:UBLExtensions>\n    <cbc:ProfileID>"
         );

@@ -56,21 +56,35 @@ namespace Zatca.EInvoice.Mappers
             // Map the PartyTaxScheme for the customer
             var partyTaxScheme = new PartyTaxScheme
             {
-                TaxScheme = taxScheme,
-                CompanyId = DictionaryHelper.GetString(data, "taxId", string.Empty)
+                TaxScheme = taxScheme
             };
+            // Only set CompanyId if provided (null is OK, empty string is not)
+            var taxId = DictionaryHelper.GetString(data, "taxId");
+            if (!string.IsNullOrEmpty(taxId))
+                partyTaxScheme.CompanyId = taxId;
 
             // Map the Address for the customer
             var addressData = DictionaryHelper.GetDictionary(data, "address");
-            var address = new Address
-            {
-                StreetName = DictionaryHelper.GetString(addressData, "street", string.Empty),
-                BuildingNumber = DictionaryHelper.GetString(addressData, "buildingNumber", string.Empty),
-                CitySubdivisionName = DictionaryHelper.GetString(addressData, "subdivision", string.Empty),
-                CityName = DictionaryHelper.GetString(addressData, "city", string.Empty),
-                PostalZone = DictionaryHelper.GetString(addressData, "postalZone", string.Empty),
-                Country = DictionaryHelper.GetString(addressData, "country", "SA")
-            };
+            var address = new Address();
+
+            // Only set address fields if they have values (null is OK, empty string is not)
+            var street = DictionaryHelper.GetString(addressData, "street");
+            if (!string.IsNullOrEmpty(street)) address.StreetName = street;
+
+            var buildingNumber = DictionaryHelper.GetString(addressData, "buildingNumber");
+            if (!string.IsNullOrEmpty(buildingNumber)) address.BuildingNumber = buildingNumber;
+
+            var subdivision = DictionaryHelper.GetString(addressData, "subdivision");
+            if (!string.IsNullOrEmpty(subdivision)) address.CitySubdivisionName = subdivision;
+
+            var city = DictionaryHelper.GetString(addressData, "city");
+            if (!string.IsNullOrEmpty(city)) address.CityName = city;
+
+            var postalZone = DictionaryHelper.GetString(addressData, "postalZone");
+            if (!string.IsNullOrEmpty(postalZone)) address.PostalZone = postalZone;
+
+            var country = DictionaryHelper.GetString(addressData, "country");
+            address.Country = !string.IsNullOrEmpty(country) ? country : "SA";
 
             // Create and populate the Party object
             var party = new Party
@@ -81,14 +95,13 @@ namespace Zatca.EInvoice.Mappers
             };
 
             // Set party identification if available
-            if (data.ContainsKey("identificationId"))
+            var identificationId = DictionaryHelper.GetString(data, "identificationId");
+            if (!string.IsNullOrEmpty(identificationId))
             {
-                party.PartyIdentification = DictionaryHelper.GetString(data, "identificationId", string.Empty);
-
-                if (data.ContainsKey("identificationType"))
-                {
-                    party.PartyIdentificationId = DictionaryHelper.GetString(data, "identificationType", string.Empty);
-                }
+                party.PartyIdentification = identificationId;
+                var identificationType = DictionaryHelper.GetString(data, "identificationType");
+                if (!string.IsNullOrEmpty(identificationType))
+                    party.PartyIdentificationId = identificationType;
             }
 
             return party;

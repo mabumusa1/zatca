@@ -11,29 +11,11 @@ namespace Zatca.EInvoice.Tests.Helpers;
 /// </summary>
 public class CertificateTests
 {
-    // Sample self-signed certificate for testing (PEM format)
-    private const string TestCertificatePem = @"-----BEGIN CERTIFICATE-----
-MIICLDCCAdKgAwIBAgIBADAKBggqhkjOPQQDAjBiMQswCQYDVQQGEwJTQTEMMAoG
-A1UECAwDUklZMRQwEgYDVQQKDAtUZXN0IENvbXBhbnkxFDASBgNVBAsMC1Rlc3Qg
-VW5pdDEZMBcGA1UEAwwQVGVzdCBDb21tb24gTmFtZTAeFw0yNDAxMDEwMDAwMDBa
-Fw0yNTAxMDEwMDAwMDBaMGIxCzAJBgNVBAYTAlNBMQwwCgYDVQQIDANSSVkxFDAS
-BgNVBAoMC1Rlc3QgQ29tcGFueTEUMBIGA1UECwwLVGVzdCBVbml0MRkwFwYDVQQD
-DBBUZXN0IENvbW1vbiBOYW1lMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5Zkr
-t7UAqKLBPdP8T6eGMJQqLxJHfP9gLvQOJZzJxP/hI3xE9RhZNPBxjCPGJKR2d7MH
-JLnJO8ZBzBQ2xLqRX6OBkDCBjTAdBgNVHQ4EFgQUg2KnZ4y7aB2yWZPKnXKT7vHj
-rGswHwYDVR0jBBgwFoAUg2KnZ4y7aB2yWZPKnXKT7vHjrGswDAYDVR0TBAUwAwEB
-/zALBgNVHQ8EBAMCAQYwMAYDVR0RBCkwJ4YlaHR0cDovL3d3dy50ZXN0Y29tcGFu
-eS5jb20vcmVwb3NpdG9yeTAKBggqhkjOPQQDAgNIADBFAiEA4u8VJQ7xZKZ5cPxF
-5qLPjBp2hVVhJxH3c5Q4kJfLEOkCIDpYdT3Z4fN7kT2ZH3U5rCGxLpRkFmLJ6T8M
-9qZvJxBa
------END CERTIFICATE-----";
+    // Sample certificate for testing (base64 format, matching PHP tests)
+    private const string TestCertificatePem = "MIICAzCCAaqgAwIBAgIGAZT7anBcMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCmVJbnZvaWNpbmcwHhcNMjUwMjEyMTgyNzE5WhcNMzAwMjExMjEwMDAwWjBUMRgwFgYDVQQDDA9NeSBPcmdhbml6YXRpb24xEzARBgNVBAoMCk15IENvbXBhbnkxFjAUBgNVBAsMDUlUIERlcGFydG1lbnQxCzAJBgNVBAYTAlNBMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEdg+fe1K42qCMlH8MQmxi02RzKU3SfNHA5QUTh9ub6vqiTvY5ON0Q3CjBJ2qzrCeBguijyQQCFARDulpKaWAaW6OBqTCBpjAMBgNVHRMBAf8EAjAAMIGVBgNVHREEgY0wgYqkgYcwgYQxIDAeBgNVBAQMFzEtU2FsZWh8Mi0xbnwzLVNNRTAwMDIzMR8wHQYKCZImiZPyLGQBAQwPMzEyMzQ1Njc4OTAxMjMzMQ0wCwYDVQQMDAQxMTAwMRswGQYDVQQaDBJSaXlhZGggMTIzNCBTdHJlZXQxEzARBgNVBA8MClRlY2hub2xvZ3kwCgYIKoZIzj0EAwIDRwAwRAIgINT+MFQefLLdd7Jlayr8nZq1lQrXQgKYxuA14LRoDvUCIGVS+MserlYamKvlCtk/g9J4gPWoJMXygSGp7FTPV8e4";
 
-    // Sample EC private key for testing (secp256r1/prime256v1)
-    private const string TestPrivateKeyPem = @"-----BEGIN EC PRIVATE KEY-----
-MHcCAQEEIJxnBKZJXJw4MQzTmhI0gH8QnKYX9hVFQ8yWjE+ZYkKfoAoGCCqGSM49
-AwEHoUQDQgAE5Zkrt7UAqKLBPdP8T6eGMJQqLxJHfP9gLvQOJZzJxP/hI3xE9RhZ
-NPBxjCPGJKR2d7MHJLnJO8ZBzBQ2xLqRXw==
------END EC PRIVATE KEY-----";
+    // Sample EC private key for testing (base64 format, matching PHP tests)
+    private const string TestPrivateKeyPem = "MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQgPsPX88rLECL/346pDroiltt9ZFz8arMlt3FHeqdxaD6hRANCAAR2D597UrjaoIyUfwxCbGLTZHMpTdJ80cDlBROH25vq+qJO9jk43RDcKMEnarOsJ4GC6KPJBAIUBEO6WkppYBpb";
 
     private const string TestSecret = "test-secret-key-123";
 
@@ -46,11 +28,10 @@ NPBxjCPGJKR2d7MHJLnJO8ZBzBQ2xLqRXw==
         // Act
         var rawCert = certInfo.RawCertificate;
 
-        // Assert
+        // Assert - Raw certificate should match the input certificate data
         Assert.NotNull(rawCert);
         Assert.NotEmpty(rawCert);
-        Assert.Contains("BEGIN CERTIFICATE", rawCert);
-        Assert.Contains("END CERTIFICATE", rawCert);
+        Assert.Equal(TestCertificatePem, rawCert);
     }
 
     [Fact]

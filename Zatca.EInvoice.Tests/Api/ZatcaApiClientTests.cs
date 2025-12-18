@@ -397,7 +397,10 @@ namespace Zatca.EInvoice.Tests.Api
                     StatusCode = statusCode,
                     Content = new StringContent(responseContent)
                 });
-            return new HttpClient(mockHandler.Object);
+            return new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/")
+            };
         }
 
         /// <summary>
@@ -459,7 +462,10 @@ namespace Zatca.EInvoice.Tests.Api
                     return new HttpResponseMessage(HttpStatusCode.OK);
                 });
 
-            var httpClient = new HttpClient(mockHandler.Object);
+            var httpClient = new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/")
+            };
             var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
             _clients.Add(client);
 
@@ -485,7 +491,10 @@ namespace Zatca.EInvoice.Tests.Api
                     ItExpr.IsAny<CancellationToken>())
                 .ThrowsAsync(new HttpRequestException("Network error"));
 
-            var httpClient = new HttpClient(mockHandler.Object);
+            var httpClient = new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/")
+            };
             var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
             _clients.Add(client);
 
@@ -620,7 +629,10 @@ namespace Zatca.EInvoice.Tests.Api
                     };
                 });
 
-            var httpClient = new HttpClient(mockHandler.Object);
+            var httpClient = new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/")
+            };
             var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
             _clients.Add(client);
 
@@ -723,8 +735,8 @@ namespace Zatca.EInvoice.Tests.Api
 
             // Assert
             Assert.NotNull(result);
-            Assert.Empty(result.BinarySecurityToken);
-            Assert.Empty(result.Secret);
+            Assert.True(string.IsNullOrEmpty(result.BinarySecurityToken));
+            Assert.True(string.IsNullOrEmpty(result.Secret));
         }
 
         /// <summary>
@@ -756,7 +768,10 @@ namespace Zatca.EInvoice.Tests.Api
                     };
                 });
 
-            var httpClient = new HttpClient(mockHandler.Object);
+            var httpClient = new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/")
+            };
             var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
             _clients.Add(client);
 
@@ -785,13 +800,16 @@ namespace Zatca.EInvoice.Tests.Api
         public void TestClientDisposalWithExternalHttpClient()
         {
             // Arrange
-            var externalHttpClient = new HttpClient();
+            var externalHttpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/")
+            };
             var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, externalHttpClient);
 
             // Act
             client.Dispose();
 
-            // Assert - External client should still be usable
+            // Assert - External client should still be usable (not disposed)
             Assert.NotNull(externalHttpClient.BaseAddress);
         }
 

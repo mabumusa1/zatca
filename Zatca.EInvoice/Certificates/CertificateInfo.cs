@@ -178,12 +178,22 @@ namespace Zatca.EInvoice.Certificates
             return sig;
         }
 
-        private X509Certificate2 LoadCertificateFromPem(string pemContent)
+        private X509Certificate2 LoadCertificateFromPem(string certificateContent)
         {
             try
             {
-                var certBytes = Encoding.UTF8.GetBytes(pemContent);
-                return new X509Certificate2(certBytes);
+                // Check if the content is in PEM format (has headers)
+                if (certificateContent.Contains("-----BEGIN CERTIFICATE-----"))
+                {
+                    // Use CreateFromPem for proper PEM handling in .NET 5+
+                    return X509Certificate2.CreateFromPem(certificateContent.AsSpan());
+                }
+                else
+                {
+                    // Raw base64 content - decode directly
+                    var certBytes = Convert.FromBase64String(certificateContent.Trim());
+                    return new X509Certificate2(certBytes);
+                }
             }
             catch (Exception ex)
             {
@@ -191,10 +201,21 @@ namespace Zatca.EInvoice.Certificates
             }
         }
 
-        private AsymmetricKeyParameter LoadPrivateKeyFromPem(string pemContent)
+        private AsymmetricKeyParameter LoadPrivateKeyFromPem(string privateKeyContent)
         {
             try
             {
+                string pemContent = privateKeyContent;
+
+                // If the content doesn't have PEM headers, wrap it
+                if (!privateKeyContent.Contains("-----BEGIN"))
+                {
+                    // Raw base64 - wrap with PKCS#8 private key headers
+                    pemContent = "-----BEGIN PRIVATE KEY-----\n" +
+                                 privateKeyContent.Trim() +
+                                 "\n-----END PRIVATE KEY-----";
+                }
+
                 using (var reader = new StringReader(pemContent))
                 {
                     var pemReader = new PemReader(reader);
