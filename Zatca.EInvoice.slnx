@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Zatca.EInvoice/Zatca.EInvoice.csproj" />
+  <Project Path="Zatca.EInvoice.Tests/Zatca.EInvoice.Tests.csproj" />
+</Solution>

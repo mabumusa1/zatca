@@ -1,0 +1,33 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+    "name": "Zatca.EInvoice",
+    "image": "mcr.microsoft.com/dotnet/sdk:9.0",
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    },
+
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.csdevkit",
+                "ms-dotnettools.vscodeintellicode-csharp",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "EditorConfig.EditorConfig",
+                "k--kato.docomment",
+                "josefpihrt-vscode.roslynator",
+                "vscode-icons-team.vscode-icons",
+                "streetsidesoftware.code-spell-checker"
+            ]
+        }
+    },
+
+    "postCreateCommand": "dotnet restore && dotnet build"
+}
