@@ -2,6 +2,7 @@ using System.CommandLine;
 using Zatca.EInvoice.CLI.Commands;
 using Zatca.EInvoice.CLI.Output;
 using Zatca.EInvoice.CLI.Services;
+using System.Text.RegularExpressions;
 
 namespace Zatca.EInvoice.CLI;
 
@@ -60,5 +61,12 @@ class Program
         Console.ResetColor();
         Console.WriteLine("ZATCA E-Invoice CLI - Version 1.0.0");
         Console.WriteLine("Comprehensive testing tool for Saudi Arabia e-invoicing\n");
+    }
+
+    static string SanitizeInput(string input)
+    {
+        var trimmed = input.Trim();
+        var sanitized = Regex.Replace(trimmed, @"[^a-zA-Z0-9\s\-_]", "");
+        return sanitized;
     }
 }

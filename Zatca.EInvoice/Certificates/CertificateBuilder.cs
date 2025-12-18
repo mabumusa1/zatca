@@ -22,6 +22,19 @@ using Zatca.EInvoice.Helpers;
 namespace Zatca.EInvoice.Certificates
 {
     /// <summary>
+    /// Custom X509NameEntryConverter that forces UTF8String encoding for all string values.
+    /// This is required to support Arabic characters in certificate fields.
+    /// </summary>
+    internal class Utf8X509NameEntryConverter : X509NameEntryConverter
+    {
+        public override Asn1Object GetConvertedValue(DerObjectIdentifier oid, string value)
+        {
+            // Always use UTF8String encoding to support Arabic and other Unicode characters
+            return new DerUtf8String(value);
+        }
+    }
+
+    /// <summary>
     /// Builds a Certificate Signing Request (CSR) and private key for ZATCA e-invoicing.
     /// </summary>
     public class CertificateBuilder
@@ -313,20 +326,25 @@ namespace Zatca.EInvoice.Certificates
                 keyGenerator.Init(keyGenParams);
                 _keyPair = keyGenerator.GenerateKeyPair();
 
-                // Create subject DN
-                var subject = new X509Name(new DerObjectIdentifier[]
+                // Create subject DN with UTF8String encoding to support Arabic characters
+                var ordering = new List<DerObjectIdentifier>
                 {
                     X509Name.C,
                     X509Name.O,
                     X509Name.OU,
                     X509Name.CN
-                }, new string[]
+                };
+                
+                var values = new List<string>
                 {
                     _country,
                     _organizationName,
                     _organizationalUnitName,
                     _commonName
-                });
+                };
+                
+                // Use custom converter to force UTF8String encoding for Arabic character support
+                var subject = new X509Name(ordering, values, new Utf8X509NameEntryConverter());
 
                 // Create CSR with extensions
                 var attributes = CreateCsrAttributes();
@@ -413,15 +431,8 @@ namespace Zatca.EInvoice.Certificates
                 throw new CertificateBuilderException($"Input cannot be null or empty: {input}");
             }
 
-            var trimmed = input.Trim();
-            var sanitized = Regex.Replace(trimmed, @"[^a-zA-Z0-9\s\-_]", "");
-
-            if (string.IsNullOrEmpty(sanitized))
-            {
-                throw new CertificateBuilderException($"Sanitization resulted in empty string for: {input}");
-            }
-
-            return sanitized;
+            // Just trim whitespace, preserve all Unicode characters including Arabic
+            return input.Trim();
         }
     }
 }
