@@ -15,17 +15,17 @@ namespace Zatca.EInvoice.Api
         /// <summary>
         /// Sandbox environment base URL.
         /// </summary>
-        public const string SandboxBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal";
+        public const string SandboxBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/";
 
         /// <summary>
         /// Simulation environment base URL.
         /// </summary>
-        public const string SimulationBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation";
+        public const string SimulationBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/";
 
         /// <summary>
         /// Production environment base URL.
         /// </summary>
-        public const string ProductionBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/core";
+        public const string ProductionBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/core/";
 
         /// <summary>
         /// Gets the base URL for the specified environment.
@@ -46,26 +46,26 @@ namespace Zatca.EInvoice.Api
         /// <summary>
         /// Compliance certificate request endpoint.
         /// </summary>
-        public const string ComplianceCertificate = "/compliance";
+        public const string ComplianceCertificate = "compliance";
 
         /// <summary>
         /// Compliance invoice validation endpoint.
         /// </summary>
-        public const string ComplianceInvoices = "/compliance/invoices";
+        public const string ComplianceInvoices = "compliance/invoices";
 
         /// <summary>
         /// Production certificate request endpoint.
         /// </summary>
-        public const string ProductionCertificate = "/production/csids";
+        public const string ProductionCertificate = "production/csids";
 
         /// <summary>
         /// Clearance invoice submission endpoint.
         /// </summary>
-        public const string ClearanceInvoice = "/invoices/clearance/single";
+        public const string ClearanceInvoice = "invoices/clearance/single";
 
         /// <summary>
         /// Reporting invoice submission endpoint.
         /// </summary>
-        public const string ReportingInvoice = "/invoices/reporting/single";
+        public const string ReportingInvoice = "invoices/reporting/single";
     }
 }

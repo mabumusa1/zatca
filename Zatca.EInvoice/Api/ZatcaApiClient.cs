@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,11 @@ namespace Zatca.EInvoice.Api
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;
         private bool _allowWarnings;
+        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
 
         /// <summary>
         /// Gets the current environment.
@@ -52,7 +58,6 @@ namespace Zatca.EInvoice.Api
             // Set default headers
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Add("Accept-Version", ZatcaApiEndpoints.ApiVersion);
         }
 
         /// <summary>
@@ -75,24 +80,30 @@ namespace Zatca.EInvoice.Api
             if (string.IsNullOrWhiteSpace(otp))
                 throw new ArgumentNullException(nameof(otp));
 
-            var payload = new
+            // Remove BOM if present and encode the entire PEM file to base64
+            csr = csr.TrimStart('\uFEFF');
+            var csrBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(csr));
+
+            var request = new HttpRequestMessage(HttpMethod.Post, ZatcaApiEndpoints.ComplianceCertificate);
+            request.Headers.TryAddWithoutValidation("OTP", otp);
+            request.Headers.TryAddWithoutValidation("Accept-Version", "V2");
+
+            var json = JsonSerializer.Serialize(new { csr = csrBase64 }, _jsonOptions);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!IsSuccessStatusCode(response.StatusCode))
             {
-                csr = Convert.ToBase64String(Encoding.UTF8.GetBytes(csr))
-            };
+                throw new ZatcaApiException(
+                    $"API request failed with status code {(int)response.StatusCode}",
+                    (int)response.StatusCode,
+                    content);
+            }
 
-            var headers = new Dictionary<string, string>
-            {
-                { "OTP", otp }
-            };
-
-            var response = await SendRequestAsync<Dictionary<string, object>>(
-                HttpMethod.Post,
-                ZatcaApiEndpoints.ComplianceCertificate,
-                payload,
-                headers,
-                cancellationToken);
-
-            return ParseComplianceCertificateResult(response);
+            var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(content, _jsonOptions);
+            return ParseComplianceCertificateResult(responseDict);
         }
 
         /// <inheritdoc/>
@@ -241,7 +252,7 @@ namespace Zatca.EInvoice.Api
                         if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
                         {
                             request.Content = new StringContent(
-                                JsonSerializer.Serialize(payload),
+                                JsonSerializer.Serialize(payload, _jsonOptions),
                                 Encoding.UTF8,
                                 header.Value);
                         }
@@ -256,7 +267,7 @@ namespace Zatca.EInvoice.Api
                 if (request.Content == null && payload != null)
                 {
                     request.Content = new StringContent(
-                        JsonSerializer.Serialize(payload),
+                        JsonSerializer.Serialize(payload, _jsonOptions),
                         Encoding.UTF8,
                         "application/json");
                 }
@@ -272,10 +283,7 @@ namespace Zatca.EInvoice.Api
                         content);
                 }
 
-                return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                return JsonSerializer.Deserialize<T>(content, _jsonOptions);
             }
             catch (HttpRequestException ex)
             {
@@ -481,7 +489,16 @@ namespace Zatca.EInvoice.Api
             {
                 if (value is JsonElement jsonElement)
                 {
-                    return jsonElement.ValueKind == JsonValueKind.String ? jsonElement.GetString() : null;
+                    // Handle different JSON value types
+                    return jsonElement.ValueKind switch
+                    {
+                        JsonValueKind.String => jsonElement.GetString(),
+                        JsonValueKind.Number => jsonElement.ToString(),
+                        JsonValueKind.True => "true",
+                        JsonValueKind.False => "false",
+                        JsonValueKind.Null => null,
+                        _ => jsonElement.ToString()
+                    };
                 }
                 return value?.ToString();
             }
@@ -495,6 +512,24 @@ namespace Zatca.EInvoice.Api
                 return property.ValueKind == JsonValueKind.String ? property.GetString() : null;
             }
             return null;
+        }
+
+        private string ExtractBase64FromPem(string pem)
+        {
+            const string beginMarker = "-----BEGIN CERTIFICATE REQUEST-----";
+            const string endMarker = "-----END CERTIFICATE REQUEST-----";
+
+            var beginIndex = pem.IndexOf(beginMarker);
+            if (beginIndex == -1)
+                throw new ArgumentException("Invalid PEM format: missing begin marker");
+
+            beginIndex += beginMarker.Length;
+            var endIndex = pem.IndexOf(endMarker, beginIndex);
+            if (endIndex == -1)
+                throw new ArgumentException("Invalid PEM format: missing end marker");
+
+            var base64Content = pem[beginIndex..endIndex].Replace("\n", "").Replace("\r", "").Trim();
+            return base64Content;
         }
 
         /// <summary>

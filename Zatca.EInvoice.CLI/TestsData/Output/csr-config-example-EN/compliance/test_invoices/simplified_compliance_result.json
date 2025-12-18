@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "error": "Compliance validation failed: API request failed with status code 406",
+  "status": null,
+  "clearanceStatus": null,
+  "reportingStatus": null,
+  "warnings": [],
+  "info": []
+}

@@ -1,5 +1,6 @@
 using Zatca.EInvoice.Api;
 using Zatca.EInvoice.CLI.Models;
+using Zatca.EInvoice.Exceptions;
 
 namespace Zatca.EInvoice.CLI.Services;
 
@@ -40,6 +41,15 @@ public class ApiService : IApiService
             }
 
             return commandResult;
+        }
+        catch (ZatcaApiException apiEx)
+        {
+            var errorMsg = $"API request failed: {apiEx.Message}";
+            if (!string.IsNullOrEmpty(apiEx.Response))
+            {
+                errorMsg += $"\nResponse: {apiEx.Response}";
+            }
+            return CommandResult<ComplianceCertificateResult>.Fail(errorMsg);
         }
         catch (Exception ex)
         {

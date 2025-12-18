@@ -1,0 +1,17 @@
+Configuration: csr-config-example-EN
+Generated: Thu Dec 18 08:41:18 PM UTC 2025
+
+CSR Details:
+  Common Name: TST-886431145-399999999900003
+  Organization ID: 399999999900003
+  Organization Name: Maximum Speed Tech Supply LTD
+  Organization Unit: Riyadh Branch
+  Country: SA
+  Invoice Type: 1100
+  Address: RRRD2929
+  Category: Supply activities
+  
+Serial Number Components:
+  Solution: TST
+  Model: TST
+  Device Serial: ed22f1d8-e6a2-1118-9b58-d9a8f11e445f

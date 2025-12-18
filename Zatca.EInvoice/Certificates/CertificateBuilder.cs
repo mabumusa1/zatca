@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Asn1.X509;
@@ -22,14 +23,21 @@ using Zatca.EInvoice.Helpers;
 namespace Zatca.EInvoice.Certificates
 {
     /// <summary>
-    /// Custom X509NameEntryConverter that forces UTF8String encoding for all string values.
-    /// This is required to support Arabic characters in certificate fields.
+    /// Custom X509NameEntryConverter that uses appropriate encoding for certificate fields.
+    /// Country code (C) uses PrintableString as required by ZATCA.
+    /// Other fields use UTF8String to support Arabic and Unicode characters.
     /// </summary>
     internal class Utf8X509NameEntryConverter : X509NameEntryConverter
     {
         public override Asn1Object GetConvertedValue(DerObjectIdentifier oid, string value)
         {
-            // Always use UTF8String encoding to support Arabic and other Unicode characters
+            // Country code must be PrintableString per X.520 and ZATCA requirements
+            if (oid.Equals(X509Name.C))
+            {
+                return new DerPrintableString(value);
+            }
+            
+            // All other fields use UTF8String to support Arabic and other Unicode characters
             return new DerUtf8String(value);
         }
     }
@@ -40,7 +48,7 @@ namespace Zatca.EInvoice.Certificates
     public class CertificateBuilder
     {
         private const string OidProduction = "ZATCA-Code-Signing";
-        private const string OidTest = "PREZATCA-Code-Signing";
+        private const string OidTest = "ZATCA-Code-Signing"; // Same for test/simulation
         private const string TemplateIdentifierOid = "1.3.6.1.4.1.311.20.2";
 
         private string _organizationIdentifier;
@@ -308,38 +316,46 @@ namespace Zatca.EInvoice.Certificates
             try
             {
                 // Generate EC key pair using secp256k1 curve
-                var ecParams = CustomNamedCurves.GetByName("secp256k1");
+                // The key is to use ECKeyGenerationParameters with the OID
+                var curveName = "secp256k1";
+                var curveOid = SecObjectIdentifiers.SecP256k1;
+                
+                // Get curve parameters - this will include the OID
+                var ecParams = CustomNamedCurves.GetByName(curveName);
                 if (ecParams == null)
                 {
-                    ecParams = SecNamedCurves.GetByName("secp256k1");
+                    ecParams = SecNamedCurves.GetByName(curveName);
                 }
 
+                // Create domain parameters WITH the OID to ensure named curve encoding
                 var domainParams = new ECDomainParameters(
                     ecParams.Curve,
                     ecParams.G,
                     ecParams.N,
                     ecParams.H,
                     ecParams.GetSeed());
-
-                var keyGenParams = new ECKeyGenerationParameters(domainParams, new SecureRandom());
+                
+                // Use the OID directly in key generation parameters
+                var keyGenParams = new ECKeyGenerationParameters(curveOid, new SecureRandom());
                 var keyGenerator = new ECKeyPairGenerator();
                 keyGenerator.Init(keyGenParams);
                 _keyPair = keyGenerator.GenerateKeyPair();
 
                 // Create subject DN with UTF8String encoding to support Arabic characters
+                // Order must match ZATCA requirements: C, OU, O, CN
                 var ordering = new List<DerObjectIdentifier>
                 {
                     X509Name.C,
-                    X509Name.O,
                     X509Name.OU,
+                    X509Name.O,
                     X509Name.CN
                 };
                 
                 var values = new List<string>
                 {
                     _country,
-                    _organizationName,
                     _organizationalUnitName,
+                    _organizationName,
                     _commonName
                 };
                 
@@ -364,64 +380,61 @@ namespace Zatca.EInvoice.Certificates
 
         private DerSet CreateCsrAttributes()
         {
-            var extensions = new List<DerSequence>();
+            // Build extensions using BouncyCastle's proper extension generator
+            var extensionsGen = new X509ExtensionsGenerator();
 
-            // Add template identifier extension (1.3.6.1.4.1.311.20.2)
+            // 1. Add template identifier extension (1.3.6.1.4.1.311.20.2)
+            // ZATCA requires UTF8String encoding
             var templateId = _production ? OidProduction : OidTest;
-            var templateIdExtension = new DerSequence(
+            extensionsGen.AddExtension(
                 new DerObjectIdentifier(TemplateIdentifierOid),
-                new DerSet(new DerPrintableString(templateId))
-            );
-            extensions.Add(templateIdExtension);
+                false,
+                new DerUtf8String(templateId));
 
-            // Add Subject Alternative Name extension
-            var sanExtension = CreateSubjectAlternativeNameExtension();
-            extensions.Add(sanExtension);
+            // 2. Add Subject Alternative Name extension
+            var san = CreateSubjectAlternativeName();
+            extensionsGen.AddExtension(
+                X509Extensions.SubjectAlternativeName,
+                false,
+                san);
 
-            // Create extension request attribute
-            var extensionOid = new DerObjectIdentifier("1.2.840.113549.1.9.14"); // extensionRequest
-            var extensionRequest = new DerSequence(
-                extensionOid,
-                new DerSet((Asn1Encodable)new DerSequence(extensions.ToArray()))
-            );
+            var extensions = extensionsGen.Generate();
 
-            return new DerSet((Asn1Encodable)extensionRequest);
+            // Wrap in extensionRequest attribute (OID 1.2.840.113549.1.9.14)
+            var attribute = new AttributePkcs(
+                PkcsObjectIdentifiers.Pkcs9AtExtensionRequest,
+                new DerSet(extensions));
+
+            return new DerSet(attribute);
         }
 
-        private DerSequence CreateSubjectAlternativeNameExtension()
+        private GeneralNames CreateSubjectAlternativeName()
         {
-            // Create DirectoryName for SAN
-            var sanAttributes = new List<DerSequence>
+            // Build DirectoryName for SAN
+            // Order and OIDs must match ZATCA requirements
+            var ordering = new List<DerObjectIdentifier>
             {
-                new DerSequence(
-                    X509Name.SerialNumber,
-                    new DerPrintableString(_serialNumber)),
-                new DerSequence(
-                    new DerObjectIdentifier("0.9.2342.19200300.100.1.1"), // UID
-                    new DerPrintableString(_organizationIdentifier)),
-                new DerSequence(
-                    new DerObjectIdentifier("2.5.4.12"), // title
-                    new DerPrintableString(_invoiceType.ToString("D4"))),
-                new DerSequence(
-                    new DerObjectIdentifier("2.5.4.26"), // registeredAddress
-                    new DerUtf8String(_address)),
-                new DerSequence(
-                    new DerObjectIdentifier("2.5.4.15"), // businessCategory
-                    new DerUtf8String(_businessCategory))
+                new DerObjectIdentifier("2.5.4.4"),  // 2.5.4.4 - SN (surname) - ZATCA uses this for serial number
+                new DerObjectIdentifier("0.9.2342.19200300.100.1.1"), // UID
+                new DerObjectIdentifier("2.5.4.12"),  // title
+                new DerObjectIdentifier("2.5.4.26"),  // registeredAddress
+                new DerObjectIdentifier("2.5.4.15")   // businessCategory
             };
 
-            var directoryName = new DerSequence(sanAttributes.ToArray());
-            var taggedName = new DerTaggedObject(true, 4, directoryName); // 4 = directoryName
+            var values = new List<string>
+            {
+                _serialNumber,
+                _organizationIdentifier,
+                _invoiceType.ToString("D4"),
+                _address,
+                _businessCategory
+            };
 
-            var generalNames = new DerSequence(taggedName);
-            var sanExtensionValue = new DerOctetString(generalNames.GetEncoded());
+            // Use UTF8String encoding for all values to support Arabic characters
+            var directoryName = new X509Name(ordering, values, new Utf8X509NameEntryConverter());
+            var generalName = new GeneralName(GeneralName.DirectoryName, directoryName);
 
-            var sanExtension = new DerSequence(
-                new DerObjectIdentifier("2.5.29.17"), // subjectAltName
-                sanExtensionValue
-            );
-
-            return sanExtension;
+            return new GeneralNames(generalName);
         }
 
         private string Sanitize(string input)

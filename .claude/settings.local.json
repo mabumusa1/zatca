@@ -3,7 +3,12 @@
     "allow": [
       "Bash(grep:*)",
       "Bash(xargs -I {} bash -c 'echo \"\"\"\"=== {} ===\"\"\"\" && grep \"\"\"\"public class\\\\|public void\\\\|public async Task\"\"\"\" {}')",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(openssl req:*)",
+      "Bash(./generate-and-verify-certs.sh)",
+      "Bash(dotnet run:*)",
+      "Bash(dotnet build:*)",
+      "Bash(openssl asn1parse:*)"
     ]
   }
 }

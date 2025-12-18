@@ -1,0 +1,12 @@
+Invoice Signing Summary
+Type: simplified
+Completed: Thu Dec 18 08:41:53 PM UTC 2025
+Status: SUCCESS
+
+Hash: taQtQVnLh+JRESNGdxPTK9ZoFfhVy/Y0DUql0rh3Njo=
+UUID: null
+
+Files:
+- simplified_invoice.json (Input JSON)
+- simplified_invoice.xml (Unsigned XML)
+- simplified_invoice_signed.xml (Signed XML)

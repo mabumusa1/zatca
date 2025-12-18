@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-16"?>
+<Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+    <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
+    <cbc:ID>INV-20251218-001</cbc:ID>
+    <cbc:UUID>f53d6bc1-2bc5-4a83-98d4-e9e56bf3d682</cbc:UUID>
+    <cbc:IssueDate>2025-12-18</cbc:IssueDate>
+    <cbc:IssueTime>20:42:03</cbc:IssueTime>
+    <cbc:Note languageID="en">Sample invoice for testing</cbc:Note>
+    <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
+    <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
+</Invoice>

@@ -19,8 +19,12 @@ INPUT_DIR="$SCRIPT_DIR/Input"
 OUTPUT_DIR="$SCRIPT_DIR/Output"
 CLI_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Create output directory if it doesn't exist
+# Create output directory (will be fresh if user deleted it)
 mkdir -p "$OUTPUT_DIR"
+
+# Create a run timestamp for this execution
+RUN_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+echo "Run timestamp: $RUN_TIMESTAMP" > "$OUTPUT_DIR/run_info.txt"
 
 # Function to parse properties file
 parse_property() {
@@ -133,12 +137,34 @@ generate_certificate() {
     echo "  Device Serial: $device_serial"
     echo ""
     
+    # Save configuration details
+    cat > "$config_output_dir/config_details.txt" << EOF
+Configuration: $config_name
+Generated: $(date)
+
+CSR Details:
+  Common Name: $common_name
+  Organization ID: $org_identifier
+  Organization Name: $org_name
+  Organization Unit: $org_unit
+  Country: $country
+  Invoice Type: $invoice_type
+  Address: $address
+  Category: $category
+  
+Serial Number Components:
+  Solution: $solution_name
+  Model: $model
+  Device Serial: $device_serial
+EOF
+
     # Run the CLI to generate certificate
     echo -e "${YELLOW}Generating certificate...${NC}"
     
     cd "$CLI_DIR"
     
-    if dotnet run -- cert generate \
+    # Capture full output
+    if dotnet run --framework net9.0 -- cert generate \
         --org-id "$org_identifier" \
         --solution "$solution_name" \
         --model "$model" \
@@ -152,16 +178,18 @@ generate_certificate() {
         --category "$category" \
         --output-dir "$config_output_dir" \
         --csr-file "certificate.csr" \
-        --key-file "private.pem"; then
+        --key-file "private.pem" 2>&1 | tee "$config_output_dir/generation_output.log"; then
         
         echo -e "${GREEN}✓ Certificate generated successfully${NC}"
         echo ""
         
         # Verify the generated certificate
-        if verify_csr "$csr_file" "$key_file" "$config_name"; then
+        if verify_csr "$csr_file" "$key_file" "$config_name" | tee "$config_output_dir/verification_result.log"; then
+            echo "PASSED" > "$config_output_dir/status.txt"
             echo -e "${GREEN}✓✓ $config_name: PASSED${NC}"
             return 0
         else
+            echo "FAILED" > "$config_output_dir/status.txt"
             echo -e "${RED}✗✗ $config_name: VERIFICATION FAILED${NC}"
             return 1
         fi
@@ -174,6 +202,7 @@ generate_certificate() {
 # Main script execution
 echo "=========================================="
 echo "ZATCA Certificate Generation & Verification"
+echo "Testing ALL Certificate Configurations"
 echo "=========================================="
 echo ""
 echo "Script Directory: $SCRIPT_DIR"
@@ -193,23 +222,29 @@ total=0
 passed=0
 failed=0
 
-# Process all .properties files in Input directory, excluding template
+# First, count and list all configurations that will be tested
+echo -e "${CYAN}Discovering configurations...${NC}"
+configs_to_test=()
 for props_file in "$INPUT_DIR"/*.properties; do
-    # Check if file exists (in case no .properties files are found)
     if [ ! -f "$props_file" ]; then
         echo -e "${RED}No .properties files found in $INPUT_DIR${NC}"
         exit 1
     fi
     
-    # Get filename
     filename=$(basename "$props_file")
-    
-    # Skip the template file
-    if [[ "$filename" == "csr-config-template.properties" ]]; then
-        echo -e "${YELLOW}Skipping template: $filename${NC}"
-        continue
+    if [[ "$filename" != "csr-config-template.properties" ]]; then
+        configs_to_test+=("$props_file")
     fi
-    
+done
+
+echo -e "${GREEN}Found ${#configs_to_test[@]} configuration(s) to test:${NC}"
+for props_file in "${configs_to_test[@]}"; do
+    echo -e "  - $(basename "$props_file" .properties)"
+done
+echo ""
+
+# Process all configurations
+for props_file in "${configs_to_test[@]}"; do
     total=$((total + 1))
     
     # Generate and verify certificate

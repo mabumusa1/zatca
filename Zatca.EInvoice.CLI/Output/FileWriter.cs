@@ -28,7 +28,9 @@ public class FileWriter
             Directory.CreateDirectory(directory);
         }
 
-        await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
+        // Use UTF8 without BOM to avoid issues with ZATCA API
+        var utf8WithoutBom = new UTF8Encoding(false);
+        await File.WriteAllTextAsync(filePath, content, utf8WithoutBom);
         _formatter.WriteInfo($"Written to: {filePath}");
         return filePath;
     }

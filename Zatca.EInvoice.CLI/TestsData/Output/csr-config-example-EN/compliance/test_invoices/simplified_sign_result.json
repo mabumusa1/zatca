@@ -1,0 +1,14 @@
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN/compliance/test_invoices/simplified_invoice_signed.xml
+ℹ Written to: /workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN/compliance/test_invoices/simplified_hash.txt
+{
+  "success": true,
+  "error": null,
+  "hash": "taQtQVnLh\u002BJRESNGdxPTK9ZoFfhVy/Y0DUql0rh3Njo=",
+  "qrCode": "AQACAAMUMjAyNS0xMi0xOFQyMDo0MTo0OVoEAAUABix0YVF0UVZuTGgrSlJFU05HZHhQVEs5Wm9GZmhWeS9ZMERVcWwwcmgzTmpvPQdYMVBUUzg5T0VXWDl0OXdZdjhGMjdJSHZTSmUxcGkvSnVKZncwajE0dTJrWC9lMEp5ZDJmM09MV3p3OG8yQVVSalY3NWQyRmF6b2lzU1E0dGppdCsrMWc9PQhYMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEt1OwwEgoY6ADpAeMjum55ywcXBoxgw0h3kcH8O1bODNzbIuLVHvb7lEHSgNyEUcmMYmI\u002BzDlbhKypdQeh\u002BhGcg==",
+  "signedXmlLength": 6516,
+  "files": {
+    "xml": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN/compliance/test_invoices/simplified_invoice_signed.xml",
+    "qr": null,
+    "hash": "/workspace/Zatca.EInvoice.CLI/TestsData/Output/csr-config-example-EN/compliance/test_invoices/simplified_hash.txt"
+  }
+}
