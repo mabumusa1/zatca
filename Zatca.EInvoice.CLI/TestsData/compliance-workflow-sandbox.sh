@@ -21,6 +21,7 @@ CLI_DIR="$(dirname "$SCRIPT_DIR")"
 
 # String constants
 readonly FALLBACK_MSG='Unknown'
+readonly SEPARATOR='=========================================='
 
 # ZATCA Sandbox Credentials (developer-portal)
 USERNAME="m.abumusa@karage.co"
@@ -62,9 +63,9 @@ request_compliance_cert() {
     local cert_output_dir="$config_dir/compliance"
     
     echo ""
-    echo "=========================================="
+    echo "$SEPARATOR"
     echo -e "${BLUE}Phase 1: Request Compliance Certificate${NC}"
-    echo "=========================================="
+    echo "$SEPARATOR"
     echo -e "${CYAN}Configuration: $config_name${NC}"
     echo -e "${CYAN}Environment: $env (developer-portal)${NC}"
     echo ""
@@ -185,12 +186,12 @@ main() {
     fi
     
     # Display banner
-    echo "=========================================="
+    echo "$SEPARATOR"
     echo -e "${MAGENTA}ZATCA Compliance Workflow - SANDBOX${NC}"
     if [[ "$process_all" == true ]]; then
         echo -e "${MAGENTA}Testing ALL Certificate Configurations${NC}"
     fi
-    echo "=========================================="
+    echo "$SEPARATOR"
     echo -e "Environment: ${CYAN}$ENVIRONMENT (developer-portal)${NC}"
     echo -e "Credentials: ${CYAN}$USERNAME${NC}"
     echo -e "OTP: ${CYAN}$SANDBOX_OTP${NC}"

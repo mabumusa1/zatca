@@ -607,7 +607,7 @@ submit_invoices() {
                     else
                         local error=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "$FALLBACK_MSG")
                         # Check if it's a sandbox certificate error (expected in sandbox mode)
-                        if echo "$error" | grep -q "certificate-hashing\|certificate-issuer-name"; then
+                        if grep -q "certificate-hashing\|certificate-issuer-name" <<< "$error"; then
                             echo -e "${YELLOW}⚠ Simplified invoice reporting - sandbox certificate limitation${NC}" >&2
                             echo -e "${YELLOW}  (This is expected in sandbox mode - the API flow works correctly)${NC}" >&2
                             passed=$((passed + 1))
@@ -693,7 +693,7 @@ submit_invoices() {
                     else
                         local error=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "$FALLBACK_MSG")
                         # Check if it's a sandbox certificate error (expected in sandbox mode)
-                        if echo "$error" | grep -q "certificate-hashing\|certificate-issuer-name"; then
+                        if grep -q "certificate-hashing\|certificate-issuer-name" <<< "$error"; then
                             echo -e "${YELLOW}⚠ Standard invoice clearance - sandbox certificate limitation${NC}" >&2
                             echo -e "${YELLOW}  (This is expected in sandbox mode - the API flow works correctly)${NC}" >&2
                             passed=$((passed + 1))
