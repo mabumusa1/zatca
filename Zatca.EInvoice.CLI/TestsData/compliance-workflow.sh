@@ -76,7 +76,7 @@ request_compliance_cert() {
     echo ""
     
     # Check if CSR exists
-    if [ ! -f "$csr_file" ]; then
+    if [[ ! -f "$csr_file" ]]; then
         echo -e "${RED}❌ Error: CSR not found at $csr_file${NC}"
         echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
         return 1
@@ -99,7 +99,7 @@ request_compliance_cert() {
         # Parse response - extract JSON from output (skip informational messages)
         local success=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.success' 2>/dev/null || echo "false")
         
-        if [ "$success" = "true" ]; then
+        if [[ "$success" == "true" ]]; then
             local request_id=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.requestId')
             
             # Save request_id for Phase 3
@@ -164,7 +164,7 @@ generate_test_invoice() {
         --full \
         --output "$invoice_file" 2>&1 | tee "$invoice_dir/${invoice_type}_json_generation.log"
     
-    if [ ! -f "$invoice_file" ]; then
+    if [[ ! -f "$invoice_file" ]]; then
         echo -e "${RED}❌ Failed to generate invoice JSON${NC}"
         return 1
     fi
@@ -174,7 +174,7 @@ generate_test_invoice() {
         --input "$invoice_file" \
         --output "$xml_file" 2>&1 | tee "$invoice_dir/${invoice_type}_xml_generation.log"
     
-    if [ ! -f "$xml_file" ]; then
+    if [[ ! -f "$xml_file" ]]; then
         echo -e "${RED}❌ Failed to generate XML${NC}"
         return 1
     fi
@@ -185,7 +185,7 @@ generate_test_invoice() {
     local pfx_file="$compliance_dir/compliance.pfx"
     
     # Create PFX if it doesn't exist
-    if [ ! -f "$pfx_file" ]; then
+    if [[ ! -f "$pfx_file" ]]; then
         if ! openssl pkcs12 -export -out "$pfx_file" -inkey "$key_file" -in "$cert_file" -passout pass: > /dev/null 2>&1; then
             echo -e "${RED}❌ Failed to create PFX certificate${NC}"
             return 1
@@ -201,7 +201,7 @@ generate_test_invoice() {
         
         local success=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_sign_result.json" | jq -r '.success' 2>/dev/null || echo "false")
         
-        if [ "$success" = "true" ]; then
+        if [[ "$success" == "true" ]]; then
             local hash=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_sign_result.json" | jq -r '.hash')
             local uuid=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_sign_result.json" | jq -r '.uuid' 2>/dev/null || uuidgen)
             
@@ -260,7 +260,7 @@ validate_compliance() {
     local cert_file="$compliance_dir/compliance.crt"
     local secret_file="$compliance_dir/secret.txt"
     
-    if [ ! -f "$cert_file" ] || [ ! -f "$secret_file" ]; then
+    if [[ ! -f "$cert_file" ]] || [[ ! -f "$secret_file" ]]; then
         echo -e "${RED}❌ Compliance certificate not found${NC}"
         return 1
     fi
@@ -303,7 +303,7 @@ validate_compliance() {
             
             local success=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_compliance_result.json" | jq -r '.success' 2>/dev/null || echo "false")
             
-            if [ "$success" = "true" ]; then
+            if [[ "$success" == "true" ]]; then
                 local status=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_compliance_result.json" | jq -r '.status')
                 local warnings=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_compliance_result.json" | jq -r '.warningMessages[]?' 2>/dev/null || echo "None")
                 
@@ -349,7 +349,7 @@ EOF
                 
                 echo -e "${RED}✗ Compliance check FAILED${NC}"
                 echo -e "${RED}  Error: $error${NC}"
-                if [ -n "$details" ]; then
+                if [[ -n "$details" ]]; then
                     echo -e "${RED}  Details: $details${NC}"
                 fi
                 failed=$((failed + 1))
@@ -378,14 +378,14 @@ Test Details:
 EOF
     
     for invoice_type in "${test_types[@]}"; do
-        if [ -f "$invoice_dir/${invoice_type}_compliance_summary.txt" ]; then
+        if [[ -f "$invoice_dir/${invoice_type}_compliance_summary.txt" ]]; then
             echo "" >> "$compliance_dir/phase2_summary.txt"
             echo "--- $invoice_type Invoice ---" >> "$compliance_dir/phase2_summary.txt"
             cat "$invoice_dir/${invoice_type}_compliance_summary.txt" >> "$compliance_dir/phase2_summary.txt"
         fi
     done
     
-    if [ $failed -eq 0 ]; then
+    if [[ $failed -eq 0 ]]; then
         echo -e "${GREEN}✓✓ All compliance tests passed!${NC}"
         echo -e "${GREEN}Summary saved to: $compliance_dir/phase2_summary.txt${NC}"
         return 0
@@ -417,7 +417,7 @@ request_production_cert() {
     local secret_file="$compliance_dir/secret.txt"
     local request_id_file="$compliance_dir/request_id.txt"
     
-    if [ ! -f "$cert_file" ] || [ ! -f "$secret_file" ] || [ ! -f "$request_id_file" ]; then
+    if [[ ! -f "$cert_file" ]] || [[ ! -f "$secret_file" ]] || [[ ! -f "$request_id_file" ]]; then
         echo -e "${RED}❌ Compliance certificate data not found${NC}"
         return 1
     fi
@@ -442,7 +442,7 @@ request_production_cert() {
         
         local success=$(grep -A 100 '^{' "$production_dir/production_response.json" | jq -r '.success' 2>/dev/null || echo "false")
         
-        if [ "$success" = "true" ]; then
+        if [[ "$success" == "true" ]]; then
             # Save Phase 3 summary
             cat > "$production_dir/phase3_summary.txt" << EOF
 Phase 3: Production Certificate Request
@@ -497,7 +497,7 @@ submit_invoices() {
     local prod_secret_file="$production_dir/production_secret.txt"
     local key_file="$config_dir/private.pem"
 
-    if [ ! -f "$prod_cert_file" ] || [ ! -f "$prod_secret_file" ]; then
+    if [[ ! -f "$prod_cert_file" ]] || [[ ! -f "$prod_secret_file" ]]; then
         echo -e "${RED}❌ Production certificate not found${NC}"
         return 1
     fi
@@ -513,14 +513,14 @@ submit_invoices() {
     local compliance_pfx="$config_dir/compliance/compliance.pfx"
     local pfx_to_use=""
 
-    if [ ! -f "$prod_pfx_file" ]; then
+    if [[ ! -f "$prod_pfx_file" ]]; then
         if openssl pkcs12 -export -out "$prod_pfx_file" -inkey "$key_file" -in "$prod_cert_file" -passout pass: > /dev/null 2>&1; then
             pfx_to_use="$prod_pfx_file"
             echo -e "${GREEN}✓ Using production certificate for signing${NC}"
         else
             # Sandbox environment: production cert may not match private key
             # Fall back to compliance certificate
-            if [ -f "$compliance_pfx" ]; then
+            if [[ -f "$compliance_pfx" ]]; then
                 pfx_to_use="$compliance_pfx"
                 echo -e "${YELLOW}ℹ Using compliance certificate for signing (sandbox mode)${NC}"
             else
@@ -550,7 +550,7 @@ submit_invoices() {
         --full \
         --output "$simplified_json" > "$submission_dir/simplified_gen.log" 2>&1
 
-    if [ ! -f "$simplified_json" ]; then
+    if [[ ! -f "$simplified_json" ]]; then
         echo -e "${RED}❌ Failed to generate simplified invoice JSON${NC}"
         failed=$((failed + 1))
     else
@@ -569,7 +569,7 @@ submit_invoices() {
 
             local success=$(grep -A 100 '^{' "$submission_dir/simplified_sign.json" | jq -r '.success' 2>/dev/null || echo "false")
 
-            if [ "$success" = "true" ]; then
+            if [[ "$success" == "true" ]]; then
                 local hash=$(grep -A 100 '^{' "$submission_dir/simplified_sign.json" | jq -r '.hash')
                 local uuid=$(grep -A 100 '^{' "$submission_dir/simplified_sign.json" | jq -r '.uuid')
 
@@ -590,7 +590,7 @@ submit_invoices() {
 
                     local report_success=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r '.success' 2>/dev/null || echo "false")
 
-                    if [ "$report_success" = "true" ]; then
+                    if [[ "$report_success" == "true" ]]; then
                         local status=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r '.reportingStatus')
                         echo -e "${GREEN}✓ Simplified invoice reporting PASSED${NC}"
                         echo -e "${GREEN}  Status: $status${NC}"
@@ -635,7 +635,7 @@ submit_invoices() {
         --full \
         --output "$standard_json" > "$submission_dir/standard_gen.log" 2>&1
 
-    if [ ! -f "$standard_json" ]; then
+    if [[ ! -f "$standard_json" ]]; then
         echo -e "${RED}❌ Failed to generate standard invoice JSON${NC}"
         failed=$((failed + 1))
     else
@@ -654,7 +654,7 @@ submit_invoices() {
 
             local success=$(grep -A 100 '^{' "$submission_dir/standard_sign.json" | jq -r '.success' 2>/dev/null || echo "false")
 
-            if [ "$success" = "true" ]; then
+            if [[ "$success" == "true" ]]; then
                 local hash=$(grep -A 100 '^{' "$submission_dir/standard_sign.json" | jq -r '.hash')
                 local uuid=$(grep -A 100 '^{' "$submission_dir/standard_sign.json" | jq -r '.uuid')
 
@@ -676,7 +676,7 @@ submit_invoices() {
 
                     local clear_success=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r '.success' 2>/dev/null || echo "false")
 
-                    if [ "$clear_success" = "true" ]; then
+                    if [[ "$clear_success" == "true" ]]; then
                         local status=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r '.clearanceStatus')
                         echo -e "${GREEN}✓ Standard invoice clearance PASSED${NC}"
                         echo -e "${GREEN}  Status: $status${NC}"
@@ -729,7 +729,7 @@ Files:
 - invoice_submissions/standard_invoice*.* (Standard invoice files)
 EOF
 
-    if [ $failed -eq 0 ]; then
+    if [[ $failed -eq 0 ]]; then
         echo -e "${GREEN}✓✓ All invoice submissions passed!${NC}"
         return 0
     else
@@ -760,7 +760,7 @@ renew_certificate() {
     local prod_secret_file="$production_dir/production_secret.txt"
     local csr_file="$config_dir/certificate.csr"
 
-    if [ ! -f "$prod_cert_file" ] || [ ! -f "$prod_secret_file" ] || [ ! -f "$csr_file" ]; then
+    if [[ ! -f "$prod_cert_file" ]] || [[ ! -f "$prod_secret_file" ]] || [[ ! -f "$csr_file" ]]; then
         echo -e "${RED}❌ Production certificate or CSR not found${NC}"
         return 1
     fi
@@ -784,7 +784,7 @@ renew_certificate() {
 
         local success=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r '.success' 2>/dev/null || echo "false")
 
-        if [ "$success" = "true" ]; then
+        if [[ "$success" == "true" ]]; then
             local request_id=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r '.requestId')
 
             # Save Phase 5 summary
@@ -964,8 +964,8 @@ main() {
     done
     
     # Use default OTP if not provided
-    if [ -z "$otp" ]; then
-        if [ -n "$DEFAULT_OTP" ]; then
+    if [[ -z "$otp" ]]; then
+        if [[ -n "$DEFAULT_OTP" ]]; then
             otp="$DEFAULT_OTP"
             echo -e "${YELLOW}ℹ Using default test OTP: $otp${NC}"
             echo -e "${YELLOW}  If this fails, get a fresh OTP from: https://sandbox.zatca.gov.sa/IntegrationSandbox${NC}"
@@ -979,7 +979,7 @@ main() {
     fi
     
     # Validate inputs
-    if [ "$process_all" = false ] && [ -z "$config_name" ]; then
+    if [[ "$process_all" == false ]] && [[ -z "$config_name" ]]; then
         echo -e "${RED}❌ Error: Configuration name is required (or use --all)${NC}"
         usage
     fi
@@ -991,7 +991,7 @@ main() {
         exit 1
     fi
     
-    if [ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]; then
+    if [[ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]]; then
         echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}"
         exit 1
     fi
@@ -999,7 +999,7 @@ main() {
     # Display banner
     echo "=========================================="
     echo -e "${MAGENTA}ZATCA Compliance Workflow${NC}"
-    if [ "$process_all" = true ]; then
+    if [[ "$process_all" == true ]]; then
         echo -e "${MAGENTA}Testing ALL Certificate Configurations${NC}"
     fi
     echo "=========================================="
@@ -1013,17 +1013,17 @@ main() {
     local passed=0
     local failed=0
     
-    if [ "$process_all" = true ]; then
+    if [[ "$process_all" == true ]]; then
         # First, discover all configurations
         echo -e "${CYAN}Discovering configurations in $OUTPUT_DIR...${NC}"
         local configs=()
         for config_dir in "$OUTPUT_DIR"/csr-config-*; do
-            if [ -d "$config_dir" ] && [ -f "$config_dir/certificate.csr" ]; then
+            if [[ -d "$config_dir" ]] && [[ -f "$config_dir/certificate.csr" ]]; then
                 configs+=("$(basename "$config_dir")")
             fi
         done
         
-        if [ ${#configs[@]} -eq 0 ]; then
+        if [[ ${#configs[@]} -eq 0 ]]; then
             echo -e "${RED}❌ No configurations found in $OUTPUT_DIR${NC}"
             echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
             exit 1
@@ -1067,7 +1067,7 @@ main() {
     echo -e "Failed: ${RED}$failed${NC}"
     echo ""
     
-    if [ $failed -eq 0 ]; then
+    if [[ $failed -eq 0 ]]; then
         echo -e "${GREEN}✓✓✓ All workflows completed successfully!${NC}"
         exit 0
     else

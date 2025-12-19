@@ -519,65 +519,66 @@ namespace Zatca.EInvoice.Api
 
         private List<string> ParseValidationMessages(Dictionary<string, object> response, string key, string type)
         {
-            var messages = new List<string>();
+            var messagesElement = GetValidationMessagesElement(response, key, type);
+            if (messagesElement == null || messagesElement.Value.ValueKind != JsonValueKind.Array)
+                return new List<string>();
 
-            if (response.TryGetValue(key, out var validationResults))
+            return ExtractMessageStrings(messagesElement.Value);
+        }
+
+        private JsonElement? GetValidationMessagesElement(Dictionary<string, object> response, string key, string type)
+        {
+            if (!response.TryGetValue(key, out var validationResults))
+                return null;
+
+            if (validationResults is not JsonElement jsonElement || jsonElement.ValueKind != JsonValueKind.Object)
+                return null;
+
+            var propertyName = type.ToLowerInvariant() + "Messages";
+            if (!jsonElement.TryGetProperty(propertyName, out var messagesElement))
+                return null;
+
+            return messagesElement;
+        }
+
+        private List<string> ExtractMessageStrings(JsonElement messagesElement)
+        {
+            var messages = new List<string>();
+            foreach (var message in messagesElement.EnumerateArray())
             {
-                if (validationResults is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Object)
+                if (message.TryGetProperty("message", out var msgText))
                 {
-                    if (jsonElement.TryGetProperty(type.ToLowerInvariant() + "Messages", out var messagesElement))
-                    {
-                        if (messagesElement.ValueKind == JsonValueKind.Array)
-                        {
-                            foreach (var message in messagesElement.EnumerateArray())
-                            {
-                                if (message.TryGetProperty("message", out var msgText))
-                                {
-                                    var text = msgText.GetString();
-                                    if (text != null)
-                                    {
-                                        messages.Add(text);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    var text = msgText.GetString();
+                    if (text != null)
+                        messages.Add(text);
                 }
             }
-
             return messages;
         }
 
         private List<ValidationMessage> ParseValidationMessagesDetailed(Dictionary<string, object> response, string key, string type)
         {
+            var messagesElement = GetValidationMessagesElement(response, key, type);
+            if (messagesElement == null || messagesElement.Value.ValueKind != JsonValueKind.Array)
+                return new List<ValidationMessage>();
+
+            return ExtractValidationMessages(messagesElement.Value, type);
+        }
+
+        private List<ValidationMessage> ExtractValidationMessages(JsonElement messagesElement, string type)
+        {
             var messages = new List<ValidationMessage>();
-
-            if (response.TryGetValue(key, out var validationResults))
+            foreach (var message in messagesElement.EnumerateArray())
             {
-                if (validationResults is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Object)
+                messages.Add(new ValidationMessage
                 {
-                    var propertyName = type.ToLowerInvariant() + "Messages";
-                    if (jsonElement.TryGetProperty(propertyName, out var messagesElement))
-                    {
-                        if (messagesElement.ValueKind == JsonValueKind.Array)
-                        {
-                            foreach (var message in messagesElement.EnumerateArray())
-                            {
-                                var validationMessage = new ValidationMessage
-                                {
-                                    Type = GetJsonStringValue(message, "type") ?? type,
-                                    Code = GetJsonStringValue(message, "code") ?? string.Empty,
-                                    Category = GetJsonStringValue(message, "category") ?? string.Empty,
-                                    Message = GetJsonStringValue(message, "message") ?? string.Empty,
-                                    Status = GetJsonStringValue(message, "status") ?? string.Empty
-                                };
-                                messages.Add(validationMessage);
-                            }
-                        }
-                    }
-                }
+                    Type = GetJsonStringValue(message, "type") ?? type,
+                    Code = GetJsonStringValue(message, "code") ?? string.Empty,
+                    Category = GetJsonStringValue(message, "category") ?? string.Empty,
+                    Message = GetJsonStringValue(message, "message") ?? string.Empty,
+                    Status = GetJsonStringValue(message, "status") ?? string.Empty
+                });
             }
-
             return messages;
         }
 

@@ -66,7 +66,7 @@ request_compliance_cert() {
     echo ""
     
     # Check if CSR exists
-    if [ ! -f "$csr_file" ]; then
+    if [[ ! -f "$csr_file" ]]; then
         echo -e "${RED}❌ Error: CSR not found at $csr_file${NC}"
         echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
         return 1
@@ -89,7 +89,7 @@ request_compliance_cert() {
         # Parse response - extract JSON from output (skip informational messages)
         local success=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.success' 2>/dev/null || echo "false")
         
-        if [ "$success" = "true" ]; then
+        if [[ "$success" == "true" ]]; then
             local request_id=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.requestId')
             
             # Save request_id for Phase 3
@@ -161,7 +161,7 @@ main() {
     done
     
     # Validate inputs
-    if [ "$process_all" = false ] && [ -z "$config_name" ]; then
+    if [[ "$process_all" == false ]] && [[ -z "$config_name" ]]; then
         echo -e "${RED}❌ Error: Configuration name is required (or use --all)${NC}"
         usage
     fi
@@ -173,7 +173,7 @@ main() {
         exit 1
     fi
     
-    if [ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]; then
+    if [[ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]]; then
         echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}"
         exit 1
     fi
@@ -181,7 +181,7 @@ main() {
     # Display banner
     echo "=========================================="
     echo -e "${MAGENTA}ZATCA Compliance Workflow - SANDBOX${NC}"
-    if [ "$process_all" = true ]; then
+    if [[ "$process_all" == true ]]; then
         echo -e "${MAGENTA}Testing ALL Certificate Configurations${NC}"
     fi
     echo "=========================================="
@@ -195,16 +195,16 @@ main() {
     echo ""
     
     # For now, just test Phase 1 to verify it works
-    if [ "$process_all" = true ]; then
+    if [[ "$process_all" == true ]]; then
         echo -e "${CYAN}Discovering configurations in $OUTPUT_DIR...${NC}"
         local configs=()
         for config_dir in "$OUTPUT_DIR"/csr-config-*; do
-            if [ -d "$config_dir" ] && [ -f "$config_dir/certificate.csr" ]; then
+            if [[ -d "$config_dir" ]] && [[ -f "$config_dir/certificate.csr" ]]; then
                 configs+=(\"$(basename \"$config_dir\")\")
             fi
         done
         
-        if [ ${#configs[@]} -eq 0 ]; then
+        if [[ ${#configs[@]} -eq 0 ]]; then
             echo -e "${RED}❌ No configurations found in $OUTPUT_DIR${NC}"
             echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
             exit 1

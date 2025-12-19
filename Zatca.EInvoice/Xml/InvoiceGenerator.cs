@@ -52,265 +52,194 @@ namespace Zatca.EInvoice.Xml
                 new XAttribute(XNamespace.Xmlns + "ext", _ext)
             );
 
-            // UBL Extensions
-            if (invoiceData.ContainsKey("ublExtensions") && invoiceData["ublExtensions"] != null)
+            AddUblExtensions(invoice, invoiceData);
+            AddBasicElements(invoice, invoiceData);
+            AddInvoiceTypeCode(invoice, invoiceData);
+            AddNoteElement(invoice, invoiceData);
+            AddCurrencyElements(invoice, invoiceData);
+            AddReferenceElements(invoice, invoiceData);
+            AddPartyElements(invoice, invoiceData);
+            AddDeliveryAndPayment(invoice, invoiceData);
+            AddAllowanceCharges(invoice, invoiceData);
+            AddTaxAndMonetaryTotals(invoice, invoiceData);
+            AddInvoiceLines(invoice, invoiceData);
+
+            return invoice;
+        }
+
+        private void AddUblExtensions(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            if (!invoiceData.ContainsKey("ublExtensions") || invoiceData["ublExtensions"] == null)
+                return;
+
+            var ublExtensions = GenerateUBLExtensions(invoiceData["ublExtensions"]);
+            if (ublExtensions != null)
             {
-                var ublExtensions = GenerateUBLExtensions(invoiceData["ublExtensions"]);
-                if (ublExtensions != null)
-                {
-                    invoice.Add(ublExtensions);
-                }
+                invoice.Add(ublExtensions);
             }
+        }
 
-            // ProfileID
-            var profileId = GetString(invoiceData, "profileID", "reporting:1.0");
-            invoice.Add(new XElement(_cbc + "ProfileID", profileId));
+        private void AddBasicElements(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            invoice.Add(new XElement(_cbc + "ProfileID", GetString(invoiceData, "profileID", "reporting:1.0")));
 
-            // ID
             if (invoiceData.ContainsKey("id"))
-            {
                 invoice.Add(new XElement(_cbc + "ID", GetString(invoiceData, "id")));
-            }
 
-            // UUID
             if (invoiceData.ContainsKey("uuid"))
-            {
                 invoice.Add(new XElement(_cbc + "UUID", GetString(invoiceData, "uuid")));
-            }
 
-            // IssueDate
             if (invoiceData.ContainsKey("issueDate"))
-            {
-                var issueDate = GetDateTime(invoiceData["issueDate"]);
-                invoice.Add(new XElement(_cbc + "IssueDate", issueDate.ToString("yyyy-MM-dd")));
-            }
+                invoice.Add(new XElement(_cbc + "IssueDate", GetDateTime(invoiceData["issueDate"]).ToString("yyyy-MM-dd")));
 
-            // IssueTime
             if (invoiceData.ContainsKey("issueTime"))
+                invoice.Add(new XElement(_cbc + "IssueTime", GetDateTime(invoiceData["issueTime"]).ToString("HH:mm:ss")));
+        }
+
+        private void AddInvoiceTypeCode(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            if (!invoiceData.ContainsKey("invoiceType"))
+                return;
+
+            var invoiceType = TryGetDictionary(invoiceData["invoiceType"]);
+            if (invoiceType == null)
+                return;
+
+            var typeCode = GetInvoiceTypeCode(invoiceType);
+            var invoiceTypeName = GetInvoiceTypeName(invoiceType);
+
+            invoice.Add(new XElement(_cbc + "InvoiceTypeCode",
+                new XAttribute("name", invoiceTypeName),
+                typeCode));
+        }
+
+        private string GetInvoiceTypeCode(Dictionary<string, object> invoiceType)
+        {
+            var typeCode = GetString(invoiceType, "typeCode", "") != ""
+                ? GetString(invoiceType, "typeCode")
+                : GetString(invoiceType, "type", "388");
+
+            if (int.TryParse(typeCode, out _))
+                return typeCode;
+
+            return typeCode.ToLowerInvariant() switch
             {
-                var issueTime = GetDateTime(invoiceData["issueTime"]);
-                invoice.Add(new XElement(_cbc + "IssueTime", issueTime.ToString("HH:mm:ss")));
-            }
+                "credit" => "381",
+                "debit" => "383",
+                _ => "388"
+            };
+        }
 
-            // InvoiceTypeCode
-            if (invoiceData.ContainsKey("invoiceType"))
-            {
-                var invoiceType = TryGetDictionary(invoiceData["invoiceType"]);
-                if (invoiceType != null)
-                {
-                    // Support both old format (type/invoice) and new ZATCA format (typeCode/name)
-                    var typeCode = GetString(invoiceType, "typeCode", "") != ""
-                        ? GetString(invoiceType, "typeCode")
-                        : GetString(invoiceType, "type", "388");
-                    var invoiceTypeName = GetString(invoiceType, "name", "") != ""
-                        ? GetString(invoiceType, "name")
-                        : GetString(invoiceType, "invoice", "0100000");
+        private string GetInvoiceTypeName(Dictionary<string, object> invoiceType)
+        {
+            return GetString(invoiceType, "name", "") != ""
+                ? GetString(invoiceType, "name")
+                : GetString(invoiceType, "invoice", "0100000");
+        }
 
-                    // Convert string type codes if necessary
-                    if (!int.TryParse(typeCode, out _))
-                    {
-                        typeCode = typeCode.ToLowerInvariant() switch
-                        {
-                            "credit" => "381",
-                            "debit" => "383",
-                            _ => "388"
-                        };
-                    }
+        private void AddNoteElement(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            if (!invoiceData.ContainsKey("note") || string.IsNullOrWhiteSpace(GetString(invoiceData, "note")))
+                return;
 
-                    invoice.Add(new XElement(_cbc + "InvoiceTypeCode",
-                        new XAttribute("name", invoiceTypeName),
-                        typeCode));
-                }
-            }
+            invoice.Add(new XElement(_cbc + "Note",
+                new XAttribute("languageID", GetString(invoiceData, "languageID", "en")),
+                GetString(invoiceData, "note")));
+        }
 
-            // Note
-            if (invoiceData.ContainsKey("note") && !string.IsNullOrWhiteSpace(GetString(invoiceData, "note")))
-            {
-                var languageId = GetString(invoiceData, "languageID", "en");
-                invoice.Add(new XElement(_cbc + "Note",
-                    new XAttribute("languageID", languageId),
-                    GetString(invoiceData, "note")));
-            }
-
-            // DocumentCurrencyCode
+        private void AddCurrencyElements(XElement invoice, Dictionary<string, object> invoiceData)
+        {
             invoice.Add(new XElement(_cbc + "DocumentCurrencyCode", GetString(invoiceData, "currencyCode", _currencyId)));
-
-            // TaxCurrencyCode
             invoice.Add(new XElement(_cbc + "TaxCurrencyCode", GetString(invoiceData, "taxCurrencyCode", _currencyId)));
+        }
 
-            // OrderReference
-            if (invoiceData.ContainsKey("orderReference"))
-            {
-                var orderRef = TryGetDictionary(invoiceData["orderReference"]);
-                if (orderRef != null)
-                {
-                    invoice.Add(GenerateOrderReference(orderRef));
-                }
-            }
+        private void AddReferenceElements(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            AddOptionalElement(invoice, invoiceData, "orderReference", GenerateOrderReference);
+            AddListElements(invoice, invoiceData, "billingReferences", GenerateBillingReference);
+            AddOptionalElement(invoice, invoiceData, "contract", GenerateContractReference);
+            AddListElements(invoice, invoiceData, "additionalDocuments", GenerateAdditionalDocumentReference);
+            AddOptionalElement(invoice, invoiceData, "signature", GenerateSignature);
+        }
 
-            // BillingReference(s)
-            if (invoiceData.ContainsKey("billingReferences"))
-            {
-                var billingRefs = TryGetList(invoiceData["billingReferences"]);
-                if (billingRefs != null)
-                {
-                    foreach (var billingRef in billingRefs)
-                    {
-                        var billingRefDict = TryGetDictionary(billingRef);
-                        if (billingRefDict != null)
-                        {
-                            invoice.Add(GenerateBillingReference(billingRefDict));
-                        }
-                    }
-                }
-            }
+        private void AddPartyElements(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            AddOptionalElement(invoice, invoiceData, "supplier", GenerateAccountingSupplierParty);
+            AddOptionalElement(invoice, invoiceData, "customer", GenerateAccountingCustomerParty);
+        }
 
-            // ContractDocumentReference
-            if (invoiceData.ContainsKey("contract"))
-            {
-                var contract = TryGetDictionary(invoiceData["contract"]);
-                if (contract != null)
-                {
-                    invoice.Add(GenerateContractReference(contract));
-                }
-            }
-
-            // AdditionalDocumentReference(s)
-            if (invoiceData.ContainsKey("additionalDocuments"))
-            {
-                var additionalDocs = TryGetList(invoiceData["additionalDocuments"]);
-                if (additionalDocs != null)
-                {
-                    foreach (var doc in additionalDocs)
-                    {
-                        var docDict = TryGetDictionary(doc);
-                        if (docDict != null)
-                        {
-                            invoice.Add(GenerateAdditionalDocumentReference(docDict));
-                        }
-                    }
-                }
-            }
-
-            // Signature
-            if (invoiceData.ContainsKey("signature"))
-            {
-                var signature = TryGetDictionary(invoiceData["signature"]);
-                if (signature != null)
-                {
-                    invoice.Add(GenerateSignature(signature));
-                }
-            }
-
-            // AccountingSupplierParty
-            if (invoiceData.ContainsKey("supplier"))
-            {
-                var supplier = TryGetDictionary(invoiceData["supplier"]);
-                if (supplier != null)
-                {
-                    invoice.Add(GenerateAccountingSupplierParty(supplier));
-                }
-            }
-
-            // AccountingCustomerParty
-            if (invoiceData.ContainsKey("customer"))
-            {
-                var customer = TryGetDictionary(invoiceData["customer"]);
-                if (customer != null)
-                {
-                    invoice.Add(GenerateAccountingCustomerParty(customer));
-                }
-            }
-
-            // Delivery
+        private void AddDeliveryAndPayment(XElement invoice, Dictionary<string, object> invoiceData)
+        {
             if (invoiceData.ContainsKey("delivery"))
             {
                 var delivery = TryGetDictionary(invoiceData["delivery"]);
-                if (delivery != null)
-                {
-                    var deliveryElement = GenerateDelivery(delivery);
-                    if (deliveryElement != null)
-                    {
-                        invoice.Add(deliveryElement);
-                    }
-                }
+                var deliveryElement = delivery != null ? GenerateDelivery(delivery) : null;
+                if (deliveryElement != null)
+                    invoice.Add(deliveryElement);
             }
 
-            // PaymentMeans
-            if (invoiceData.ContainsKey("paymentMeans"))
-            {
-                var paymentMeans = TryGetDictionary(invoiceData["paymentMeans"]);
-                if (paymentMeans != null)
-                {
-                    invoice.Add(GeneratePaymentMeans(paymentMeans));
-                }
-            }
+            AddOptionalElement(invoice, invoiceData, "paymentMeans", GeneratePaymentMeans);
+        }
 
-            // AllowanceCharge(s)
-            if (invoiceData.ContainsKey("allowanceCharges"))
-            {
-                var allowanceCharges = TryGetList(invoiceData["allowanceCharges"]);
-                if (allowanceCharges != null)
-                {
-                    foreach (var allowanceCharge in allowanceCharges)
-                    {
-                        var acDict = TryGetDictionary(allowanceCharge);
-                        if (acDict != null)
-                        {
-                            invoice.Add(GenerateAllowanceCharge(acDict));
-                        }
-                    }
-                }
-            }
+        private void AddAllowanceCharges(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            AddListElements(invoice, invoiceData, "allowanceCharges", GenerateAllowanceCharge);
+        }
 
-            // TaxTotal
+        private void AddTaxAndMonetaryTotals(XElement invoice, Dictionary<string, object> invoiceData)
+        {
             if (invoiceData.ContainsKey("taxTotal"))
             {
                 var taxTotal = TryGetDictionary(invoiceData["taxTotal"]);
                 if (taxTotal != null)
                 {
-                    // First TaxTotal with currency
-                    if (taxTotal.ContainsKey("taxAmount"))
-                    {
-                        var taxAmountElement = new XElement(_cac + "TaxTotal",
-                            XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId)
-                        );
-                        invoice.Add(taxAmountElement);
-                    }
-
-                    // Second TaxTotal with subtotals
+                    AddTaxAmountElement(invoice, taxTotal);
                     invoice.Add(GenerateTaxTotal(taxTotal));
                 }
             }
 
-            // LegalMonetaryTotal
-            if (invoiceData.ContainsKey("legalMonetaryTotal"))
-            {
-                var lmt = TryGetDictionary(invoiceData["legalMonetaryTotal"]);
-                if (lmt != null)
-                {
-                    invoice.Add(GenerateLegalMonetaryTotal(lmt));
-                }
-            }
+            AddOptionalElement(invoice, invoiceData, "legalMonetaryTotal", GenerateLegalMonetaryTotal);
+        }
 
-            // InvoiceLine(s)
-            if (invoiceData.ContainsKey("invoiceLines"))
-            {
-                var invoiceLines = TryGetList(invoiceData["invoiceLines"]);
-                if (invoiceLines != null)
-                {
-                    foreach (var line in invoiceLines)
-                    {
-                        var lineDict = TryGetDictionary(line);
-                        if (lineDict != null)
-                        {
-                            invoice.Add(GenerateInvoiceLine(lineDict));
-                        }
-                    }
-                }
-            }
+        private void AddTaxAmountElement(XElement invoice, Dictionary<string, object> taxTotal)
+        {
+            if (!taxTotal.ContainsKey("taxAmount"))
+                return;
 
-            return invoice;
+            invoice.Add(new XElement(_cac + "TaxTotal",
+                XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId)));
+        }
+
+        private void AddInvoiceLines(XElement invoice, Dictionary<string, object> invoiceData)
+        {
+            AddListElements(invoice, invoiceData, "invoiceLines", GenerateInvoiceLine);
+        }
+
+        private void AddOptionalElement(XElement invoice, Dictionary<string, object> invoiceData, string key, Func<Dictionary<string, object>, XElement> generator)
+        {
+            if (!invoiceData.ContainsKey(key))
+                return;
+
+            var dict = TryGetDictionary(invoiceData[key]);
+            if (dict != null)
+                invoice.Add(generator(dict));
+        }
+
+        private void AddListElements(XElement invoice, Dictionary<string, object> invoiceData, string key, Func<Dictionary<string, object>, XElement> generator)
+        {
+            if (!invoiceData.ContainsKey(key))
+                return;
+
+            var list = TryGetList(invoiceData[key]);
+            if (list == null)
+                return;
+
+            foreach (var item in list)
+            {
+                var dict = TryGetDictionary(item);
+                if (dict != null)
+                    invoice.Add(generator(dict));
+            }
         }
 
         private XElement GenerateUBLExtensions(object ublExtensions)
@@ -456,74 +385,72 @@ namespace Zatca.EInvoice.Xml
         {
             var elements = new List<XElement>();
 
-            // PartyIdentification
-            if (party.ContainsKey("partyIdentification") && !string.IsNullOrWhiteSpace(GetString(party, "partyIdentification")))
-            {
-                var partyIdElement = new XElement(_cac + "PartyIdentification");
-                var idElement = new XElement(_cbc + "ID", GetString(party, "partyIdentification"));
-
-                if (party.ContainsKey("partyIdentificationId"))
-                {
-                    idElement.Add(new XAttribute("schemeID", GetString(party, "partyIdentificationId")));
-                }
-
-                partyIdElement.Add(idElement);
-                elements.Add(partyIdElement);
-            }
-
-            // PostalAddress
-            if (party.ContainsKey("address"))
-            {
-                var address = TryGetDictionary(party["address"]);
-                if (address != null)
-                {
-                    elements.Add(GenerateAddress(address));
-                }
-            }
-
-            // PartyTaxScheme
-            if (party.ContainsKey("taxId") || party.ContainsKey("taxScheme"))
-            {
-                var partyTaxScheme = new XElement(_cac + "PartyTaxScheme");
-
-                if (party.ContainsKey("taxId"))
-                {
-                    partyTaxScheme.Add(new XElement(_cbc + "CompanyID", GetString(party, "taxId")));
-                }
-
-                var taxSchemeElement = new XElement(_cac + "TaxScheme");
-                if (party.ContainsKey("taxScheme"))
-                {
-                    var taxScheme = TryGetDictionary(party["taxScheme"]);
-                    if (taxScheme != null && taxScheme.ContainsKey("id"))
-                    {
-                        taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
-                    }
-                    else
-                    {
-                        taxSchemeElement.Add(new XElement(_cbc + "ID", "VAT"));
-                    }
-                }
-                else
-                {
-                    taxSchemeElement.Add(new XElement(_cbc + "ID", "VAT"));
-                }
-
-                partyTaxScheme.Add(taxSchemeElement);
-                elements.Add(partyTaxScheme);
-            }
-
-            // PartyLegalEntity
-            if (party.ContainsKey("registrationName"))
-            {
-                var partyLegalEntity = new XElement(_cac + "PartyLegalEntity",
-                    new XElement(_cbc + "RegistrationName", GetString(party, "registrationName"))
-                );
-
-                elements.Add(partyLegalEntity);
-            }
+            AddPartyIdentification(elements, party);
+            AddPartyAddress(elements, party);
+            AddPartyTaxScheme(elements, party);
+            AddPartyLegalEntity(elements, party);
 
             return elements.ToArray();
+        }
+
+        private void AddPartyIdentification(List<XElement> elements, Dictionary<string, object> party)
+        {
+            if (!party.ContainsKey("partyIdentification") || string.IsNullOrWhiteSpace(GetString(party, "partyIdentification")))
+                return;
+
+            var idElement = new XElement(_cbc + "ID", GetString(party, "partyIdentification"));
+            if (party.ContainsKey("partyIdentificationId"))
+                idElement.Add(new XAttribute("schemeID", GetString(party, "partyIdentificationId")));
+
+            var partyIdElement = new XElement(_cac + "PartyIdentification", idElement);
+            elements.Add(partyIdElement);
+        }
+
+        private void AddPartyAddress(List<XElement> elements, Dictionary<string, object> party)
+        {
+            if (!party.ContainsKey("address"))
+                return;
+
+            var address = TryGetDictionary(party["address"]);
+            if (address != null)
+                elements.Add(GenerateAddress(address));
+        }
+
+        private void AddPartyTaxScheme(List<XElement> elements, Dictionary<string, object> party)
+        {
+            if (!party.ContainsKey("taxId") && !party.ContainsKey("taxScheme"))
+                return;
+
+            var partyTaxScheme = new XElement(_cac + "PartyTaxScheme");
+
+            if (party.ContainsKey("taxId"))
+                partyTaxScheme.Add(new XElement(_cbc + "CompanyID", GetString(party, "taxId")));
+
+            partyTaxScheme.Add(new XElement(_cac + "TaxScheme",
+                new XElement(_cbc + "ID", GetPartyTaxSchemeId(party))));
+
+            elements.Add(partyTaxScheme);
+        }
+
+        private string GetPartyTaxSchemeId(Dictionary<string, object> party)
+        {
+            if (!party.ContainsKey("taxScheme"))
+                return "VAT";
+
+            var taxScheme = TryGetDictionary(party["taxScheme"]);
+            if (taxScheme != null && taxScheme.ContainsKey("id"))
+                return GetString(taxScheme, "id");
+
+            return "VAT";
+        }
+
+        private void AddPartyLegalEntity(List<XElement> elements, Dictionary<string, object> party)
+        {
+            if (!party.ContainsKey("registrationName"))
+                return;
+
+            elements.Add(new XElement(_cac + "PartyLegalEntity",
+                new XElement(_cbc + "RegistrationName", GetString(party, "registrationName"))));
         }
 
         private XElement GenerateAddress(Dictionary<string, object> address)
@@ -629,71 +556,77 @@ namespace Zatca.EInvoice.Xml
             var element = new XElement(_cac + "AllowanceCharge");
 
             if (ac.ContainsKey("chargeIndicator"))
-            {
                 element.Add(new XElement(_cbc + "ChargeIndicator", GetString(ac, "chargeIndicator")));
-            }
 
             if (ac.ContainsKey("allowanceChargeReason"))
-            {
                 element.Add(new XElement(_cbc + "AllowanceChargeReason", GetString(ac, "allowanceChargeReason")));
-            }
 
             if (ac.ContainsKey("amount"))
-            {
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "Amount", GetDecimal(ac["amount"]), _currencyId));
-            }
 
-            // Add TaxCategory for BR-32 compliance
-            if (ac.ContainsKey("taxCategories"))
-            {
-                var taxCategories = TryGetList(ac["taxCategories"]);
-                if (taxCategories != null)
-                {
-                    foreach (var category in taxCategories)
-                    {
-                        var categoryDict = TryGetDictionary(category);
-                        if (categoryDict != null)
-                        {
-                            var taxCategoryElement = new XElement(_cac + "TaxCategory");
-
-                            if (categoryDict.ContainsKey("id"))
-                            {
-                                taxCategoryElement.Add(new XElement(_cbc + "ID",
-                                    new XAttribute("schemeID", "UN/ECE 5305"),
-                                    new XAttribute("schemeAgencyID", "6"),
-                                    GetString(categoryDict, "id")));
-                            }
-
-                            if (categoryDict.ContainsKey("percent"))
-                            {
-                                taxCategoryElement.Add(new XElement(_cbc + "Percent",
-                                    GetDecimal(categoryDict["percent"]).ToString("F2")));
-                            }
-
-                            if (categoryDict.ContainsKey("taxScheme"))
-                            {
-                                var taxScheme = TryGetDictionary(categoryDict["taxScheme"]);
-                                if (taxScheme != null)
-                                {
-                                    var taxSchemeElement = new XElement(_cac + "TaxScheme");
-                                    if (taxScheme.ContainsKey("id"))
-                                    {
-                                        taxSchemeElement.Add(new XElement(_cbc + "ID",
-                                            new XAttribute("schemeID", "UN/ECE 5153"),
-                                            new XAttribute("schemeAgencyID", "6"),
-                                            GetString(taxScheme, "id")));
-                                    }
-                                    taxCategoryElement.Add(taxSchemeElement);
-                                }
-                            }
-
-                            element.Add(taxCategoryElement);
-                        }
-                    }
-                }
-            }
+            AddAllowanceChargeTaxCategories(element, ac);
 
             return element;
+        }
+
+        private void AddAllowanceChargeTaxCategories(XElement element, Dictionary<string, object> ac)
+        {
+            if (!ac.ContainsKey("taxCategories"))
+                return;
+
+            var taxCategories = TryGetList(ac["taxCategories"]);
+            if (taxCategories == null)
+                return;
+
+            foreach (var category in taxCategories)
+            {
+                var categoryDict = TryGetDictionary(category);
+                if (categoryDict != null)
+                    element.Add(GenerateAllowanceChargeTaxCategory(categoryDict));
+            }
+        }
+
+        private XElement GenerateAllowanceChargeTaxCategory(Dictionary<string, object> categoryDict)
+        {
+            var taxCategoryElement = new XElement(_cac + "TaxCategory");
+
+            if (categoryDict.ContainsKey("id"))
+            {
+                taxCategoryElement.Add(new XElement(_cbc + "ID",
+                    new XAttribute("schemeID", "UN/ECE 5305"),
+                    new XAttribute("schemeAgencyID", "6"),
+                    GetString(categoryDict, "id")));
+            }
+
+            if (categoryDict.ContainsKey("percent"))
+            {
+                taxCategoryElement.Add(new XElement(_cbc + "Percent",
+                    GetDecimal(categoryDict["percent"]).ToString("F2")));
+            }
+
+            AddTaxSchemeElement(taxCategoryElement, categoryDict, "UN/ECE 5153");
+
+            return taxCategoryElement;
+        }
+
+        private void AddTaxSchemeElement(XElement parent, Dictionary<string, object> dict, string schemeId)
+        {
+            if (!dict.ContainsKey("taxScheme"))
+                return;
+
+            var taxScheme = TryGetDictionary(dict["taxScheme"]);
+            if (taxScheme == null)
+                return;
+
+            var taxSchemeElement = new XElement(_cac + "TaxScheme");
+            if (taxScheme.ContainsKey("id"))
+            {
+                taxSchemeElement.Add(new XElement(_cbc + "ID",
+                    new XAttribute("schemeID", schemeId),
+                    new XAttribute("schemeAgencyID", "6"),
+                    GetString(taxScheme, "id")));
+            }
+            parent.Add(taxSchemeElement);
         }
 
         private XElement GenerateTaxTotal(Dictionary<string, object> taxTotal)
@@ -729,71 +662,53 @@ namespace Zatca.EInvoice.Xml
             var element = new XElement(_cac + "TaxSubtotal");
 
             if (subTotal.ContainsKey("taxableAmount"))
-            {
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxableAmount", GetDecimal(subTotal["taxableAmount"]), _currencyId));
-            }
 
             if (subTotal.ContainsKey("taxAmount"))
-            {
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(subTotal["taxAmount"]), _currencyId));
-            }
 
-            if (subTotal.ContainsKey("taxCategory"))
-            {
-                var taxCategory = TryGetDictionary(subTotal["taxCategory"]);
-                if (taxCategory != null)
-                {
-                    var taxCategoryElement = new XElement(_cac + "TaxCategory");
-
-                    if (taxCategory.ContainsKey("id"))
-                    {
-                        // ZATCA requires schemeID and schemeAgencyID for tax category ID
-                        taxCategoryElement.Add(new XElement(_cbc + "ID",
-                            new XAttribute("schemeID", "UN/ECE 5305"),
-                            new XAttribute("schemeAgencyID", "6"),
-                            GetString(taxCategory, "id")));
-                    }
-
-                    if (taxCategory.ContainsKey("percent"))
-                    {
-                        taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(taxCategory["percent"]).FormatPercent()));
-                    }
-
-                    if (taxCategory.ContainsKey("taxExemptionReasonCode"))
-                    {
-                        taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReasonCode", GetString(taxCategory, "taxExemptionReasonCode")));
-                    }
-
-                    if (taxCategory.ContainsKey("taxExemptionReason"))
-                    {
-                        taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReason", GetString(taxCategory, "taxExemptionReason")));
-                    }
-
-                    if (taxCategory.ContainsKey("taxScheme"))
-                    {
-                        var taxScheme = TryGetDictionary(taxCategory["taxScheme"]);
-                        if (taxScheme != null)
-                        {
-                            var taxSchemeElement = new XElement(_cac + "TaxScheme");
-
-                            if (taxScheme.ContainsKey("id"))
-                            {
-                                // ZATCA requires schemeID and schemeAgencyID for tax scheme ID
-                                taxSchemeElement.Add(new XElement(_cbc + "ID",
-                                    new XAttribute("schemeID", "UN/ECE 5153"),
-                                    new XAttribute("schemeAgencyID", "6"),
-                                    GetString(taxScheme, "id")));
-                            }
-
-                            taxCategoryElement.Add(taxSchemeElement);
-                        }
-                    }
-
-                    element.Add(taxCategoryElement);
-                }
-            }
+            AddSubTotalTaxCategory(element, subTotal);
 
             return element;
+        }
+
+        private void AddSubTotalTaxCategory(XElement element, Dictionary<string, object> subTotal)
+        {
+            if (!subTotal.ContainsKey("taxCategory"))
+                return;
+
+            var taxCategory = TryGetDictionary(subTotal["taxCategory"]);
+            if (taxCategory == null)
+                return;
+
+            var taxCategoryElement = GenerateSubTotalTaxCategoryElement(taxCategory);
+            element.Add(taxCategoryElement);
+        }
+
+        private XElement GenerateSubTotalTaxCategoryElement(Dictionary<string, object> taxCategory)
+        {
+            var taxCategoryElement = new XElement(_cac + "TaxCategory");
+
+            if (taxCategory.ContainsKey("id"))
+            {
+                taxCategoryElement.Add(new XElement(_cbc + "ID",
+                    new XAttribute("schemeID", "UN/ECE 5305"),
+                    new XAttribute("schemeAgencyID", "6"),
+                    GetString(taxCategory, "id")));
+            }
+
+            if (taxCategory.ContainsKey("percent"))
+                taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(taxCategory["percent"]).FormatPercent()));
+
+            if (taxCategory.ContainsKey("taxExemptionReasonCode"))
+                taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReasonCode", GetString(taxCategory, "taxExemptionReasonCode")));
+
+            if (taxCategory.ContainsKey("taxExemptionReason"))
+                taxCategoryElement.Add(new XElement(_cbc + "TaxExemptionReason", GetString(taxCategory, "taxExemptionReason")));
+
+            AddTaxSchemeElement(taxCategoryElement, taxCategory, "UN/ECE 5153");
+
+            return taxCategoryElement;
         }
 
         private XElement GenerateLegalMonetaryTotal(Dictionary<string, object> lmt)
@@ -838,69 +753,42 @@ namespace Zatca.EInvoice.Xml
             var element = new XElement(_cac + "InvoiceLine");
 
             if (line.ContainsKey("id"))
-            {
                 element.Add(new XElement(_cbc + "ID", GetString(line, "id")));
-            }
 
             if (line.ContainsKey("note"))
-            {
                 element.Add(new XElement(_cbc + "Note", GetString(line, "note")));
-            }
 
             if (line.ContainsKey("quantity"))
-            {
-                var unitCode = GetString(line, "unitCode", "PCE");
-                element.Add(XmlSerializationExtensions.CreateQuantityElement(_cbc + "InvoicedQuantity", GetDecimal(line["quantity"]), unitCode));
-            }
+                element.Add(XmlSerializationExtensions.CreateQuantityElement(_cbc + "InvoicedQuantity", GetDecimal(line["quantity"]), GetString(line, "unitCode", "PCE")));
 
             if (line.ContainsKey("lineExtensionAmount"))
-            {
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "LineExtensionAmount", GetDecimal(line["lineExtensionAmount"]), _currencyId));
-            }
 
-            // TaxTotal
-            if (line.ContainsKey("taxTotal"))
-            {
-                var taxTotal = TryGetDictionary(line["taxTotal"]);
-                if (taxTotal != null)
-                {
-                    var taxTotalElement = new XElement(_cac + "TaxTotal");
-
-                    if (taxTotal.ContainsKey("taxAmount"))
-                    {
-                        taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId));
-                    }
-
-                    if (taxTotal.ContainsKey("roundingAmount"))
-                    {
-                        taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(taxTotal["roundingAmount"]), _currencyId));
-                    }
-
-                    element.Add(taxTotalElement);
-                }
-            }
-
-            // Item
-            if (line.ContainsKey("item"))
-            {
-                var item = TryGetDictionary(line["item"]);
-                if (item != null)
-                {
-                    element.Add(GenerateItem(item));
-                }
-            }
-
-            // Price
-            if (line.ContainsKey("price"))
-            {
-                var price = TryGetDictionary(line["price"]);
-                if (price != null)
-                {
-                    element.Add(GeneratePrice(price));
-                }
-            }
+            AddLineTaxTotal(element, line);
+            AddOptionalElement(element, line, "item", GenerateItem);
+            AddOptionalElement(element, line, "price", GeneratePrice);
 
             return element;
+        }
+
+        private void AddLineTaxTotal(XElement element, Dictionary<string, object> line)
+        {
+            if (!line.ContainsKey("taxTotal"))
+                return;
+
+            var taxTotal = TryGetDictionary(line["taxTotal"]);
+            if (taxTotal == null)
+                return;
+
+            var taxTotalElement = new XElement(_cac + "TaxTotal");
+
+            if (taxTotal.ContainsKey("taxAmount"))
+                taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxTotal["taxAmount"]), _currencyId));
+
+            if (taxTotal.ContainsKey("roundingAmount"))
+                taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(taxTotal["roundingAmount"]), _currencyId));
+
+            element.Add(taxTotalElement);
         }
 
         private XElement GenerateItem(Dictionary<string, object> item)
@@ -908,55 +796,59 @@ namespace Zatca.EInvoice.Xml
             var element = new XElement(_cac + "Item");
 
             if (item.ContainsKey("name"))
-            {
                 element.Add(new XElement(_cbc + "Name", GetString(item, "name")));
-            }
 
-            if (item.ContainsKey("classifiedTaxCategory"))
-            {
-                var classifiedTaxCategories = TryGetList(item["classifiedTaxCategory"]);
-                if (classifiedTaxCategories != null)
-                {
-                    foreach (var category in classifiedTaxCategories)
-                    {
-                        var categoryDict = TryGetDictionary(category);
-                        if (categoryDict != null)
-                        {
-                            var taxCategoryElement = new XElement(_cac + "ClassifiedTaxCategory");
-
-                            if (categoryDict.ContainsKey("id"))
-                            {
-                                taxCategoryElement.Add(new XElement(_cbc + "ID", GetString(categoryDict, "id")));
-                            }
-
-                            if (categoryDict.ContainsKey("percent"))
-                            {
-                                taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(categoryDict["percent"]).FormatPercent()));
-                            }
-
-                            if (categoryDict.ContainsKey("taxScheme"))
-                            {
-                                var taxScheme = TryGetDictionary(categoryDict["taxScheme"]);
-                                if (taxScheme != null)
-                                {
-                                    var taxSchemeElement = new XElement(_cac + "TaxScheme");
-
-                                    if (taxScheme.ContainsKey("id"))
-                                    {
-                                        taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
-                                    }
-
-                                    taxCategoryElement.Add(taxSchemeElement);
-                                }
-                            }
-
-                            element.Add(taxCategoryElement);
-                        }
-                    }
-                }
-            }
+            AddClassifiedTaxCategories(element, item);
 
             return element;
+        }
+
+        private void AddClassifiedTaxCategories(XElement element, Dictionary<string, object> item)
+        {
+            if (!item.ContainsKey("classifiedTaxCategory"))
+                return;
+
+            var classifiedTaxCategories = TryGetList(item["classifiedTaxCategory"]);
+            if (classifiedTaxCategories == null)
+                return;
+
+            foreach (var category in classifiedTaxCategories)
+            {
+                var categoryDict = TryGetDictionary(category);
+                if (categoryDict != null)
+                    element.Add(GenerateClassifiedTaxCategory(categoryDict));
+            }
+        }
+
+        private XElement GenerateClassifiedTaxCategory(Dictionary<string, object> categoryDict)
+        {
+            var taxCategoryElement = new XElement(_cac + "ClassifiedTaxCategory");
+
+            if (categoryDict.ContainsKey("id"))
+                taxCategoryElement.Add(new XElement(_cbc + "ID", GetString(categoryDict, "id")));
+
+            if (categoryDict.ContainsKey("percent"))
+                taxCategoryElement.Add(new XElement(_cbc + "Percent", GetDecimal(categoryDict["percent"]).FormatPercent()));
+
+            AddSimpleTaxScheme(taxCategoryElement, categoryDict);
+
+            return taxCategoryElement;
+        }
+
+        private void AddSimpleTaxScheme(XElement parent, Dictionary<string, object> dict)
+        {
+            if (!dict.ContainsKey("taxScheme"))
+                return;
+
+            var taxScheme = TryGetDictionary(dict["taxScheme"]);
+            if (taxScheme == null)
+                return;
+
+            var taxSchemeElement = new XElement(_cac + "TaxScheme");
+            if (taxScheme.ContainsKey("id"))
+                taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
+
+            parent.Add(taxSchemeElement);
         }
 
         private XElement GeneratePrice(Dictionary<string, object> price)

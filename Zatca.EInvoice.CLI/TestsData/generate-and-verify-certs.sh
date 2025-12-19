@@ -43,12 +43,12 @@ verify_csr() {
     echo "----------------------------------------"
     
     # Check if files exist
-    if [ ! -f "$csr_file" ]; then
+    if [[ ! -f "$csr_file" ]]; then
         echo -e "${RED}❌ Error: $csr_file not found${NC}"
         return 1
     fi
     
-    if [ ! -f "$key_file" ]; then
+    if [[ ! -f "$key_file" ]]; then
         echo -e "${RED}❌ Error: $key_file not found${NC}"
         return 1
     fi
@@ -69,7 +69,7 @@ verify_csr() {
     CSR_PUBKEY=$(openssl req -in "$csr_file" -noout -pubkey)
     KEY_PUBKEY=$(openssl ec -in "$key_file" -pubout 2>/dev/null)
     
-    if [ "$CSR_PUBKEY" = "$KEY_PUBKEY" ]; then
+    if [[ "$CSR_PUBKEY" == "$KEY_PUBKEY" ]]; then
         echo -e "${GREEN}✓ Public keys match - CSR and private key are a valid pair${NC}"
     else
         echo -e "${RED}❌ Public keys do NOT match - Invalid key pair${NC}"
@@ -212,7 +212,7 @@ echo "CLI Directory: $CLI_DIR"
 echo ""
 
 # Check if CLI project exists
-if [ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]; then
+if [[ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]]; then
     echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}"
     exit 1
 fi
@@ -226,7 +226,7 @@ failed=0
 echo -e "${CYAN}Discovering configurations...${NC}"
 configs_to_test=()
 for props_file in "$INPUT_DIR"/*.properties; do
-    if [ ! -f "$props_file" ]; then
+    if [[ ! -f "$props_file" ]]; then
         echo -e "${RED}No .properties files found in $INPUT_DIR${NC}"
         exit 1
     fi
@@ -265,7 +265,7 @@ echo -e "Passed: ${GREEN}$passed${NC}"
 echo -e "Failed: ${RED}$failed${NC}"
 echo ""
 
-if [ $failed -eq 0 ]; then
+if [[ $failed -eq 0 ]]; then
     echo -e "${GREEN}✓✓ All certificates generated and verified successfully!${NC}"
     exit 0
 else

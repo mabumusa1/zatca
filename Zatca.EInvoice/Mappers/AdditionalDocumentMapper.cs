@@ -35,56 +35,58 @@ namespace Zatca.EInvoice.Mappers
 
             foreach (var docObj in documentsList)
             {
-                if (docObj is Dictionary<string, object> doc)
-                {
-                    // Ensure a valid document ID is provided
-                    var docId = DictionaryHelper.GetString(doc, "id", string.Empty);
-                    if (string.IsNullOrEmpty(docId))
-                    {
-                        continue; // Skip documents without an ID
-                    }
-
-                    var docRef = new AdditionalDocumentReference
-                    {
-                        Id = docId
-                    };
-
-                    // Set UUID if provided
-                    var uuid = DictionaryHelper.GetString(doc, "uuid", null);
-                    if (!string.IsNullOrEmpty(uuid))
-                    {
-                        docRef.UUID = uuid;
-                    }
-
-                    // If document ID is 'PIH', map the attachment if provided
-                    if (docId == "PIH" && doc.ContainsKey("attachment"))
-                    {
-                        var attachmentData = DictionaryHelper.GetDictionary(doc, "attachment");
-                        if (attachmentData != null)
-                        {
-                            var attachment = new Attachment
-                            {
-                                EmbeddedDocumentBinaryObject = DictionaryHelper.GetString(attachmentData, "content") ?? string.Empty,
-                                MimeCode = DictionaryHelper.GetString(attachmentData, "mimeCode") ?? "base64",
-                                MimeType = DictionaryHelper.GetString(attachmentData, "mimeType") ?? "text/plain"
-                            };
-
-                            docRef.Attachment = attachment;
-                        }
-                    }
-
+                var docRef = MapSingleDocument(docObj);
+                if (docRef != null)
                     additionalDocs.Add(docRef);
-                }
             }
 
-            // Append a default additional document reference for QR code if not already present
-            var qrExists = additionalDocs.Any(d => d.Id == "QR");
-            if (!qrExists)
-            {
-                additionalDocs.Add(new AdditionalDocumentReference { Id = "QR" });
-            }
+            EnsureQrDocumentExists(additionalDocs);
 
             return additionalDocs;
+        }
+
+        private AdditionalDocumentReference? MapSingleDocument(object docObj)
+        {
+            if (docObj is not Dictionary<string, object> doc)
+                return null;
+
+            var docId = DictionaryHelper.GetString(doc, "id", string.Empty);
+            if (string.IsNullOrEmpty(docId))
+                return null;
+
+            var docRef = new AdditionalDocumentReference { Id = docId };
+
+            var uuid = DictionaryHelper.GetString(doc, "uuid", null);
+            if (!string.IsNullOrEmpty(uuid))
+                docRef.UUID = uuid;
+
+            if (docId == "PIH")
+                MapPihAttachment(docRef, doc);
+
+            return docRef;
+        }
+
+        private void MapPihAttachment(AdditionalDocumentReference docRef, Dictionary<string, object> doc)
+        {
+            if (!doc.ContainsKey("attachment"))
+                return;
+
+            var attachmentData = DictionaryHelper.GetDictionary(doc, "attachment");
+            if (attachmentData == null)
+                return;
+
+            docRef.Attachment = new Attachment
+            {
+                EmbeddedDocumentBinaryObject = DictionaryHelper.GetString(attachmentData, "content") ?? string.Empty,
+                MimeCode = DictionaryHelper.GetString(attachmentData, "mimeCode") ?? "base64",
+                MimeType = DictionaryHelper.GetString(attachmentData, "mimeType") ?? "text/plain"
+            };
+        }
+
+        private void EnsureQrDocumentExists(List<AdditionalDocumentReference> additionalDocs)
+        {
+            if (!additionalDocs.Any(d => d.Id == "QR"))
+                additionalDocs.Add(new AdditionalDocumentReference { Id = "QR" });
         }
     }
 }
