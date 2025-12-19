@@ -4,7 +4,7 @@
 
 ### Prerequisites
 - Delete the `Output` folder to start fresh: `rm -rf Output`
-- Have your ZATCA OTP ready from the sandbox portal
+- Have your ZATCA OTP ready from the sandbox portal (or use default: 123345)
 - Credentials are already configured in the scripts
 
 ### Step 1: Generate All Certificates
@@ -33,29 +33,30 @@ Output/
 │   └── status.txt
 ├── csr-config-example-AR-VAT-Group/
 ├── csr-config-example-EN/
+├── csr-config-example-EN-NEW/
 └── csr-config-example-EN-VAT-group/
 ```
 
 ### Step 2: Run Complete Compliance Workflow
 
-**IMPORTANT**: Get a fresh OTP from the ZATCA portal before running this step:
-- **Sandbox Portal**: https://sandbox.zatca.gov.sa/IntegrationSandbox
-- Login with credentials (see below)
-- Generate a new OTP (they expire quickly)
-
+**For sandbox testing (uses default OTP 123345):**
 ```bash
 chmod +x compliance-workflow.sh
 
-# Test ALL configurations (recommended) - REPLACE YOUR_OTP with actual OTP from portal
-./compliance-workflow.sh --all --otp YOUR_OTP_HERE --env simulation
+# Test ALL configurations (recommended)
+./compliance-workflow.sh --all --env sandbox
 
 # Or test a single configuration
-./compliance-workflow.sh --config csr-config-example-EN --otp YOUR_OTP_HERE --env simulation
+./compliance-workflow.sh --config csr-config-example-EN --env sandbox
 ```
 
-**Note**: Use `--env simulation` for testing. Sandbox and simulation endpoints behave differently.
+**For simulation/production (requires fresh OTP):**
+```bash
+# Get a fresh OTP from: https://sandbox.zatca.gov.sa/IntegrationSandbox
+./compliance-workflow.sh --all --otp YOUR_OTP_HERE --env simulation
+```
 
-This will perform the complete 3-phase lifecycle for EACH configuration:
+This will perform the complete 5-phase lifecycle for EACH configuration:
 
 **Phase 1: Compliance Certificate (CSID)**
 - Request compliance certificate from ZATCA API
@@ -72,6 +73,18 @@ This will perform the complete 3-phase lifecycle for EACH configuration:
 - Request production certificate
 - Save production certificate and secret
 - Logs: `production/production_response.json`, `phase3_summary.txt`
+
+**Phase 4: Invoice Submission**
+- Generate fresh invoices for production submission
+- Sign invoices with production certificate (or compliance cert in sandbox)
+- Submit simplified invoices via reporting API (B2C)
+- Submit standard invoices via clearance API (B2B)
+- Logs: `production/invoice_submissions/`, `phase4_summary.txt`
+
+**Phase 5: Certificate Renewal (Optional)**
+- Test certificate renewal API
+- Request renewed production certificate
+- Logs: `production/renewal/`, `phase5_summary.txt`
 
 ### Expected Complete Structure
 
@@ -91,29 +104,31 @@ Output/csr-config-example-EN/
 │   ├── secret.txt                  # Compliance secret
 │   ├── request_id.txt              # For production cert request
 │   ├── compliance_response.json    # Full API response
+│   ├── compliance.pfx              # PFX format certificate
 │   ├── phase1_summary.txt          # Phase 1 summary
 │   ├── phase2_summary.txt          # Phase 2 summary
-│   ├── compliance.pfx              # PFX format certificate
 │   └── test_invoices/
-│       ├── simplified_invoice.json
-│       ├── simplified_invoice.xml
-│       ├── simplified_invoice_signed.xml
-│       ├── simplified_hash.txt
-│       ├── simplified_uuid.txt
-│       ├── simplified_compliance_result.json
-│       ├── simplified_compliance_summary.txt
-│       ├── standard_invoice.json
-│       ├── standard_invoice.xml
-│       ├── standard_invoice_signed.xml
-│       ├── standard_hash.txt
-│       ├── standard_uuid.txt
-│       ├── standard_compliance_result.json
-│       └── standard_compliance_summary.txt
+│       ├── simplified_invoice.*    # Simplified invoice files
+│       ├── simplified_*.json/txt   # Signing and compliance results
+│       ├── standard_invoice.*      # Standard invoice files
+│       └── standard_*.json/txt     # Signing and compliance results
 └── production/
     ├── production.crt              # Production certificate (PCSID)
     ├── production_secret.txt       # Production secret
     ├── production_response.json    # Full API response
-    └── phase3_summary.txt          # Phase 3 summary
+    ├── phase3_summary.txt          # Phase 3 summary
+    ├── phase4_summary.txt          # Phase 4 summary
+    ├── invoice_submissions/        # Phase 4: Production invoices
+    │   ├── simplified_invoice.*    # Simplified invoice (reporting)
+    │   ├── simplified_*.json       # Reporting results
+    │   ├── standard_invoice.*      # Standard invoice (clearance)
+    │   ├── standard_*.json         # Clearance results
+    │   └── standard_cleared.xml    # Cleared invoice from ZATCA
+    └── renewal/                    # Phase 5: Certificate renewal
+        ├── renewed_production.crt  # Renewed certificate
+        ├── renewed_production_secret.txt
+        ├── renewal_response.json   # Renewal API response
+        └── phase5_summary.txt      # Phase 5 summary
 ```
 
 ## Credentials
@@ -121,30 +136,41 @@ Output/csr-config-example-EN/
 - **Username:** m.abumusa@karage.co
 - **Password:** @hR8C8FQTxm9#ge
 - **Sandbox Portal:** https://sandbox.zatca.gov.sa/IntegrationSandbox
+- **Default Sandbox OTP:** 123345 (may work, get fresh OTP if it fails)
 
 ## What Gets Tested
 
-The scripts will test **ALL** certificate configurations:
+The scripts will test **ALL** 5 certificate configurations:
 
-1. **csr-config-example-EN** - English configuration
-2. **csr-config-example-AR** - Arabic configuration
-3. **csr-config-example-EN-VAT-group** - English VAT group
-4. **csr-config-example-AR-VAT-Group** - Arabic VAT group
+| Config | Language | Org ID | VAT Group |
+|--------|----------|--------|-----------|
+| csr-config-example-EN | English | 399999999900003 | No |
+| csr-config-example-EN-NEW | English | 310000000000013 | No |
+| csr-config-example-AR | Arabic | 399999999900003 | No |
+| csr-config-example-EN-VAT-group | English | 399999999910003 | Yes |
+| csr-config-example-AR-VAT-Group | Arabic | 399999999910003 | Yes |
 
 Each configuration goes through:
-- ✓ Certificate generation
-- ✓ Certificate verification
-- ✓ Compliance certificate request
-- ✓ Simplified invoice compliance check
-- ✓ Standard invoice compliance check
-- ✓ Production certificate request
+- Phase 0: Certificate generation and verification
+- Phase 1: Compliance certificate request (CSID)
+- Phase 2: Simplified and standard invoice compliance checks
+- Phase 3: Production certificate request (PCSID)
+- Phase 4: Invoice submission (clearance + reporting)
+- Phase 5: Certificate renewal test
+
+## Sandbox Limitations
+
+When testing in sandbox mode, you may see these expected behaviors:
+- **Simplified invoice reporting** may show "sandbox certificate limitation" warning
+- **Certificate renewal** may fail with 404 (endpoint not available in sandbox)
+- These are normal in sandbox - the actual API flow works correctly
 
 ## Troubleshooting
 
 ### Check Logs
 All API responses and outputs are saved. Check:
 - `generation_output.log` - Certificate generation
-- `compliance_response.json` - API responses
+- `*_response.json` - API responses
 - `*_summary.txt` files - Human-readable summaries
 - `*_output.log` files - Complete command outputs
 
@@ -176,15 +202,18 @@ find Output -name "*_summary.txt" -exec echo "=== {} ===" \; -exec cat {} \;
 
 # Check workflow completion
 find Output -name "workflow_complete.txt" -exec cat {} \;
+
+# Count completed workflows
+find Output -name "workflow_complete.txt" | wc -l
 ```
 
 ## Success Indicators
 
-✅ **Script completed successfully** - All tests passed
-✅ **Files generated** - Check Output folder structure
-✅ **API responses saved** - All JSON files present
-✅ **Certificates created** - .crt and .pem files exist
-✅ **Summary files** - Human-readable summaries available
+- All 5 configurations complete with `workflow_complete.txt`
+- Phase 1-4 summaries show SUCCESS
+- Compliance checks pass for both simplified and standard invoices
+- Clearance returns status: CLEARED for standard invoices
+- No unexpected errors in `*_response.json` files
 
 ## Next Steps
 

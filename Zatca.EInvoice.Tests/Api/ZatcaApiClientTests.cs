@@ -837,6 +837,192 @@ namespace Zatca.EInvoice.Tests.Api
         }
 
         /// <summary>
+        /// Test that RenewProductionCertificate returns successful response.
+        /// </summary>
+        [Fact]
+        public async Task TestRenewProductionCertificateSuccess()
+        {
+            // Arrange
+            var responseContent = JsonSerializer.Serialize(new
+            {
+                binarySecurityToken = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("RENEWED_CERTIFICATE")),
+                secret = "renewed_secret_789",
+                requestID = "renewal_req_111",
+                dispositionMessage = "Certificate renewed successfully",
+                validationResults = new
+                {
+                    errorMessages = Array.Empty<object>(),
+                    warningMessages = Array.Empty<object>()
+                }
+            });
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Simulation, httpClient);
+            _clients.Add(client);
+
+            // Act
+            var result = await client.RenewProductionCertificateAsync(
+                "123456",
+                "test_csr_content",
+                "current_certificate",
+                "current_secret");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("RENEWED_CERTIFICATE", result.BinarySecurityToken);
+            Assert.Equal("renewed_secret_789", result.Secret);
+            Assert.Equal("renewal_req_111", result.RequestId);
+            Assert.Equal("Certificate renewed successfully", result.DispositionMessage);
+            Assert.Empty(result.Errors);
+            Assert.Empty(result.Warnings);
+        }
+
+        /// <summary>
+        /// Test that RenewProductionCertificate uses PATCH method.
+        /// </summary>
+        [Fact]
+        public async Task TestRenewProductionCertificateUsesPatchMethod()
+        {
+            // Arrange
+            HttpRequestMessage capturedRequest = null;
+            var mockHandler = new Mock<HttpMessageHandler>();
+            mockHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync((HttpRequestMessage request, CancellationToken ct) =>
+                {
+                    capturedRequest = request;
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(JsonSerializer.Serialize(new
+                        {
+                            binarySecurityToken = "dGVzdA==",
+                            secret = "secret",
+                            requestID = "req",
+                            dispositionMessage = "OK",
+                            validationResults = new { }
+                        }))
+                    };
+                });
+
+            var httpClient = new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/")
+            };
+            var client = new ZatcaApiClient(ZatcaEnvironment.Simulation, httpClient);
+            _clients.Add(client);
+
+            // Act
+            await client.RenewProductionCertificateAsync(
+                "123456",
+                "test_csr",
+                "test_cert",
+                "test_secret");
+
+            // Assert
+            Assert.NotNull(capturedRequest);
+            Assert.Equal("PATCH", capturedRequest.Method.Method);
+            Assert.Contains("production/csids/renewal", capturedRequest.RequestUri?.ToString());
+        }
+
+        /// <summary>
+        /// Test that RenewProductionCertificate includes OTP header.
+        /// </summary>
+        [Fact]
+        public async Task TestRenewProductionCertificateIncludesOtpHeader()
+        {
+            // Arrange
+            HttpRequestMessage capturedRequest = null;
+            var mockHandler = new Mock<HttpMessageHandler>();
+            mockHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync((HttpRequestMessage request, CancellationToken ct) =>
+                {
+                    capturedRequest = request;
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(JsonSerializer.Serialize(new
+                        {
+                            binarySecurityToken = "dGVzdA==",
+                            secret = "secret",
+                            requestID = "req",
+                            dispositionMessage = "OK",
+                            validationResults = new { }
+                        }))
+                    };
+                });
+
+            var httpClient = new HttpClient(mockHandler.Object)
+            {
+                BaseAddress = new Uri("https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/")
+            };
+            var client = new ZatcaApiClient(ZatcaEnvironment.Simulation, httpClient);
+            _clients.Add(client);
+
+            // Act
+            await client.RenewProductionCertificateAsync(
+                "987654",
+                "test_csr",
+                "test_cert",
+                "test_secret");
+
+            // Assert
+            Assert.NotNull(capturedRequest);
+            Assert.True(capturedRequest.Headers.Contains("OTP"));
+            var otpValue = capturedRequest.Headers.GetValues("OTP").FirstOrDefault();
+            Assert.Equal("987654", otpValue);
+        }
+
+        /// <summary>
+        /// Test that RenewProductionCertificate throws on null parameters.
+        /// </summary>
+        [Fact]
+        public async Task TestRenewProductionCertificateNullParametersThrowException()
+        {
+            // Arrange
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox);
+            _clients.Add(client);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.RenewProductionCertificateAsync(null!, "csr", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.RenewProductionCertificateAsync("otp", null!, "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.RenewProductionCertificateAsync("otp", "csr", null!, "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.RenewProductionCertificateAsync("otp", "csr", "cert", null!));
+        }
+
+        /// <summary>
+        /// Test that RenewProductionCertificate handles API failure.
+        /// </summary>
+        [Fact]
+        public async Task TestRenewProductionCertificateFailure()
+        {
+            // Arrange
+            var errorResponse = JsonSerializer.Serialize(new
+            {
+                error = "Invalid OTP",
+                message = "The OTP has expired"
+            });
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.BadRequest, errorResponse);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ZatcaApiException>(async () =>
+                await client.RenewProductionCertificateAsync("expired_otp", "csr", "cert", "secret"));
+        }
+
+        /// <summary>
         /// Cleanup test clients.
         /// </summary>
         public void Dispose()

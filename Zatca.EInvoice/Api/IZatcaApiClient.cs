@@ -92,5 +92,21 @@ namespace Zatca.EInvoice.Api
             string certificate,
             string secret,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Renews a production certificate (PCSID) before expiration.
+        /// </summary>
+        /// <param name="otp">One-time password from ZATCA portal.</param>
+        /// <param name="csr">Certificate Signing Request (CSR) in PEM format.</param>
+        /// <param name="certificate">Current production certificate.</param>
+        /// <param name="secret">Current production secret.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The renewal result containing the new certificate and secret.</returns>
+        Task<ProductionCertificateResult> RenewProductionCertificateAsync(
+            string otp,
+            string csr,
+            string certificate,
+            string secret,
+            CancellationToken cancellationToken = default);
     }
 }

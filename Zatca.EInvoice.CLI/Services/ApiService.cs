@@ -209,6 +209,56 @@ public class ApiService : IApiService
         }
     }
 
+    /// <inheritdoc/>
+    public async Task<CommandResult<ProductionCertificateResult>> RenewProductionCertificateAsync(
+        string otp,
+        string csr,
+        string certificate,
+        string secret,
+        ZatcaEnvironment environment = ZatcaEnvironment.Simulation)
+    {
+        try
+        {
+            using var client = new ZatcaApiClient(environment);
+            client.SetWarningHandling(true);
+
+            var result = await client.RenewProductionCertificateAsync(otp, csr, certificate, secret);
+
+            var commandResult = CommandResult<ProductionCertificateResult>.Ok(result);
+
+            if (result.Errors?.Count > 0)
+            {
+                foreach (var error in result.Errors)
+                {
+                    commandResult.WithWarning($"Error: {error}");
+                }
+            }
+
+            if (result.Warnings?.Count > 0)
+            {
+                foreach (var warning in result.Warnings)
+                {
+                    commandResult.WithWarning(warning);
+                }
+            }
+
+            return commandResult;
+        }
+        catch (ZatcaApiException apiEx)
+        {
+            var errorMsg = $"Certificate renewal failed: {apiEx.Message}";
+            if (!string.IsNullOrEmpty(apiEx.Response))
+            {
+                errorMsg += $"\nResponse: {apiEx.Response}";
+            }
+            return CommandResult<ProductionCertificateResult>.Fail(errorMsg);
+        }
+        catch (Exception ex)
+        {
+            return CommandResult<ProductionCertificateResult>.Fail($"Certificate renewal failed: {ex.Message}");
+        }
+    }
+
     private static CommandResult<InvoiceSubmissionResult> CreateInvoiceSubmissionResult(InvoiceSubmissionResult result)
     {
         var commandResult = CommandResult<InvoiceSubmissionResult>.Ok(result);

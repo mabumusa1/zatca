@@ -237,6 +237,47 @@ namespace Zatca.EInvoice.Api
             return ParseInvoiceSubmissionResult(response);
         }
 
+        /// <inheritdoc/>
+        public async Task<ProductionCertificateResult> RenewProductionCertificateAsync(
+            string otp,
+            string csr,
+            string certificate,
+            string secret,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(otp))
+                throw new ArgumentNullException(nameof(otp));
+            if (string.IsNullOrWhiteSpace(csr))
+                throw new ArgumentNullException(nameof(csr));
+            if (string.IsNullOrWhiteSpace(certificate))
+                throw new ArgumentNullException(nameof(certificate));
+            if (string.IsNullOrWhiteSpace(secret))
+                throw new ArgumentNullException(nameof(secret));
+
+            // Remove BOM if present and encode the entire PEM file to base64
+            csr = csr.TrimStart('\uFEFF');
+            var csrBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(csr));
+
+            var payload = new
+            {
+                csr = csrBase64
+            };
+
+            var headers = CreateAuthHeaders(certificate, secret);
+            headers["OTP"] = otp;
+            headers["Accept-Version"] = "V2";
+            headers["Content-Type"] = "application/json";
+
+            var response = await SendRequestAsync<Dictionary<string, object>>(
+                new HttpMethod("PATCH"),
+                ZatcaApiEndpoints.ProductionCertificateRenewal,
+                payload,
+                headers,
+                cancellationToken);
+
+            return ParseProductionCertificateResult(response);
+        }
+
         private async Task<T> SendRequestAsync<T>(
             HttpMethod method,
             string endpoint,

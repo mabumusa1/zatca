@@ -17,6 +17,7 @@ public static class ApiCommands
         apiCommand.AddCommand(CreateComplianceCertCommand(apiService, formatter, fileWriter));
         apiCommand.AddCommand(CreateComplianceCheckCommand(apiService, formatter));
         apiCommand.AddCommand(CreateProductionCertCommand(apiService, formatter, fileWriter));
+        apiCommand.AddCommand(CreateRenewCertCommand(apiService, formatter, fileWriter));
         apiCommand.AddCommand(CreateClearanceCommand(apiService, formatter, fileWriter));
         apiCommand.AddCommand(CreateReportingCommand(apiService, formatter));
 
@@ -270,6 +271,103 @@ public static class ApiCommands
                 if (result.Success)
                 {
                     formatter.WriteSuccess("Production certificate received");
+                    formatter.WriteKeyValue("Certificate Length", $"{result.Data?.BinarySecurityToken?.Length} characters");
+
+                    if (!string.IsNullOrEmpty(certFile))
+                    {
+                        formatter.WriteKeyValue("Certificate saved to", certFile);
+                        formatter.WriteKeyValue("Secret saved to", secretFile);
+                    }
+
+                    foreach (var warning in result.Warnings)
+                    {
+                        formatter.WriteWarning(warning);
+                    }
+                }
+                else
+                {
+                    formatter.WriteError(result.ErrorMessage ?? "Unknown error");
+                    context.ExitCode = 1;
+                }
+            }
+        });
+
+        return command;
+    }
+
+    private static Command CreateRenewCertCommand(IApiService apiService, IOutputFormatter formatter, FileWriter fileWriter)
+    {
+        var command = new Command("renew-cert", "Renew production certificate before expiration");
+
+        var csrOption = new Option<string>("--csr", "CSR file path") { IsRequired = true };
+        var otpOption = new Option<string>("--otp", "One-time password from ZATCA") { IsRequired = true };
+        var certOption = new Option<string>("--cert", "Current production certificate file") { IsRequired = true };
+        var secretOption = new Option<string>("--secret", "Current production secret") { IsRequired = true };
+        var envOption = new Option<string>("--env", () => "simulation", "Environment: sandbox|simulation|production");
+        var outputOption = new Option<string?>(new[] { "-o", "--output" }, "Output directory for renewed certificate and secret");
+        var jsonOption = new Option<bool>("--json", () => false, "Output as JSON");
+
+        command.AddOption(csrOption);
+        command.AddOption(otpOption);
+        command.AddOption(certOption);
+        command.AddOption(secretOption);
+        command.AddOption(envOption);
+        command.AddOption(outputOption);
+        command.AddOption(jsonOption);
+
+        command.SetHandler(async (context) =>
+        {
+            var csrPath = context.ParseResult.GetValueForOption(csrOption)!;
+            var otp = context.ParseResult.GetValueForOption(otpOption)!;
+            var certPath = context.ParseResult.GetValueForOption(certOption)!;
+            var secret = context.ParseResult.GetValueForOption(secretOption)!;
+            var env = context.ParseResult.GetValueForOption(envOption)!;
+            var outputDir = context.ParseResult.GetValueForOption(outputOption);
+            var jsonOutput = context.ParseResult.GetValueForOption(jsonOption);
+
+            if (!File.Exists(csrPath))
+            {
+                formatter.WriteError($"CSR file not found: {csrPath}");
+                context.ExitCode = 1;
+                return;
+            }
+
+            var csr = await File.ReadAllTextAsync(csrPath);
+            var certificate = File.Exists(certPath) ? await File.ReadAllTextAsync(certPath) : certPath;
+            var environment = ParseEnvironment(env);
+
+            var result = await apiService.RenewProductionCertificateAsync(otp, csr, certificate, secret, environment);
+
+            string? certFile = null, secretFile = null;
+            if (result.Success && !string.IsNullOrEmpty(outputDir))
+            {
+                fileWriter.EnsureDirectory(outputDir);
+                certFile = await fileWriter.WriteCertificateAsync(result.Data!.BinarySecurityToken, Path.Combine(outputDir, "renewed_production.crt"));
+                secretFile = await fileWriter.WriteTextAsync(result.Data!.Secret, Path.Combine(outputDir, "renewed_production_secret.txt"));
+                await fileWriter.WriteTextAsync(result.Data!.RequestId ?? "", Path.Combine(outputDir, "renewed_request_id.txt"));
+            }
+
+            if (jsonOutput)
+            {
+                formatter.WriteJson(new
+                {
+                    success = result.Success,
+                    error = result.ErrorMessage,
+                    requestId = result.Data?.RequestId,
+                    certificate = result.Data?.BinarySecurityToken,
+                    secret = result.Data?.Secret,
+                    files = new { certificate = certFile, secret = secretFile },
+                    warnings = result.Warnings
+                });
+            }
+            else
+            {
+                formatter.WriteHeader("Production Certificate Renewal");
+
+                if (result.Success)
+                {
+                    formatter.WriteSuccess("Production certificate renewed successfully");
+                    formatter.WriteKeyValue("Request ID", result.Data?.RequestId);
                     formatter.WriteKeyValue("Certificate Length", $"{result.Data?.BinarySecurityToken?.Length} characters");
 
                     if (!string.IsNullOrEmpty(certFile))

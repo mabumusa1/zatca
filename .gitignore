@@ -482,3 +482,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+.claude
+
+# ZATCA TestsData Output folder (contains generated certificates and API responses)
+Zatca.EInvoice.CLI/TestsData/Output/

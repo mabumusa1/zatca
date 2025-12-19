@@ -398,6 +398,89 @@ File.WriteAllText("production_cert.json",
 
 ---
 
+## Certificate Renewal
+
+Production certificates (PCSID) have expiration dates and must be renewed before they expire. ZATCA provides a renewal endpoint that allows you to renew your certificate without going through the full compliance process again.
+
+### When to Renew
+
+- Renew certificates before they expire (recommended: at least 30 days before expiration)
+- You'll need a new OTP from the ZATCA portal for renewal
+- The renewal process generates a new certificate and secret
+
+### Renewal Process
+
+```csharp
+using Zatca.EInvoice.Api;
+using Zatca.EInvoice.Certificates;
+
+// Step 1: Generate a new CSR (must use the same organization details)
+var builder = new CertificateBuilder()
+    .SetOrganizationIdentifier("312345678901233")
+    .SetSerialNumber("MyApp", "1.0", "DEVICE001")
+    .SetCommonName("My Company Ltd")
+    .SetCountryName("SA")
+    .SetOrganizationName("My Company Ltd")
+    .SetOrganizationalUnitName("IT")
+    .SetAddress("Riyadh, King Fahd Road")
+    .SetInvoiceType("1100")
+    .SetProduction(true)  // Must be true for production renewal
+    .SetBusinessCategory("Retail");
+
+string newCsr = builder.GetCsr();
+string newPrivateKey = builder.GetPrivateKey();
+
+// Step 2: Load current production certificate credentials
+string currentCertificate = File.ReadAllText("production_cert.pem");
+string currentSecret = "current-secret-from-zatca";
+
+// Step 3: Request renewal from ZATCA
+var apiClient = new ZatcaApiClient(ZatcaEnvironment.Production);
+
+string otp = "123456";  // New OTP from ZATCA portal
+
+var renewalResult = await apiClient.RenewProductionCertificateAsync(
+    otp,
+    newCsr,
+    currentCertificate,
+    currentSecret
+);
+
+if (renewalResult.IsSuccess)
+{
+    // Step 4: Save the new certificate and secret
+    File.WriteAllText("production_cert_new.pem", renewalResult.BinarySecurityToken);
+
+    var newCertData = new
+    {
+        Certificate = renewalResult.BinarySecurityToken,
+        Secret = renewalResult.Secret,
+        PrivateKey = newPrivateKey  // Store securely!
+    };
+
+    Console.WriteLine("Certificate renewed successfully!");
+    Console.WriteLine($"New Request ID: {renewalResult.RequestId}");
+}
+else
+{
+    Console.WriteLine("Renewal failed:");
+    foreach (var error in renewalResult.Errors)
+    {
+        Console.WriteLine($"  - {error}");
+    }
+}
+```
+
+### Renewal Best Practices
+
+1. **Schedule Renewals**: Set up automated reminders to renew certificates before expiration
+2. **Test First**: If possible, test the renewal process in sandbox/simulation before production
+3. **Backup Old Credentials**: Keep the old certificate and secret until the new ones are verified working
+4. **Update Immediately**: Once renewed, update your application to use the new credentials
+5. **Secure Storage**: Store the new private key securely (never commit to source control)
+
+---
+
 ## Security Best Practices
 
 ### 1. Protect Private Keys
@@ -410,7 +493,7 @@ File.WriteAllText("production_cert.json",
 
 ### 2. Rotate Certificates
 
-Certificates have expiration dates. Implement rotation before expiry.
+Certificates have expiration dates. Use the `RenewProductionCertificateAsync` method to renew before expiry. See the [Certificate Renewal](#certificate-renewal) section above for details.
 
 ### 3. Secure Storage
 

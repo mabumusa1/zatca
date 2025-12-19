@@ -375,16 +375,16 @@ var submissionResult = await apiClient.ValidateInvoiceComplianceAsync(
     certificate.Secret
 );
 
-if (submissionResult.ClearanceStatus == "CLEARED")
+if (submissionResult.IsSuccess)
 {
     Console.WriteLine("Invoice passed compliance check!");
 }
 else
 {
     Console.WriteLine($"Validation failed: {submissionResult.ClearanceStatus}");
-    foreach (var error in submissionResult.ValidationResults?.ErrorMessages ?? new List<string>())
+    foreach (var error in submissionResult.Errors)
     {
-        Console.WriteLine($"  - {error}");
+        Console.WriteLine($"  - [{error.Code}] {error.Message}");
     }
 }
 ```
@@ -395,7 +395,7 @@ Once you have a production certificate:
 
 ```csharp
 // For simplified invoices (reporting)
-var reportResult = await apiClient.ReportInvoiceAsync(
+var reportResult = await apiClient.SubmitReportingInvoiceAsync(
     signedResult.SignedXml,
     signedResult.InvoiceHash,
     invoiceData["uuid"].ToString(),
@@ -404,7 +404,7 @@ var reportResult = await apiClient.ReportInvoiceAsync(
 );
 
 // For standard invoices (clearance)
-var clearanceResult = await apiClient.ClearInvoiceAsync(
+var clearanceResult = await apiClient.SubmitClearanceInvoiceAsync(
     signedResult.SignedXml,
     signedResult.InvoiceHash,
     invoiceData["uuid"].ToString(),

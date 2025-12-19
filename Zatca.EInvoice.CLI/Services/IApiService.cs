@@ -57,4 +57,14 @@ public interface IApiService
         string certificate,
         string secret,
         ZatcaEnvironment environment = ZatcaEnvironment.Simulation);
+
+    /// <summary>
+    /// Renews a production certificate before expiration.
+    /// </summary>
+    Task<CommandResult<ProductionCertificateResult>> RenewProductionCertificateAsync(
+        string otp,
+        string csr,
+        string certificate,
+        string secret,
+        ZatcaEnvironment environment = ZatcaEnvironment.Simulation);
 }

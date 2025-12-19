@@ -67,5 +67,10 @@ namespace Zatca.EInvoice.Api
         /// Reporting invoice submission endpoint.
         /// </summary>
         public const string ReportingInvoice = "invoices/reporting/single";
+
+        /// <summary>
+        /// Production certificate renewal endpoint.
+        /// </summary>
+        public const string ProductionCertificateRenewal = "production/csids/renewal";
     }
 }

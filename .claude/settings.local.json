@@ -14,7 +14,12 @@
       "WebFetch(domain:sandbox.zatca.gov.sa)",
       "Bash(./compliance-workflow.sh:*)",
       "Bash(dotnet script:*)",
-      "Bash(dotnet add:*)"
+      "Bash(dotnet add:*)",
+      "Bash(tree:*)",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(xargs:*)",
+      "Bash(openssl pkcs12:*)"
     ]
   }
 }
