@@ -14,7 +14,7 @@ namespace Zatca.EInvoice.Signing;
 /// </summary>
 public class InvoiceExtension
 {
-    private XDocument _document;
+    private readonly XDocument _document;
 
     /// <summary>
     /// Initializes a new instance of the InvoiceExtension class.
@@ -111,8 +111,7 @@ public class InvoiceExtension
     public string ComputeHash()
     {
         var canonicalXml = GetCanonicalXml();
-        using var sha256 = SHA256.Create();
-        var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(canonicalXml));
+        var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(canonicalXml));
         return Convert.ToBase64String(hashBytes);
     }
 
