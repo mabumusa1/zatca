@@ -56,12 +56,12 @@ namespace Zatca.EInvoice.Validation
         public void ValidateMonetaryTotalsAndThrow(Dictionary<string, object> data)
         {
             // Check that the Legal Monetary Total section exists.
-            if (!data.ContainsKey(LegalMonetaryTotal))
+            if (!data.TryGetValue(LegalMonetaryTotal, out var lmtObj))
             {
                 throw new ArgumentException("Legal Monetary Total section is missing.");
             }
 
-            if (!(data[LegalMonetaryTotal] is Dictionary<string, object> lmt))
+            if (lmtObj is not Dictionary<string, object> lmt)
             {
                 throw new ArgumentException("Legal Monetary Total must be a valid object.");
             }
@@ -246,13 +246,13 @@ namespace Zatca.EInvoice.Validation
         private void ValidateMonetaryTotalsInternal(Dictionary<string, object> data, ValidationResult result)
         {
             // Check that the Legal Monetary Total section exists.
-            if (!data.ContainsKey(LegalMonetaryTotal))
+            if (!data.TryGetValue(LegalMonetaryTotal, out var lmtObj))
             {
                 result.AddError("Legal Monetary Total section is missing.");
                 return;
             }
 
-            if (!(data[LegalMonetaryTotal] is Dictionary<string, object> lmt))
+            if (lmtObj is not Dictionary<string, object> lmt)
             {
                 result.AddError("Legal Monetary Total must be a valid object.");
                 return;

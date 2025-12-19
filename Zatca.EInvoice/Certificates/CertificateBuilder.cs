@@ -316,18 +316,8 @@ namespace Zatca.EInvoice.Certificates
             try
             {
                 // Generate EC key pair using secp256k1 curve
-                // The key is to use ECKeyGenerationParameters with the OID
-                var curveName = "secp256k1";
-                var curveOid = SecObjectIdentifiers.SecP256k1;
-
-                // Get curve parameters - this will include the OID
-                var ecParams = CustomNamedCurves.GetByName(curveName);
-                if (ecParams == null)
-                {
-                    ecParams = SecNamedCurves.GetByName(curveName);
-                }
-
                 // Use the OID directly in key generation parameters
+                var curveOid = SecObjectIdentifiers.SecP256k1;
                 var keyGenParams = new ECKeyGenerationParameters(curveOid, new SecureRandom());
                 var keyGenerator = new ECKeyPairGenerator();
                 keyGenerator.Init(keyGenParams);

@@ -17,21 +17,8 @@ namespace Zatca.EInvoice.Validation
         // String constants for repeated literals
         private const string InvoiceTypeKey = "invoiceType";
         private const string InvoiceKey = "invoice";
-        private const string SupplierKey = "supplier";
-        private const string CustomerKey = "customer";
         private const string AddressKey = "address";
-        private const string TaxTotalKey = "taxTotal";
-        private const string TaxAmountKey = "taxAmount";
-        private const string TaxSchemeKey = "taxScheme";
-        private const string TaxIdKey = "taxId";
-        private const string RegistrationNameKey = "registrationName";
-        private const string PaymentMeansKey = "paymentMeans";
-        private const string TaxCategoryKey = "taxCategory";
         private const string LegalMonetaryTotalKey = "legalMonetaryTotal";
-        private const string LineExtensionAmountKey = "lineExtensionAmount";
-        private const string PriceKey = "price";
-        private const string AdditionalDocumentsKey = "additionalDocuments";
-        private const string AttachmentKey = "attachment";
 
         // Static readonly arrays for validation fields
         private static readonly string[] SupplierCustomerRequiredFields = { "registrationName", "taxId", "address" };
@@ -245,12 +232,10 @@ namespace Zatca.EInvoice.Validation
                 return;
             }
 
-            if (paymentMeansObj is Dictionary<string, object> paymentMeans)
+            if (paymentMeansObj is Dictionary<string, object> paymentMeans &&
+                (!paymentMeans.TryGetValue("code", out var codeObj) || IsEmpty(codeObj)))
             {
-                if (!paymentMeans.TryGetValue("code", out var codeObj) || IsEmpty(codeObj))
-                {
-                    result.AddError("The field 'Payment Means code' is required and cannot be empty.");
-                }
+                result.AddError("The field 'Payment Means code' is required and cannot be empty.");
             }
         }
 
@@ -440,12 +425,10 @@ namespace Zatca.EInvoice.Validation
                 }
 
                 // For documents with id 'PIH', attachment is required.
-                if (doc.TryGetValue("id", out var idObjCheck) && idObjCheck?.ToString() == "PIH")
+                if (doc.TryGetValue("id", out var idObjCheck) && idObjCheck?.ToString() == "PIH" &&
+                    (!doc.TryGetValue("attachment", out var attachmentObj) || IsEmpty(attachmentObj)))
                 {
-                    if (!doc.TryGetValue("attachment", out var attachmentObj) || IsEmpty(attachmentObj))
-                    {
-                        result.AddError($"The attachment for AdditionalDocuments[{docIndex}] with id 'PIH' is required.");
-                    }
+                    result.AddError($"The attachment for AdditionalDocuments[{docIndex}] with id 'PIH' is required.");
                 }
             }
         }
@@ -532,12 +515,10 @@ namespace Zatca.EInvoice.Validation
                 return;
             }
 
-            if (paymentMeansObj is Dictionary<string, object> paymentMeans)
+            if (paymentMeansObj is Dictionary<string, object> paymentMeans &&
+                (!paymentMeans.TryGetValue("code", out var codeObj) || IsEmpty(codeObj)))
             {
-                if (!paymentMeans.TryGetValue("code", out var codeObj) || IsEmpty(codeObj))
-                {
-                    throw new ArgumentException("The field 'Payment Means code' is required and cannot be empty.");
-                }
+                throw new ArgumentException("The field 'Payment Means code' is required and cannot be empty.");
             }
         }
 
@@ -737,12 +718,10 @@ namespace Zatca.EInvoice.Validation
                 }
 
                 // For documents with id 'PIH', attachment is required.
-                if (doc.TryGetValue("id", out var idObjCheck) && idObjCheck?.ToString() == "PIH")
+                if (doc.TryGetValue("id", out var idObjCheck) && idObjCheck?.ToString() == "PIH" &&
+                    (!doc.TryGetValue("attachment", out var attachmentObj) || IsEmpty(attachmentObj)))
                 {
-                    if (!doc.TryGetValue("attachment", out var attachmentObj) || IsEmpty(attachmentObj))
-                    {
-                        throw new ArgumentException($"The attachment for AdditionalDocuments[{docIndex}] with id 'PIH' is required.");
-                    }
+                    throw new ArgumentException($"The attachment for AdditionalDocuments[{docIndex}] with id 'PIH' is required.");
                 }
             }
         }

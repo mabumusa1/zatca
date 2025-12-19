@@ -380,8 +380,7 @@ public class SignatureBuilder
     private static string ComputeCertificateHash(X509Certificate2 certificate)
     {
         // ZATCA format: base64(hex(sha256(DER)))
-        using var sha256 = SHA256.Create();
-        var hashBytes = sha256.ComputeHash(certificate.RawData);
+        var hashBytes = SHA256.HashData(certificate.RawData);
         // Convert hash to lowercase hex string, then base64 encode
         var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));

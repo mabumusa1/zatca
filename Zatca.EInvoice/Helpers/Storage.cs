@@ -192,7 +192,10 @@ namespace Zatca.EInvoice.Helpers
                 try
                 {
                     var testFile = Path.Combine(path, Path.GetRandomFileName());
-                    using (File.Create(testFile, 1, FileOptions.DeleteOnClose)) { }
+                    using (File.Create(testFile, 1, FileOptions.DeleteOnClose))
+                    {
+                        // File created and will be auto-deleted on close
+                    }
                 }
                 catch
                 {

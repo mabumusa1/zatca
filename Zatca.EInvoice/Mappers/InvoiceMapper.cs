@@ -100,17 +100,7 @@ namespace Zatca.EInvoice.Mappers
                 Signature = MapSignature(DictionaryHelper.GetDictionary(data, "signature"))
             };
 
-            // Add additional notes if available
-            if (data.TryGetValue("notes", out var notesValue) && notesValue is IEnumerable<object> notesList)
-            {
-                foreach (var noteObj in notesList)
-                {
-                    if (noteObj is Dictionary<string, object> note)
-                    {
-                        // Add note logic here if Invoice has a method to add multiple notes
-                    }
-                }
-            }
+            // Notes are handled via the Note property assignment above
 
             return invoice;
         }
