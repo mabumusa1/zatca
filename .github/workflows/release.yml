@@ -13,6 +13,7 @@ jobs:
   publish:
     name: Build and Publish to NuGet
     runs-on: ubuntu-latest
+    environment: nuget
     permissions:
       contents: read
       packages: write
