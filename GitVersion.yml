@@ -1,0 +1,18 @@
+mode: ContinuousDeployment
+branches:
+  main:
+    regex: ^main$
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+  feature:
+    regex: ^feature[/-]
+    tag: alpha
+    increment: Minor
+  hotfix:
+    regex: ^hotfix[/-]
+    tag: beta
+    increment: Patch
+ignore:
+  sha: []

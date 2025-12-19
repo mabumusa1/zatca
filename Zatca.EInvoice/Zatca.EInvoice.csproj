@@ -6,10 +6,32 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Zatca.EInvoice</RootNamespace>
     <AssemblyName>Zatca.EInvoice</AssemblyName>
-    <Version>1.0.0</Version>
-    <Authors>ZATCA E-Invoice</Authors>
-    <Description>A .NET 8 library for generating ZATCA Fatoora e-invoices compliant with Saudi Arabia's e-invoicing regulations.</Description>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>Zatca.EInvoice</PackageId>
+    <Authors>mabumusa1</Authors>
+    <Description>A .NET library for generating ZATCA Fatoora e-invoices compliant with Saudi Arabia's e-invoicing regulations.</Description>
+    <PackageTags>zatca;fatoora;e-invoice;saudi-arabia;ksa;einvoice;tax;vat</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mabumusa1/zatca</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mabumusa1/zatca.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Build Quality & Debugging -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
+
+  <!-- Include README in package -->
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.*" />
@@ -17,6 +39,8 @@
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.*" />
     <PackageReference Include="System.Text.Json" Version="9.0.*" />
+    <!-- SourceLink for debugging -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
