@@ -142,7 +142,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSingleLineAndThrow(Dictionary<string, object> line, int index)
+        private static void ValidateSingleLineAndThrow(Dictionary<string, object> line, int index)
         {
             ValidateLineNumericFieldsAndThrow(line, index);
             var priceAmount = ValidateLinePriceAndThrow(line, index);
@@ -151,7 +151,7 @@ namespace Zatca.EInvoice.Validation
             ValidateLineTaxTotalAndThrow(line, index);
         }
 
-        private void ValidateLineNumericFieldsAndThrow(Dictionary<string, object> line, int index)
+        private static void ValidateLineNumericFieldsAndThrow(Dictionary<string, object> line, int index)
         {
             var numericFields = new[] { Quantity, LineExtensionAmount };
             foreach (var field in numericFields)
@@ -167,7 +167,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private decimal ValidateLinePriceAndThrow(Dictionary<string, object> line, int index)
+        private static decimal ValidateLinePriceAndThrow(Dictionary<string, object> line, int index)
         {
             if (!line.TryGetValue(Price, out var priceObj) || priceObj is not Dictionary<string, object> price)
             {
@@ -184,7 +184,7 @@ namespace Zatca.EInvoice.Validation
             return priceAmount;
         }
 
-        private void ValidateLineExtensionCalculationAndThrow(Dictionary<string, object> line, int index, decimal priceAmount)
+        private static void ValidateLineExtensionCalculationAndThrow(Dictionary<string, object> line, int index, decimal priceAmount)
         {
             decimal quantity = GetDecimal(line[Quantity]);
             decimal expectedLineExtension = priceAmount * quantity;
@@ -197,7 +197,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineItemTaxPercentAndThrow(Dictionary<string, object> line, int index)
+        private static void ValidateLineItemTaxPercentAndThrow(Dictionary<string, object> line, int index)
         {
             if (!line.TryGetValue("item", out var itemObj) || itemObj is not Dictionary<string, object> item)
                 return;
@@ -214,7 +214,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int index)
+        private static void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int index)
         {
             if (!line.TryGetValue(TaxTotal, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
             {
@@ -243,7 +243,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateMonetaryTotalsInternal(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateMonetaryTotalsInternal(Dictionary<string, object> data, ValidationResult result)
         {
             // Check that the Legal Monetary Total section exists.
             if (!data.TryGetValue(LegalMonetaryTotal, out var lmtObj))
@@ -303,7 +303,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateInvoiceLinesInternal(IList<object> invoiceLines, ValidationResult result)
+        private static void ValidateInvoiceLinesInternal(IList<object> invoiceLines, ValidationResult result)
         {
             for (int index = 0; index < invoiceLines.Count; index++)
             {
@@ -314,7 +314,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSingleLineInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        private static void ValidateSingleLineInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
             ValidateLineNumericFieldsInternal(line, index, result);
             var priceAmount = ValidateLinePriceInternal(line, index, result);
@@ -326,7 +326,7 @@ namespace Zatca.EInvoice.Validation
             ValidateLineTaxTotalInternal(line, index, result);
         }
 
-        private void ValidateLineNumericFieldsInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        private static void ValidateLineNumericFieldsInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
             var numericFields = new[] { Quantity, LineExtensionAmount };
             foreach (var field in numericFields)
@@ -343,7 +343,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private decimal? ValidateLinePriceInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        private static decimal? ValidateLinePriceInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
             if (!line.TryGetValue(Price, out var priceObj) || priceObj is not Dictionary<string, object> price)
             {
@@ -362,7 +362,7 @@ namespace Zatca.EInvoice.Validation
             return priceAmount;
         }
 
-        private void ValidateLineExtensionCalculationInternal(Dictionary<string, object> line, int index, decimal priceAmount, ValidationResult result)
+        private static void ValidateLineExtensionCalculationInternal(Dictionary<string, object> line, int index, decimal priceAmount, ValidationResult result)
         {
             if (!TryGetDecimal(line[Quantity], out decimal quantity) ||
                 !TryGetDecimal(line[LineExtensionAmount], out decimal providedLineExtension))
@@ -376,7 +376,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineItemTaxPercentInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        private static void ValidateLineItemTaxPercentInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
             if (!line.TryGetValue("item", out var itemObj) || itemObj is not Dictionary<string, object> item)
                 return;
@@ -393,7 +393,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineTaxTotalInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        private static void ValidateLineTaxTotalInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
             if (!line.TryGetValue(TaxTotal, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
             {
@@ -475,7 +475,7 @@ namespace Zatca.EInvoice.Validation
             return false;
         }
 
-        private decimal GetDecimal(object value)
+        private static decimal GetDecimal(object value)
         {
             if (TryGetDecimal(value, out decimal result))
             {

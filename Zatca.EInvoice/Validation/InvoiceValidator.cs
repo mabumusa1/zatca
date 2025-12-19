@@ -125,7 +125,7 @@ namespace Zatca.EInvoice.Validation
             ValidateAdditionalDocumentsAndThrow(data);
         }
 
-        private void ValidateTopLevelFields(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateTopLevelFields(Dictionary<string, object> data, ValidationResult result)
         {
             var requiredFields = new Dictionary<string, string>
             {
@@ -145,7 +145,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateInvoiceType(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateInvoiceType(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue("invoiceType", out var invoiceTypeObj) || !(invoiceTypeObj is Dictionary<string, object> invoiceType))
             {
@@ -167,7 +167,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSupplier(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateSupplier(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue("supplier", out var supplierObj) || IsEmpty(supplierObj))
             {
@@ -185,7 +185,7 @@ namespace Zatca.EInvoice.Validation
             ValidateAddressFields(supplier, "Supplier Address", result);
         }
 
-        private void ValidateCustomer(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateCustomer(Dictionary<string, object> data, ValidationResult result)
         {
             if (IsSimplifiedInvoice(data))
                 return;
@@ -206,7 +206,7 @@ namespace Zatca.EInvoice.Validation
             ValidateAddressFields(customer, "Customer Address", result);
         }
 
-        private void ValidateAddressFields(Dictionary<string, object> entity, string prefix, ValidationResult result)
+        private static void ValidateAddressFields(Dictionary<string, object> entity, string prefix, ValidationResult result)
         {
             if (!entity.TryGetValue(AddressKey, out var addressObj) || addressObj is not Dictionary<string, object> address)
                 return;
@@ -214,7 +214,7 @@ namespace Zatca.EInvoice.Validation
             ValidateRequiredFields(address, AddressRequiredFields, prefix, result);
         }
 
-        private void ValidateRequiredFields(Dictionary<string, object> data, string[] fields, string prefix, ValidationResult result)
+        private static void ValidateRequiredFields(Dictionary<string, object> data, string[] fields, string prefix, ValidationResult result)
         {
             foreach (var field in fields)
             {
@@ -225,7 +225,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidatePaymentMeans(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidatePaymentMeans(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue("paymentMeans", out var paymentMeansObj))
             {
@@ -239,7 +239,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateTaxTotal(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateTaxTotal(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
@@ -252,7 +252,7 @@ namespace Zatca.EInvoice.Validation
             ValidateTaxSubTotals(taxTotal, result);
         }
 
-        private void ValidateTaxSubTotals(Dictionary<string, object> taxTotal, ValidationResult result)
+        private static void ValidateTaxSubTotals(Dictionary<string, object> taxTotal, ValidationResult result)
         {
             if (!taxTotal.TryGetValue("subTotals", out var subTotalsObj) || subTotalsObj is not IList<object> subTotals)
                 return;
@@ -266,7 +266,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSingleTaxSubTotal(Dictionary<string, object> subTotal, int index, ValidationResult result)
+        private static void ValidateSingleTaxSubTotal(Dictionary<string, object> subTotal, int index, ValidationResult result)
         {
             foreach (var field in TaxSubTotalRequiredFields)
             {
@@ -279,7 +279,7 @@ namespace Zatca.EInvoice.Validation
             ValidateTaxSchemeId(subTotal, index, result);
         }
 
-        private void ValidateTaxSchemeId(Dictionary<string, object> subTotal, int index, ValidationResult result)
+        private static void ValidateTaxSchemeId(Dictionary<string, object> subTotal, int index, ValidationResult result)
         {
             if (!subTotal.TryGetValue("taxCategory", out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory)
                 return;
@@ -291,7 +291,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLegalMonetaryTotal(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateLegalMonetaryTotal(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue(LegalMonetaryTotalKey, out var lmtObj) || IsEmpty(lmtObj))
             {
@@ -314,7 +314,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateInvoiceLines(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateInvoiceLines(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue("invoiceLines", out var linesObj) ||
                 linesObj is not IList<object> invoiceLines ||
@@ -333,7 +333,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSingleInvoiceLine(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        private static void ValidateSingleInvoiceLine(Dictionary<string, object> line, int lineIndex, ValidationResult result)
         {
             foreach (var field in InvoiceLineRequiredFields)
             {
@@ -348,7 +348,7 @@ namespace Zatca.EInvoice.Validation
             ValidateLineTaxTotal(line, lineIndex, result);
         }
 
-        private void ValidateLineItem(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        private static void ValidateLineItem(Dictionary<string, object> line, int lineIndex, ValidationResult result)
         {
             if (!line.TryGetValue("item", out var itemObj) || itemObj is not Dictionary<string, object> item)
                 return;
@@ -361,7 +361,7 @@ namespace Zatca.EInvoice.Validation
             ValidateLineItemTaxCategory(item, lineIndex, result);
         }
 
-        private void ValidateLineItemTaxCategory(Dictionary<string, object> item, int lineIndex, ValidationResult result)
+        private static void ValidateLineItemTaxCategory(Dictionary<string, object> item, int lineIndex, ValidationResult result)
         {
             if (!item.TryGetValue("classifiedTaxCategory", out var catObj) ||
                 catObj is not IList<object> classifiedTaxCategory ||
@@ -382,7 +382,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLinePrice(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        private static void ValidateLinePrice(Dictionary<string, object> line, int lineIndex, ValidationResult result)
         {
             if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
                 return;
@@ -393,7 +393,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineTaxTotal(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        private static void ValidateLineTaxTotal(Dictionary<string, object> line, int lineIndex, ValidationResult result)
         {
             if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
@@ -404,7 +404,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateAdditionalDocuments(Dictionary<string, object> data, ValidationResult result)
+        private static void ValidateAdditionalDocuments(Dictionary<string, object> data, ValidationResult result)
         {
             if (!data.TryGetValue("additionalDocuments", out var additionalDocumentsObj) ||
                 !(additionalDocumentsObj is IList<object> additionalDocuments))
@@ -434,7 +434,7 @@ namespace Zatca.EInvoice.Validation
         }
 
         // Throw-based validation methods
-        private void ValidateSupplierAndThrow(Dictionary<string, object> data)
+        private static void ValidateSupplierAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("supplier", out var supplierObj) || IsEmpty(supplierObj))
             {
@@ -471,7 +471,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateCustomerAndThrow(Dictionary<string, object> data)
+        private static void ValidateCustomerAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("customer", out var customerObj) || IsEmpty(customerObj))
             {
@@ -508,7 +508,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidatePaymentMeansAndThrow(Dictionary<string, object> data)
+        private static void ValidatePaymentMeansAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("paymentMeans", out var paymentMeansObj))
             {
@@ -522,7 +522,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateTaxTotalAndThrow(Dictionary<string, object> data)
+        private static void ValidateTaxTotalAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
@@ -535,7 +535,7 @@ namespace Zatca.EInvoice.Validation
             ValidateTaxSubTotalsAndThrow(taxTotal);
         }
 
-        private void ValidateTaxSubTotalsAndThrow(Dictionary<string, object> taxTotal)
+        private static void ValidateTaxSubTotalsAndThrow(Dictionary<string, object> taxTotal)
         {
             if (!taxTotal.TryGetValue("subTotals", out var subTotalsObj) || subTotalsObj is not IList<object> subTotals)
                 return;
@@ -549,7 +549,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSingleTaxSubTotalAndThrow(Dictionary<string, object> subTotal, int index)
+        private static void ValidateSingleTaxSubTotalAndThrow(Dictionary<string, object> subTotal, int index)
         {
             var subRequired = new[] { "taxableAmount", "taxCategory" };
             foreach (var field in subRequired)
@@ -563,7 +563,7 @@ namespace Zatca.EInvoice.Validation
             ValidateTaxSchemeIdAndThrow(subTotal, index);
         }
 
-        private void ValidateTaxSchemeIdAndThrow(Dictionary<string, object> subTotal, int index)
+        private static void ValidateTaxSchemeIdAndThrow(Dictionary<string, object> subTotal, int index)
         {
             if (!subTotal.TryGetValue("taxCategory", out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory ||
                 !taxCategory.TryGetValue("taxScheme", out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme ||
@@ -573,7 +573,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLegalMonetaryTotalAndThrow(Dictionary<string, object> data)
+        private static void ValidateLegalMonetaryTotalAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("legalMonetaryTotal", out var legalMonetaryTotalObj) || IsEmpty(legalMonetaryTotalObj))
             {
@@ -595,7 +595,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateInvoiceLinesAndThrow(Dictionary<string, object> data)
+        private static void ValidateInvoiceLinesAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("invoiceLines", out var linesObj) ||
                 linesObj is not IList<object> invoiceLines ||
@@ -613,7 +613,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateSingleInvoiceLineAndThrow(Dictionary<string, object> line, int lineIndex)
+        private static void ValidateSingleInvoiceLineAndThrow(Dictionary<string, object> line, int lineIndex)
         {
             ValidateLineRequiredFieldsAndThrow(line, lineIndex);
             ValidateLineItemAndThrow(line, lineIndex);
@@ -621,7 +621,7 @@ namespace Zatca.EInvoice.Validation
             ValidateLineTaxTotalAndThrow(line, lineIndex);
         }
 
-        private void ValidateLineRequiredFieldsAndThrow(Dictionary<string, object> line, int lineIndex)
+        private static void ValidateLineRequiredFieldsAndThrow(Dictionary<string, object> line, int lineIndex)
         {
             var lineRequired = new[] { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
             foreach (var field in lineRequired)
@@ -633,7 +633,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineItemAndThrow(Dictionary<string, object> line, int lineIndex)
+        private static void ValidateLineItemAndThrow(Dictionary<string, object> line, int lineIndex)
         {
             if (line["item"] is not Dictionary<string, object> item)
             {
@@ -648,7 +648,7 @@ namespace Zatca.EInvoice.Validation
             ValidateLineItemTaxCategoryAndThrow(item, lineIndex);
         }
 
-        private void ValidateLineItemTaxCategoryAndThrow(Dictionary<string, object> item, int lineIndex)
+        private static void ValidateLineItemTaxCategoryAndThrow(Dictionary<string, object> item, int lineIndex)
         {
             if (!item.TryGetValue("classifiedTaxCategory", out var catObj) ||
                 catObj is not IList<object> classifiedTaxCategory ||
@@ -671,7 +671,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLinePriceAndThrow(Dictionary<string, object> line, int lineIndex)
+        private static void ValidateLinePriceAndThrow(Dictionary<string, object> line, int lineIndex)
         {
             if (line["price"] is not Dictionary<string, object> price)
             {
@@ -684,7 +684,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int lineIndex)
+        private static void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int lineIndex)
         {
             if (line["taxTotal"] is not Dictionary<string, object> taxTotal)
             {
@@ -697,7 +697,7 @@ namespace Zatca.EInvoice.Validation
             }
         }
 
-        private void ValidateAdditionalDocumentsAndThrow(Dictionary<string, object> data)
+        private static void ValidateAdditionalDocumentsAndThrow(Dictionary<string, object> data)
         {
             if (!data.TryGetValue("additionalDocuments", out var additionalDocumentsObj) ||
                 !(additionalDocumentsObj is IList<object> additionalDocuments))
