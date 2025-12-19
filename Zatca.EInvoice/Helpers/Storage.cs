@@ -39,7 +39,7 @@ namespace Zatca.EInvoice.Helpers
         /// <param name="path">Relative or full path of the file.</param>
         /// <param name="content">Content to write.</param>
         /// <exception cref="ZatcaStorageException">Thrown if the file cannot be written.</exception>
-        public void Write(string path, string content)
+        public static void Write(string path, string content)
         {
             var fullPath = GetFullPath(path);
             var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
@@ -65,7 +65,7 @@ namespace Zatca.EInvoice.Helpers
         /// <param name="path">Relative or full path of the file.</param>
         /// <param name="content">Content to append.</param>
         /// <exception cref="ZatcaStorageException">Thrown if the file cannot be written.</exception>
-        public void Append(string path, string content)
+        public static void Append(string path, string content)
         {
             var fullPath = GetFullPath(path);
             var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
@@ -91,7 +91,7 @@ namespace Zatca.EInvoice.Helpers
         /// <param name="path">Relative or full path of the file.</param>
         /// <returns>The file contents.</returns>
         /// <exception cref="ZatcaStorageException">Thrown if the file does not exist or cannot be read.</exception>
-        public string Read(string path)
+        public static string Read(string path)
         {
             var fullPath = GetFullPath(path);
 
@@ -121,7 +121,7 @@ namespace Zatca.EInvoice.Helpers
         /// </summary>
         /// <param name="path">Relative or full path of the file.</param>
         /// <returns>True if the file exists, false otherwise.</returns>
-        public bool Exists(string path)
+        public static bool Exists(string path)
         {
             var fullPath = GetFullPath(path);
             return File.Exists(fullPath);
@@ -132,7 +132,7 @@ namespace Zatca.EInvoice.Helpers
         /// </summary>
         /// <param name="path">Relative or full path of the file.</param>
         /// <exception cref="ZatcaStorageException">Thrown if the file cannot be deleted.</exception>
-        public void Delete(string path)
+        public static void Delete(string path)
         {
             var fullPath = GetFullPath(path);
 

@@ -32,7 +32,7 @@ namespace Zatca.EInvoice.Validation
         /// </summary>
         /// <param name="data">The invoice data dictionary.</param>
         /// <returns>A <see cref="ValidationResult"/> indicating whether validation was successful.</returns>
-        public ValidationResult ValidateMonetaryTotals(Dictionary<string, object> data)
+        public static ValidationResult ValidateMonetaryTotals(Dictionary<string, object> data)
         {
             var result = new ValidationResult();
 
@@ -53,7 +53,7 @@ namespace Zatca.EInvoice.Validation
         /// </summary>
         /// <param name="data">The invoice data dictionary.</param>
         /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-        public void ValidateMonetaryTotalsAndThrow(Dictionary<string, object> data)
+        public static void ValidateMonetaryTotalsAndThrow(Dictionary<string, object> data)
         {
             // Check that the Legal Monetary Total section exists.
             if (!data.TryGetValue(LegalMonetaryTotal, out var lmtObj))
@@ -110,7 +110,7 @@ namespace Zatca.EInvoice.Validation
         /// </summary>
         /// <param name="invoiceLines">Array of invoice lines.</param>
         /// <returns>A <see cref="ValidationResult"/> indicating whether validation was successful.</returns>
-        public ValidationResult ValidateInvoiceLines(IList<object> invoiceLines)
+        public static ValidationResult ValidateInvoiceLines(IList<object> invoiceLines)
         {
             var result = new ValidationResult();
 
@@ -131,7 +131,7 @@ namespace Zatca.EInvoice.Validation
         /// </summary>
         /// <param name="invoiceLines">Array of invoice lines.</param>
         /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-        public void ValidateInvoiceLinesAndThrow(IList<object> invoiceLines)
+        public static void ValidateInvoiceLinesAndThrow(IList<object> invoiceLines)
         {
             for (int index = 0; index < invoiceLines.Count; index++)
             {

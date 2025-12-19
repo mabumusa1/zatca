@@ -208,11 +208,10 @@ namespace Zatca.EInvoice.Certificates
             Generate();
 
             var csrContent = GetCsr();
-            var storage = new Storage();
 
             try
             {
-                storage.Write(csrPath, csrContent);
+                Storage.Write(csrPath, csrContent);
             }
             catch (ZatcaStorageException ex)
             {
@@ -258,8 +257,7 @@ namespace Zatca.EInvoice.Certificates
                 pemWriter.WriteObject(_keyPair.Private);
                 pemWriter.Writer.Flush();
 
-                var storage = new Storage();
-                storage.Write(path, stringWriter.ToString());
+                Storage.Write(path, stringWriter.ToString());
             }
             catch (Exception ex)
             {

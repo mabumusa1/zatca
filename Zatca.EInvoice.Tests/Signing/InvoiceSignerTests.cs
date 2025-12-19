@@ -153,8 +153,8 @@ namespace Zatca.EInvoice.Tests.Signing
             // Arrange
             var certificate = CreateMockCertificate();
 
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            // Act & Assert - Empty string throws ArgumentException from InvoiceExtension.FromString
+            Assert.Throws<ArgumentException>(() =>
                 InvoiceSigner.Sign("", certificate));
         }
 

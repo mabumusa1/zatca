@@ -27,7 +27,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="data">The item data.</param>
         /// <returns>The mapped Item object.</returns>
-        public Item Map(Dictionary<string, object> data)
+        public static Item Map(Dictionary<string, object> data)
         {
             if (data == null)
             {

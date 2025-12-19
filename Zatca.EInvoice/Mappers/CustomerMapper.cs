@@ -33,7 +33,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="data">Customer data.</param>
         /// <returns>The mapped customer as a Party object.</returns>
-        public Party Map(Dictionary<string, object> data)
+        public static Party Map(Dictionary<string, object> data)
         {
             if (data == null || data.Count == 0)
             {

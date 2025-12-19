@@ -22,11 +22,12 @@ namespace Zatca.EInvoice.Mappers
     /// </summary>
     public class InvoiceMapper : IInvoiceMapper
     {
-        private readonly SupplierMapper _supplierMapper;
-        private readonly CustomerMapper _customerMapper;
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         private readonly InvoiceLineMapper _invoiceLineMapper;
-        private readonly PaymentMeansMapper _paymentMeansMapper;
-        private readonly AdditionalDocumentMapper _additionalDocumentMapper;
 
         /// <summary>
         /// InvoiceMapper constructor.
@@ -34,28 +35,15 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         public InvoiceMapper()
         {
-            _supplierMapper = new SupplierMapper();
-            _customerMapper = new CustomerMapper();
             _invoiceLineMapper = new InvoiceLineMapper();
-            _paymentMeansMapper = new PaymentMeansMapper();
-            _additionalDocumentMapper = new AdditionalDocumentMapper();
         }
 
         /// <summary>
         /// InvoiceMapper constructor with dependency injection.
         /// </summary>
-        public InvoiceMapper(
-            SupplierMapper supplierMapper,
-            CustomerMapper customerMapper,
-            InvoiceLineMapper invoiceLineMapper,
-            PaymentMeansMapper paymentMeansMapper,
-            AdditionalDocumentMapper additionalDocumentMapper)
+        public InvoiceMapper(InvoiceLineMapper invoiceLineMapper)
         {
-            _supplierMapper = supplierMapper;
-            _customerMapper = customerMapper;
             _invoiceLineMapper = invoiceLineMapper;
-            _paymentMeansMapper = paymentMeansMapper;
-            _additionalDocumentMapper = additionalDocumentMapper;
         }
 
         /// <summary>
@@ -87,12 +75,12 @@ namespace Zatca.EInvoice.Mappers
                 InvoiceCurrencyCode = DictionaryHelper.GetString(data, "currencyCode") ?? "SAR",
                 TaxCurrencyCode = DictionaryHelper.GetString(data, "taxCurrencyCode") ?? "SAR",
                 BillingReferences = MapBillingReferences(DictionaryHelper.GetList(data, "billingReferences")),
-                AdditionalDocumentReferences = _additionalDocumentMapper.MapAdditionalDocuments(
+                AdditionalDocumentReferences = AdditionalDocumentMapper.MapAdditionalDocuments(
                     DictionaryHelper.GetList(data, "additionalDocuments")),
-                AccountingSupplierParty = _supplierMapper.Map(DictionaryHelper.GetDictionary(data, "supplier")),
-                AccountingCustomerParty = _customerMapper.Map(DictionaryHelper.GetDictionary(data, "customer")),
+                AccountingSupplierParty = SupplierMapper.Map(DictionaryHelper.GetDictionary(data, "supplier")),
+                AccountingCustomerParty = CustomerMapper.Map(DictionaryHelper.GetDictionary(data, "customer")),
                 Delivery = MapDelivery(DictionaryHelper.GetDictionary(data, "delivery")),
-                PaymentMeans = _paymentMeansMapper.Map(DictionaryHelper.GetDictionary(data, "paymentMeans")),
+                PaymentMeans = PaymentMeansMapper.Map(DictionaryHelper.GetDictionary(data, "paymentMeans")),
                 AllowanceCharges = MapAllowanceCharges(data),
                 TaxTotal = MapTaxTotal(DictionaryHelper.GetDictionary(data, "taxTotal")),
                 LegalMonetaryTotal = MapLegalMonetaryTotal(DictionaryHelper.GetDictionary(data, "legalMonetaryTotal")),
@@ -119,10 +107,7 @@ namespace Zatca.EInvoice.Mappers
 
             try
             {
-                var data = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonData, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new Dictionary<string, object>();
+                var data = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonData, JsonOptions) ?? new Dictionary<string, object>();
 
                 return MapToInvoice(data);
             }
@@ -146,7 +131,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps UblExtensions data to a UblExtensions object.
         /// </summary>
-        private UblExtensions MapUblExtensions(Dictionary<string, object> data)
+        private static UblExtensions MapUblExtensions(Dictionary<string, object> data)
         {
             if (data == null)
             {
@@ -186,7 +171,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps Signature data to a Signature object.
         /// </summary>
-        private Signature MapSignature(Dictionary<string, object> data)
+        private static Signature MapSignature(Dictionary<string, object> data)
         {
             if (data == null)
             {
@@ -204,7 +189,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps InvoiceType data to an InvoiceType object.
         /// </summary>
-        private InvoiceType MapInvoiceType(Dictionary<string, object> data)
+        private static InvoiceType MapInvoiceType(Dictionary<string, object> data)
         {
             if (data == null)
             {
@@ -312,7 +297,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps Delivery data to a Delivery object.
         /// </summary>
-        private Delivery MapDelivery(Dictionary<string, object> data)
+        private static Delivery MapDelivery(Dictionary<string, object> data)
         {
             if (data == null)
             {
@@ -329,7 +314,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps TaxTotal data to a TaxTotal object.
         /// </summary>
-        private TaxTotal MapTaxTotal(Dictionary<string, object> data)
+        private static TaxTotal MapTaxTotal(Dictionary<string, object> data)
         {
             if (data == null)
             {
@@ -389,7 +374,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps LegalMonetaryTotal data to a LegalMonetaryTotal object.
         /// </summary>
-        private LegalMonetaryTotal MapLegalMonetaryTotal(Dictionary<string, object> data)
+        private static LegalMonetaryTotal MapLegalMonetaryTotal(Dictionary<string, object> data)
         {
             if (data == null)
             {

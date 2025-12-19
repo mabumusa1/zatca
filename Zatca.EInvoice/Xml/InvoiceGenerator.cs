@@ -149,7 +149,7 @@ namespace Zatca.EInvoice.Xml
 
         private void AddNoteElement(XElement invoice, Dictionary<string, object> invoiceData)
         {
-            if (!invoiceData.ContainsKey("note") || string.IsNullOrWhiteSpace(GetString(invoiceData, "note")))
+            if (!invoiceData.TryGetValue("note", out _) || string.IsNullOrWhiteSpace(GetString(invoiceData, "note")))
                 return;
 
             invoice.Add(new XElement(_cbc + "Note",
@@ -252,7 +252,7 @@ namespace Zatca.EInvoice.Xml
             }
         }
 
-        private XElement GenerateUBLExtensions(object ublExtensions)
+        private XElement GenerateUBLExtensions(object _)
         {
             // Placeholder for UBL Extensions - would need full implementation based on requirements
             return new XElement(_ext + "UBLExtensions");
@@ -262,7 +262,7 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "OrderReference");
 
-            if (orderRef.ContainsKey("id"))
+            if (orderRef.TryGetValue("id", out _))
             {
                 element.Add(new XElement(_cbc + "ID", GetString(orderRef, "id")));
             }
@@ -281,7 +281,7 @@ namespace Zatca.EInvoice.Xml
                 {
                     var invoiceDocRefElement = new XElement(_cac + "InvoiceDocumentReference");
 
-                    if (invoiceDocRef.ContainsKey("id"))
+                    if (invoiceDocRef.TryGetValue("id", out _))
                     {
                         invoiceDocRefElement.Add(new XElement(_cbc + "ID", GetString(invoiceDocRef, "id")));
                     }
@@ -290,7 +290,7 @@ namespace Zatca.EInvoice.Xml
                 }
             }
             // Also support direct ID for billing reference
-            else if (billingRef.ContainsKey("id"))
+            else if (billingRef.TryGetValue("id", out _))
             {
                 var invoiceDocRefElement = new XElement(_cac + "InvoiceDocumentReference");
                 invoiceDocRefElement.Add(new XElement(_cbc + "ID", GetString(billingRef, "id")));
@@ -304,7 +304,7 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "ContractDocumentReference");
 
-            if (contract.ContainsKey("id"))
+            if (contract.TryGetValue("id", out _))
             {
                 element.Add(new XElement(_cbc + "ID", GetString(contract, "id")));
             }
@@ -316,12 +316,12 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "AdditionalDocumentReference");
 
-            if (doc.ContainsKey("id"))
+            if (doc.TryGetValue("id", out _))
             {
                 element.Add(new XElement(_cbc + "ID", GetString(doc, "id")));
             }
 
-            if (doc.ContainsKey("uuid"))
+            if (doc.TryGetValue("uuid", out _))
             {
                 element.Add(new XElement(_cbc + "UUID", GetString(doc, "uuid")));
             }
@@ -333,7 +333,7 @@ namespace Zatca.EInvoice.Xml
                 {
                     var attachmentElement = new XElement(_cac + "Attachment");
 
-                    if (attachment.ContainsKey("embeddedDocument"))
+                    if (attachment.TryGetValue("embeddedDocument", out _))
                     {
                         var embeddedDoc = GetString(attachment, "embeddedDocument");
                         var mimeCode = GetString(attachment, "mimeCode", "text/plain");
@@ -354,12 +354,12 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "Signature");
 
-            if (signature.ContainsKey("id"))
+            if (signature.TryGetValue("id", out _))
             {
                 element.Add(new XElement(_cbc + "ID", GetString(signature, "id")));
             }
 
-            if (signature.ContainsKey("signatureMethod"))
+            if (signature.TryGetValue("signatureMethod", out _))
             {
                 element.Add(new XElement(_cbc + "SignatureMethod", GetString(signature, "signatureMethod")));
             }
@@ -405,11 +405,11 @@ namespace Zatca.EInvoice.Xml
 
         private void AddPartyIdentification(List<XElement> elements, Dictionary<string, object> party)
         {
-            if (!party.ContainsKey("partyIdentification") || string.IsNullOrWhiteSpace(GetString(party, "partyIdentification")))
+            if (!party.TryGetValue("partyIdentification", out _) || string.IsNullOrWhiteSpace(GetString(party, "partyIdentification")))
                 return;
 
             var idElement = new XElement(_cbc + "ID", GetString(party, "partyIdentification"));
-            if (party.ContainsKey("partyIdentificationId"))
+            if (party.TryGetValue("partyIdentificationId", out _))
                 idElement.Add(new XAttribute("schemeID", GetString(party, "partyIdentificationId")));
 
             var partyIdElement = new XElement(_cac + "PartyIdentification", idElement);
@@ -428,12 +428,12 @@ namespace Zatca.EInvoice.Xml
 
         private void AddPartyTaxScheme(List<XElement> elements, Dictionary<string, object> party)
         {
-            if (!party.ContainsKey("taxId") && !party.ContainsKey("taxScheme"))
+            if (!party.TryGetValue("taxId", out _) && !party.TryGetValue("taxScheme", out _))
                 return;
 
             var partyTaxScheme = new XElement(_cac + "PartyTaxScheme");
 
-            if (party.ContainsKey("taxId"))
+            if (party.TryGetValue("taxId", out _))
                 partyTaxScheme.Add(new XElement(_cbc + "CompanyID", GetString(party, "taxId")));
 
             partyTaxScheme.Add(new XElement(_cac + "TaxScheme",
@@ -448,7 +448,7 @@ namespace Zatca.EInvoice.Xml
                 return "VAT";
 
             var taxScheme = TryGetDictionary(taxSchemeValue);
-            if (taxScheme != null && taxScheme.ContainsKey("id"))
+            if (taxScheme != null && taxScheme.TryGetValue("id", out _))
                 return GetString(taxScheme, "id");
 
             return "VAT";
@@ -456,7 +456,7 @@ namespace Zatca.EInvoice.Xml
 
         private void AddPartyLegalEntity(List<XElement> elements, Dictionary<string, object> party)
         {
-            if (!party.ContainsKey("registrationName"))
+            if (!party.TryGetValue("registrationName", out _))
                 return;
 
             elements.Add(new XElement(_cac + "PartyLegalEntity",
@@ -467,52 +467,52 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "PostalAddress");
 
-            if (address.ContainsKey("street"))
+            if (address.TryGetValue("street", out _))
             {
                 element.Add(new XElement(_cbc + "StreetName", GetString(address, "street")));
             }
 
-            if (address.ContainsKey("additionalStreet"))
+            if (address.TryGetValue("additionalStreet", out _))
             {
                 element.Add(new XElement(_cbc + "AdditionalStreetName", GetString(address, "additionalStreet")));
             }
 
-            if (address.ContainsKey("buildingNumber"))
+            if (address.TryGetValue("buildingNumber", out _))
             {
                 element.Add(new XElement(_cbc + "BuildingNumber", GetString(address, "buildingNumber")));
             }
 
-            if (address.ContainsKey("plotIdentification"))
+            if (address.TryGetValue("plotIdentification", out _))
             {
                 element.Add(new XElement(_cbc + "PlotIdentification", GetString(address, "plotIdentification")));
             }
 
             // Support both citySubdivisionName and subdivision keys
-            if (address.ContainsKey("citySubdivisionName"))
+            if (address.TryGetValue("citySubdivisionName", out _))
             {
                 element.Add(new XElement(_cbc + "CitySubdivisionName", GetString(address, "citySubdivisionName")));
             }
-            else if (address.ContainsKey("subdivision"))
+            else if (address.TryGetValue("subdivision", out _))
             {
                 element.Add(new XElement(_cbc + "CitySubdivisionName", GetString(address, "subdivision")));
             }
 
-            if (address.ContainsKey("city"))
+            if (address.TryGetValue("city", out _))
             {
                 element.Add(new XElement(_cbc + "CityName", GetString(address, "city")));
             }
 
-            if (address.ContainsKey("postalZone"))
+            if (address.TryGetValue("postalZone", out _))
             {
                 element.Add(new XElement(_cbc + "PostalZone", GetString(address, "postalZone")));
             }
 
-            if (address.ContainsKey("countrySubentity"))
+            if (address.TryGetValue("countrySubentity", out _))
             {
                 element.Add(new XElement(_cbc + "CountrySubentity", GetString(address, "countrySubentity")));
             }
 
-            if (address.ContainsKey("country"))
+            if (address.TryGetValue("country", out _))
             {
                 element.Add(new XElement(_cac + "Country",
                     new XElement(_cbc + "IdentificationCode", GetString(address, "country"))
@@ -629,7 +629,7 @@ namespace Zatca.EInvoice.Xml
                 return;
 
             var taxSchemeElement = new XElement(_cac + "TaxScheme");
-            if (taxScheme.ContainsKey("id"))
+            if (taxScheme.TryGetValue("id", out _))
             {
                 taxSchemeElement.Add(new XElement(_cbc + "ID",
                     new XAttribute(SchemeIdKey, schemeId),
@@ -795,8 +795,8 @@ namespace Zatca.EInvoice.Xml
             if (taxTotal.TryGetValue(TaxAmountKey, out var taxAmountValue))
                 taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxAmountValue), _currencyId));
 
-            if (taxTotal.ContainsKey("roundingAmount"))
-                taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(taxTotal["roundingAmount"]), _currencyId));
+            if (taxTotal.TryGetValue("roundingAmount", out var roundingAmountValue))
+                taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(roundingAmountValue), _currencyId));
 
             element.Add(taxTotalElement);
         }
@@ -805,7 +805,7 @@ namespace Zatca.EInvoice.Xml
         {
             var element = new XElement(_cac + "Item");
 
-            if (item.ContainsKey("name"))
+            if (item.TryGetValue("name", out _))
                 element.Add(new XElement(_cbc + "Name", GetString(item, "name")));
 
             AddClassifiedTaxCategories(element, item);
@@ -834,7 +834,7 @@ namespace Zatca.EInvoice.Xml
         {
             var taxCategoryElement = new XElement(_cac + "ClassifiedTaxCategory");
 
-            if (categoryDict.ContainsKey("id"))
+            if (categoryDict.TryGetValue("id", out _))
                 taxCategoryElement.Add(new XElement(_cbc + "ID", GetString(categoryDict, "id")));
 
             if (categoryDict.TryGetValue(PercentKey, out var percentValue))
@@ -855,7 +855,7 @@ namespace Zatca.EInvoice.Xml
                 return;
 
             var taxSchemeElement = new XElement(_cac + "TaxScheme");
-            if (taxScheme.ContainsKey("id"))
+            if (taxScheme.TryGetValue("id", out _))
                 taxSchemeElement.Add(new XElement(_cbc + "ID", GetString(taxScheme, "id")));
 
             parent.Add(taxSchemeElement);
@@ -870,10 +870,10 @@ namespace Zatca.EInvoice.Xml
                 element.Add(XmlSerializationExtensions.CreatePriceElement(_cbc + "PriceAmount", GetDecimal(amountValue), _currencyId));
             }
 
-            if (price.ContainsKey("baseQuantity"))
+            if (price.TryGetValue("baseQuantity", out var baseQuantityValue))
             {
                 var unitCode = GetString(price, "baseQuantityUnitCode", "PCE");
-                element.Add(XmlSerializationExtensions.CreateQuantityElement(_cbc + "BaseQuantity", GetDecimal(price["baseQuantity"]), unitCode));
+                element.Add(XmlSerializationExtensions.CreateQuantityElement(_cbc + "BaseQuantity", GetDecimal(baseQuantityValue), unitCode));
             }
 
             return element;

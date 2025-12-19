@@ -28,7 +28,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="documents">An array of additional document data.</param>
         /// <returns>Array of mapped AdditionalDocumentReference objects.</returns>
-        public List<AdditionalDocumentReference> MapAdditionalDocuments(IEnumerable<object>? documents)
+        public static List<AdditionalDocumentReference> MapAdditionalDocuments(IEnumerable<object>? documents)
         {
             var additionalDocs = new List<AdditionalDocumentReference>();
             var documentsList = documents ?? new List<object>();

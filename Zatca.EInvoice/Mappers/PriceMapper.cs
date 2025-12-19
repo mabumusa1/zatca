@@ -30,7 +30,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="data">The price data.</param>
         /// <returns>The mapped Price object.</returns>
-        public Price Map(Dictionary<string, object> data)
+        public static Price Map(Dictionary<string, object> data)
         {
             if (data == null)
             {

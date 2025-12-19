@@ -8,12 +8,6 @@ namespace Zatca.EInvoice.Tests.Mappers;
 /// </summary>
 public class InvoiceAmountValidatorTests
 {
-    private readonly InvoiceAmountValidator _validator;
-
-    public InvoiceAmountValidatorTests()
-    {
-        _validator = new InvoiceAmountValidator();
-    }
 
     /// <summary>
     /// Test that valid monetary totals pass validation.
@@ -25,7 +19,7 @@ public class InvoiceAmountValidatorTests
         var invoiceData = InvoiceTestData.GetValidInvoiceData();
 
         // Act
-        var result = _validator.ValidateMonetaryTotals(invoiceData);
+        var result = InvoiceAmountValidator.ValidateMonetaryTotals(invoiceData);
 
         // Assert
         result.Should().NotBeNull();
@@ -44,7 +38,7 @@ public class InvoiceAmountValidatorTests
         var invoiceLines = invoiceData["invoiceLines"] as List<object>;
 
         // Act
-        var result = _validator.ValidateInvoiceLines(invoiceLines!);
+        var result = InvoiceAmountValidator.ValidateInvoiceLines(invoiceLines!);
 
         // Assert
         result.Should().NotBeNull();
@@ -66,7 +60,7 @@ public class InvoiceAmountValidatorTests
         firstLine!["lineExtensionAmount"] = 100m; // Wrong amount (should be 2 * 2 = 4)
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*lineExtensionAmount is incorrect*");
     }
@@ -86,7 +80,7 @@ public class InvoiceAmountValidatorTests
         taxTotal!["roundingAmount"] = 100m; // Wrong amount (should be 4 + 0.60 = 4.60)
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*roundingAmount is incorrect*");
     }
@@ -104,7 +98,7 @@ public class InvoiceAmountValidatorTests
         legalMonetaryTotal!["taxInclusiveAmount"] = 100m; // Wrong amount (should be 4 + 0.6 = 4.60)
 
         // Act & Assert
-        Action act = () => _validator.ValidateMonetaryTotalsAndThrow(invoiceData);
+        Action act = () => InvoiceAmountValidator.ValidateMonetaryTotalsAndThrow(invoiceData);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*taxInclusiveAmount*does not equal*");
     }
@@ -122,7 +116,7 @@ public class InvoiceAmountValidatorTests
         firstLine!["lineExtensionAmount"] = -10m;
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*cannot be negative*");
     }
@@ -141,7 +135,7 @@ public class InvoiceAmountValidatorTests
         price!["amount"] = -5m;
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*cannot be negative*");
     }
@@ -160,7 +154,7 @@ public class InvoiceAmountValidatorTests
         taxTotal!["taxAmount"] = -1m;
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*cannot be negative*");
     }
@@ -176,7 +170,7 @@ public class InvoiceAmountValidatorTests
         invoiceData.Remove("legalMonetaryTotal");
 
         // Act & Assert
-        Action act = () => _validator.ValidateMonetaryTotalsAndThrow(invoiceData);
+        Action act = () => InvoiceAmountValidator.ValidateMonetaryTotalsAndThrow(invoiceData);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*Legal Monetary Total*missing*");
     }
@@ -193,7 +187,7 @@ public class InvoiceAmountValidatorTests
         legalMonetaryTotal!.Remove("lineExtensionAmount");
 
         // Act & Assert
-        Action act = () => _validator.ValidateMonetaryTotalsAndThrow(invoiceData);
+        Action act = () => InvoiceAmountValidator.ValidateMonetaryTotalsAndThrow(invoiceData);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*lineExtensionAmount*");
     }
@@ -211,7 +205,7 @@ public class InvoiceAmountValidatorTests
         firstLine!.Remove("price");
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*price object*");
     }
@@ -229,7 +223,7 @@ public class InvoiceAmountValidatorTests
         firstLine!.Remove("taxTotal");
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*taxTotal object*");
     }
@@ -247,7 +241,7 @@ public class InvoiceAmountValidatorTests
         firstLine!["quantity"] = "not a number";
 
         // Act & Assert
-        Action act = () => _validator.ValidateInvoiceLinesAndThrow(invoiceLines);
+        Action act = () => InvoiceAmountValidator.ValidateInvoiceLinesAndThrow(invoiceLines);
         act.Should().Throw<ArgumentException>()
             .WithMessage("*must be a numeric value*");
     }
@@ -264,7 +258,7 @@ public class InvoiceAmountValidatorTests
         legalMonetaryTotal!["taxInclusiveAmount"] = 100m; // Wrong amount
 
         // Act
-        var result = _validator.ValidateMonetaryTotals(invoiceData);
+        var result = InvoiceAmountValidator.ValidateMonetaryTotals(invoiceData);
 
         // Assert
         result.Should().NotBeNull();
@@ -287,7 +281,7 @@ public class InvoiceAmountValidatorTests
         legalMonetaryTotal!["taxInclusiveAmount"] = 4.605m; // Should be 4.60, but 4.605 is within tolerance
 
         // Act
-        var result = _validator.ValidateMonetaryTotals(invoiceData);
+        var result = InvoiceAmountValidator.ValidateMonetaryTotals(invoiceData);
 
         // Assert
         result.Should().NotBeNull();
@@ -308,7 +302,7 @@ public class InvoiceAmountValidatorTests
         legalMonetaryTotal!["taxInclusiveAmount"] = 4.62m; // Should be 4.60, 4.62 is beyond tolerance
 
         // Act
-        var result = _validator.ValidateMonetaryTotals(invoiceData);
+        var result = InvoiceAmountValidator.ValidateMonetaryTotals(invoiceData);
 
         // Assert
         result.Should().NotBeNull();

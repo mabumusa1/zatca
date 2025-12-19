@@ -10,7 +10,6 @@ namespace Zatca.EInvoice.Tests.Helpers;
 public class StorageTests : IDisposable
 {
     private readonly string _tempDirectory;
-    private readonly Storage _storage;
     private readonly List<string> _filesToCleanup;
 
     public StorageTests()
@@ -19,7 +18,8 @@ public class StorageTests : IDisposable
         _tempDirectory = Path.Combine(Path.GetTempPath(), "ZatcaStorageTests_" + Guid.NewGuid().ToString());
         Directory.CreateDirectory(_tempDirectory);
 
-        _storage = new Storage(_tempDirectory);
+        // Set the static base path via constructor
+        _ = new Storage(_tempDirectory);
         _filesToCleanup = new List<string>();
     }
 
@@ -32,7 +32,7 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Write(fileName, content);
+        Storage.Write(fileName, content);
 
         // Assert
         var fullPath = Path.Combine(_tempDirectory, fileName);
@@ -52,8 +52,8 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Write(fileName, initialContent);
-        _storage.Append(fileName, appendContent);
+        Storage.Write(fileName, initialContent);
+        Storage.Append(fileName, appendContent);
 
         // Assert
         var fullPath = Path.Combine(_tempDirectory, fileName);
@@ -70,7 +70,7 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Append(fileName, content);
+        Storage.Append(fileName, content);
 
         // Assert
         var fullPath = Path.Combine(_tempDirectory, fileName);
@@ -92,7 +92,7 @@ public class StorageTests : IDisposable
         File.WriteAllText(fullPath, content);
 
         // Act
-        var actualContent = _storage.Read(fileName);
+        var actualContent = Storage.Read(fileName);
 
         // Assert
         Assert.Equal(content, actualContent);
@@ -106,7 +106,7 @@ public class StorageTests : IDisposable
 
         // Act & Assert
         var exception = Assert.Throws<ZatcaStorageException>(() =>
-            _storage.Read(fileName));
+            Storage.Read(fileName));
 
         Assert.Contains("File not found", exception.Message);
         Assert.NotNull(exception.Context);
@@ -124,7 +124,7 @@ public class StorageTests : IDisposable
         File.WriteAllText(fullPath, "exists");
 
         // Act
-        var exists = _storage.Exists(fileName);
+        var exists = Storage.Exists(fileName);
 
         // Assert
         Assert.True(exists);
@@ -137,7 +137,7 @@ public class StorageTests : IDisposable
         var fileName = "does-not-exist.txt";
 
         // Act
-        var exists = _storage.Exists(fileName);
+        var exists = Storage.Exists(fileName);
 
         // Assert
         Assert.False(exists);
@@ -152,7 +152,7 @@ public class StorageTests : IDisposable
         File.WriteAllText(fullPath, "to be deleted");
 
         // Act
-        _storage.Delete(fileName);
+        Storage.Delete(fileName);
 
         // Assert
         Assert.False(File.Exists(fullPath));
@@ -165,7 +165,7 @@ public class StorageTests : IDisposable
         var fileName = "non-existent-delete.txt";
 
         // Act
-        var exception = Record.Exception(() => _storage.Delete(fileName));
+        var exception = Record.Exception(() => Storage.Delete(fileName));
 
         // Assert - Should not throw
         Assert.Null(exception);
@@ -180,7 +180,7 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Write(fileName, content);
+        Storage.Write(fileName, content);
 
         // Assert
         var fullPath = Path.Combine(_tempDirectory, fileName);
@@ -200,8 +200,8 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Write(fileName, initialContent);
-        _storage.Write(fileName, newContent);
+        Storage.Write(fileName, initialContent);
+        Storage.Write(fileName, newContent);
 
         // Assert
         var fullPath = Path.Combine(_tempDirectory, fileName);
@@ -213,20 +213,23 @@ public class StorageTests : IDisposable
     public void TestStorageWithoutBasePath()
     {
         // Arrange
-        var storage = new Storage(); // No base path
+        _ = new Storage(); // Reset base path
         var fullPath = Path.Combine(_tempDirectory, "absolute-path-test.txt");
         var content = "absolute path content";
 
         // Act
-        storage.Write(fullPath, content);
+        Storage.Write(fullPath, content);
 
         // Assert
         Assert.True(File.Exists(fullPath));
-        var actualContent = storage.Read(fullPath);
+        var actualContent = Storage.Read(fullPath);
         Assert.Equal(content, actualContent);
 
         // Cleanup
         File.Delete(fullPath);
+
+        // Restore base path for other tests
+        _ = new Storage(_tempDirectory);
     }
 
     [Fact]
@@ -238,8 +241,8 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Write(fileName, content);
-        var actualContent = _storage.Read(fileName);
+        Storage.Write(fileName, content);
+        var actualContent = Storage.Read(fileName);
 
         // Assert
         Assert.Equal(content, actualContent);
@@ -250,11 +253,11 @@ public class StorageTests : IDisposable
     {
         // Act & Assert - null path
         Assert.Throws<ArgumentNullException>(() =>
-            _storage.Write(null, "content"));
+            Storage.Write(null, "content"));
 
         // Act & Assert - empty path
         Assert.Throws<ArgumentNullException>(() =>
-            _storage.Write(string.Empty, "content"));
+            Storage.Write(string.Empty, "content"));
     }
 
     [Fact]
@@ -265,13 +268,13 @@ public class StorageTests : IDisposable
         _filesToCleanup.Add(fileName);
 
         // Act
-        _storage.Write(fileName, "Line 1\n");
-        _storage.Append(fileName, "Line 2\n");
-        _storage.Append(fileName, "Line 3\n");
-        _storage.Append(fileName, "Line 4\n");
+        Storage.Write(fileName, "Line 1\n");
+        Storage.Append(fileName, "Line 2\n");
+        Storage.Append(fileName, "Line 3\n");
+        Storage.Append(fileName, "Line 4\n");
 
         // Assert
-        var content = _storage.Read(fileName);
+        var content = Storage.Read(fileName);
         Assert.Equal("Line 1\nLine 2\nLine 3\nLine 4\n", content);
     }
 

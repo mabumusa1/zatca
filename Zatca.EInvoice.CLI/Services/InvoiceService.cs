@@ -76,8 +76,7 @@ public class InvoiceService : IInvoiceService
             }
 
             // Also validate amounts if invoice data is complete enough
-            var amountValidator = new InvoiceAmountValidator();
-            var amountResult = amountValidator.ValidateMonetaryTotals(loadResult.Data!);
+            var amountResult = InvoiceAmountValidator.ValidateMonetaryTotals(loadResult.Data!);
             if (!amountResult.IsValid)
             {
                 errors.AddRange(amountResult.Errors);

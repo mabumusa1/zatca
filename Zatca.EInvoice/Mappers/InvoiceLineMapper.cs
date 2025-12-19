@@ -24,28 +24,11 @@ namespace Zatca.EInvoice.Mappers
     /// </summary>
     public class InvoiceLineMapper
     {
-        private readonly ItemMapper _itemMapper;
-        private readonly PriceMapper _priceMapper;
-
         /// <summary>
         /// InvoiceLineMapper constructor.
-        /// Initializes the dependent mappers.
         /// </summary>
         public InvoiceLineMapper()
         {
-            _itemMapper = new ItemMapper();
-            _priceMapper = new PriceMapper();
-        }
-
-        /// <summary>
-        /// InvoiceLineMapper constructor with dependency injection.
-        /// </summary>
-        /// <param name="itemMapper">The item mapper.</param>
-        /// <param name="priceMapper">The price mapper.</param>
-        public InvoiceLineMapper(ItemMapper itemMapper, PriceMapper priceMapper)
-        {
-            _itemMapper = itemMapper;
-            _priceMapper = priceMapper;
         }
 
         /// <summary>
@@ -68,11 +51,11 @@ namespace Zatca.EInvoice.Mappers
                 {
                     // Map item data using ItemMapper
                     var itemData = DictionaryHelper.GetDictionary(line, "item");
-                    var item = _itemMapper.Map(itemData);
+                    var item = ItemMapper.Map(itemData);
 
                     // Map price data using PriceMapper
                     var priceData = DictionaryHelper.GetDictionary(line, "price");
-                    var price = _priceMapper.Map(priceData);
+                    var price = PriceMapper.Map(priceData);
 
                     // Map line tax total data
                     var taxTotalData = DictionaryHelper.GetDictionary(line, "taxTotal");
@@ -102,7 +85,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="data">Dictionary of line tax total data.</param>
         /// <returns>The mapped TaxTotal object.</returns>
-        private TaxTotal MapLineTaxTotal(Dictionary<string, object> data)
+        private static TaxTotal MapLineTaxTotal(Dictionary<string, object> data)
         {
             if (data == null)
             {

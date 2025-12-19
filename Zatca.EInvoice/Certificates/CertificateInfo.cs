@@ -132,7 +132,7 @@ namespace Zatca.EInvoice.Certificates
         public string GetFormattedIssuer()
         {
             var issuer = _certificate.Issuer;
-            var parts = issuer.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = issuer.Split([','], StringSplitOptions.RemoveEmptyEntries);
             Array.Reverse(parts);
             return string.Join(", ", parts).Trim();
         }

@@ -10,7 +10,7 @@ namespace Zatca.EInvoice.Signing;
 /// Main orchestrator for signing ZATCA e-invoices with digital signatures and QR codes.
 /// This class implements the Category E digital signing requirements.
 /// </summary>
-public class InvoiceSigner
+public static class InvoiceSigner
 {
     /// <summary>
     /// Signs an invoice XML with the provided certificate.
@@ -22,10 +22,8 @@ public class InvoiceSigner
     /// <exception cref="ArgumentException">Thrown when the certificate doesn't have a private key.</exception>
     public static SignedInvoiceResult Sign(string xmlInvoice, X509Certificate2 certificate)
     {
-        if (string.IsNullOrWhiteSpace(xmlInvoice))
-            throw new ArgumentNullException(nameof(xmlInvoice));
-        if (certificate == null)
-            throw new ArgumentNullException(nameof(certificate));
+        ArgumentNullException.ThrowIfNull(xmlInvoice);
+        ArgumentNullException.ThrowIfNull(certificate);
         if (!certificate.HasPrivateKey)
             throw new ArgumentException("Certificate must have a private key.", nameof(certificate));
 
@@ -226,8 +224,7 @@ public class InvoiceSigner
     /// <returns>Base64-encoded hash.</returns>
     public static string GetHash(string xmlInvoice)
     {
-        if (string.IsNullOrWhiteSpace(xmlInvoice))
-            throw new ArgumentNullException(nameof(xmlInvoice));
+        ArgumentNullException.ThrowIfNull(xmlInvoice);
 
         var invoiceExtension = InvoiceExtension.FromString(xmlInvoice);
         invoiceExtension
@@ -252,10 +249,8 @@ public class InvoiceSigner
         string hash,
         string digitalSignature)
     {
-        if (string.IsNullOrWhiteSpace(signedXmlInvoice))
-            throw new ArgumentNullException(nameof(signedXmlInvoice));
-        if (certificate == null)
-            throw new ArgumentNullException(nameof(certificate));
+        ArgumentNullException.ThrowIfNull(signedXmlInvoice);
+        ArgumentNullException.ThrowIfNull(certificate);
 
         var invoiceExtension = InvoiceExtension.FromString(signedXmlInvoice);
         var publicKeyBytes = ExtractPublicKey(certificate);

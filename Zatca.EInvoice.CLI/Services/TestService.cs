@@ -386,9 +386,8 @@ public class TestService : ITestService
     {
         try
         {
-            var validator = new InvoiceAmountValidator();
             var data = GetStandardInvoiceData();
-            var result = validator.ValidateMonetaryTotals(data);
+            var result = InvoiceAmountValidator.ValidateMonetaryTotals(data);
 
             return Task.FromResult(result.IsValid
                 ? TestResult.Pass("Amount validation passed")

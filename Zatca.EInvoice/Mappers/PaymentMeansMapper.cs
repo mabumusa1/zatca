@@ -21,7 +21,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="data">The payment means data.</param>
         /// <returns>The mapped PaymentMeans object.</returns>
-        public PaymentMeans Map(Dictionary<string, object> data)
+        public static PaymentMeans Map(Dictionary<string, object> data)
         {
             if (data == null)
             {
