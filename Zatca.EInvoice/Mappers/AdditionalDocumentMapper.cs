@@ -21,7 +21,7 @@ namespace Zatca.EInvoice.Mappers
     ///   }
     /// }
     /// </summary>
-    public class AdditionalDocumentMapper
+    public static class AdditionalDocumentMapper
     {
         /// <summary>
         /// Maps additional documents data to an array of AdditionalDocumentReference objects.

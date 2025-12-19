@@ -16,6 +16,7 @@ namespace Zatca.EInvoice.Xml
     {
         // String constants for repeated literals
         private const string TaxAmountKey = "taxAmount";
+        private const string TaxAmountElementName = "TaxAmount";
         private const string TaxSchemeKey = "taxScheme";
         private const string TaxTotalKey = "taxTotal";
         private const string SchemeIdKey = "schemeID";
@@ -82,7 +83,7 @@ namespace Zatca.EInvoice.Xml
             if (!invoiceData.TryGetValue("ublExtensions", out var ublExtensionsValue) || ublExtensionsValue == null)
                 return;
 
-            var ublExtensions = GenerateUBLExtensions(ublExtensionsValue);
+            var ublExtensions = GenerateUBLExtensions();
             if (ublExtensions != null)
             {
                 invoice.Add(ublExtensions);
@@ -217,7 +218,7 @@ namespace Zatca.EInvoice.Xml
                 return;
 
             invoice.Add(new XElement(_cac + "TaxTotal",
-                XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxAmountValue), _currencyId)));
+                XmlSerializationExtensions.CreateAmountElement(_cbc + TaxAmountElementName, GetDecimal(taxAmountValue), _currencyId)));
         }
 
         private void AddInvoiceLines(XElement invoice, Dictionary<string, object> invoiceData)
@@ -252,7 +253,7 @@ namespace Zatca.EInvoice.Xml
             }
         }
 
-        private XElement GenerateUBLExtensions(object _)
+        private XElement GenerateUBLExtensions()
         {
             // Placeholder for UBL Extensions - would need full implementation based on requirements
             return new XElement(_ext + "UBLExtensions");
@@ -645,7 +646,7 @@ namespace Zatca.EInvoice.Xml
 
             if (taxTotal.TryGetValue(TaxAmountKey, out var taxAmountValue))
             {
-                element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxAmountValue), _currencyId));
+                element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + TaxAmountElementName, GetDecimal(taxAmountValue), _currencyId));
             }
 
             if (taxTotal.TryGetValue("subTotals", out var subTotalsValue))
@@ -675,7 +676,7 @@ namespace Zatca.EInvoice.Xml
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxableAmount", GetDecimal(taxableAmountValue), _currencyId));
 
             if (subTotal.TryGetValue(TaxAmountKey, out var taxAmountValue))
-                element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxAmountValue), _currencyId));
+                element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + TaxAmountElementName, GetDecimal(taxAmountValue), _currencyId));
 
             AddSubTotalTaxCategory(element, subTotal);
 
@@ -793,7 +794,7 @@ namespace Zatca.EInvoice.Xml
             var taxTotalElement = new XElement(_cac + "TaxTotal");
 
             if (taxTotal.TryGetValue(TaxAmountKey, out var taxAmountValue))
-                taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "TaxAmount", GetDecimal(taxAmountValue), _currencyId));
+                taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + TaxAmountElementName, GetDecimal(taxAmountValue), _currencyId));
 
             if (taxTotal.TryGetValue("roundingAmount", out var roundingAmountValue))
                 taxTotalElement.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "RoundingAmount", GetDecimal(roundingAmountValue), _currencyId));
@@ -1055,7 +1056,7 @@ namespace Zatca.EInvoice.Xml
         /// </summary>
         /// <param name="element">The XML element to format.</param>
         /// <returns>A formatted XML string.</returns>
-        private string FormatXml(XElement element)
+        private static string FormatXml(XElement element)
         {
             // Use UTF8 encoding WITHOUT BOM to avoid hash computation issues
             var utf8NoBom = new UTF8Encoding(false);

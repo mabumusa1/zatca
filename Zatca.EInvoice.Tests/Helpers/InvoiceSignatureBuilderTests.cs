@@ -13,7 +13,7 @@ public class InvoiceSignatureBuilderTests
     // Sample certificate for testing (base64 format, matching PHP tests)
     private const string TestCertificatePem = "MIICAzCCAaqgAwIBAgIGAZT7anBcMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCmVJbnZvaWNpbmcwHhcNMjUwMjEyMTgyNzE5WhcNMzAwMjExMjEwMDAwWjBUMRgwFgYDVQQDDA9NeSBPcmdhbml6YXRpb24xEzARBgNVBAoMCk15IENvbXBhbnkxFjAUBgNVBAsMDUlUIERlcGFydG1lbnQxCzAJBgNVBAYTAlNBMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEdg+fe1K42qCMlH8MQmxi02RzKU3SfNHA5QUTh9ub6vqiTvY5ON0Q3CjBJ2qzrCeBguijyQQCFARDulpKaWAaW6OBqTCBpjAMBgNVHRMBAf8EAjAAMIGVBgNVHREEgY0wgYqkgYcwgYQxIDAeBgNVBAQMFzEtU2FsZWh8Mi0xbnwzLVNNRTAwMDIzMR8wHQYKCZImiZPyLGQBAQwPMzEyMzQ1Njc4OTAxMjMzMQ0wCwYDVQQMDAQxMTAwMRswGQYDVQQaDBJSaXlhZGggMTIzNCBTdHJlZXQxEzARBgNVBA8MClRlY2hub2xvZ3kwCgYIKoZIzj0EAwIDRwAwRAIgINT+MFQefLLdd7Jlayr8nZq1lQrXQgKYxuA14LRoDvUCIGVS+MserlYamKvlCtk/g9J4gPWoJMXygSGp7FTPV8e4";
 
-    private X509Certificate2 GetTestCertificate()
+    private static X509Certificate2 GetTestCertificate()
     {
         var certBytes = Convert.FromBase64String(TestCertificatePem);
         return new X509Certificate2(certBytes);
@@ -334,7 +334,7 @@ public class InvoiceSignatureBuilderTests
     }
 
     [Fact]
-    public void TestBuildSignatureXml_GeneratesDifferentSigningTimes()
+    public async Task TestBuildSignatureXml_GeneratesDifferentSigningTimes()
     {
         // Arrange
         var certificate = GetTestCertificate();
@@ -347,7 +347,7 @@ public class InvoiceSignatureBuilderTests
         var xml1 = builder1.BuildSignatureXml();
 
         // Small delay to ensure different timestamp
-        System.Threading.Thread.Sleep(1100);
+        await Task.Delay(1100);
 
         var builder2 = new SignatureBuilder()
             .SetCertificate(certificate)

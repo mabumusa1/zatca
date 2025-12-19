@@ -19,13 +19,21 @@ namespace Zatca.EInvoice.Validation
         private const string InvoiceKey = "invoice";
         private const string AddressKey = "address";
         private const string LegalMonetaryTotalKey = "legalMonetaryTotal";
+        private const string SupplierKey = "supplier";
+        private const string CustomerKey = "customer";
+        private const string TaxTotalKey = "taxTotal";
+        private const string TaxSchemeKey = "taxScheme";
+        private const string TaxAmountKey = "taxAmount";
+        private const string LineExtensionAmountKey = "lineExtensionAmount";
+        private const string PriceKey = "price";
+        private const string TaxCategoryKey = "taxCategory";
 
         // Static readonly arrays for validation fields
-        private static readonly string[] SupplierCustomerRequiredFields = { "registrationName", "taxId", "address" };
+        private static readonly string[] SupplierCustomerRequiredFields = { "registrationName", "taxId", AddressKey };
         private static readonly string[] AddressRequiredFields = { "street", "buildingNumber", "city", "postalZone", "country" };
-        private static readonly string[] LmtRequiredFields = { "lineExtensionAmount", "taxExclusiveAmount", "taxInclusiveAmount", "payableAmount" };
-        private static readonly string[] InvoiceLineRequiredFields = { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
-        private static readonly string[] TaxSubTotalRequiredFields = { "taxableAmount", "taxCategory" };
+        private static readonly string[] LmtRequiredFields = { LineExtensionAmountKey, "taxExclusiveAmount", "taxInclusiveAmount", "payableAmount" };
+        private static readonly string[] InvoiceLineRequiredFields = { "id", "unitCode", "quantity", LineExtensionAmountKey, "item", PriceKey, TaxTotalKey };
+        private static readonly string[] TaxSubTotalRequiredFields = { "taxableAmount", TaxCategoryKey };
 
         /// <summary>
         /// Validates the required invoice data fields.
@@ -169,7 +177,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateSupplier(Dictionary<string, object> data, ValidationResult result)
         {
-            if (!data.TryGetValue("supplier", out var supplierObj) || IsEmpty(supplierObj))
+            if (!data.TryGetValue(SupplierKey, out var supplierObj) || IsEmpty(supplierObj))
             {
                 result.AddError("Supplier data is required.");
                 return;
@@ -190,7 +198,7 @@ namespace Zatca.EInvoice.Validation
             if (IsSimplifiedInvoice(data))
                 return;
 
-            if (!data.TryGetValue("customer", out var customerObj) || IsEmpty(customerObj))
+            if (!data.TryGetValue(CustomerKey, out var customerObj) || IsEmpty(customerObj))
             {
                 result.AddError("Customer data is required for non-simplified invoices.");
                 return;
@@ -241,10 +249,10 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateTaxTotal(Dictionary<string, object> data, ValidationResult result)
         {
-            if (!data.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            if (!data.TryGetValue(TaxTotalKey, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
 
-            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
+            if (!taxTotal.TryGetValue(TaxAmountKey, out var taxAmountObj) || !IsNumericValue(taxAmountObj))
             {
                 result.AddError("The field 'Tax Total taxAmount' is required and cannot be empty.");
             }
@@ -281,9 +289,9 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateTaxSchemeId(Dictionary<string, object> subTotal, int index, ValidationResult result)
         {
-            if (!subTotal.TryGetValue("taxCategory", out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory)
+            if (!subTotal.TryGetValue(TaxCategoryKey, out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory)
                 return;
-            if (!taxCategory.TryGetValue("taxScheme", out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme)
+            if (!taxCategory.TryGetValue(TaxSchemeKey, out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme)
                 return;
             if (!taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
             {
@@ -369,7 +377,7 @@ namespace Zatca.EInvoice.Validation
                 classifiedTaxCategory[0] is not Dictionary<string, object> firstCategory)
                 return;
 
-            if (!firstCategory.TryGetValue("taxScheme", out var schemeObj) ||
+            if (!firstCategory.TryGetValue(TaxSchemeKey, out var schemeObj) ||
                 schemeObj is not Dictionary<string, object> taxScheme ||
                 !taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
             {
@@ -384,7 +392,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateLinePrice(Dictionary<string, object> line, int lineIndex, ValidationResult result)
         {
-            if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
+            if (!line.TryGetValue(PriceKey, out var priceObj) || priceObj is not Dictionary<string, object> price)
                 return;
 
             if (!price.TryGetValue("amount", out var amountObj) || !IsNumericValue(amountObj))
@@ -395,10 +403,10 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateLineTaxTotal(Dictionary<string, object> line, int lineIndex, ValidationResult result)
         {
-            if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            if (!line.TryGetValue(TaxTotalKey, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
 
-            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
+            if (!taxTotal.TryGetValue(TaxAmountKey, out var taxAmountObj) || !IsNumericValue(taxAmountObj))
             {
                 result.AddError($"The field 'Invoice Lines[{lineIndex}] TaxTotal taxAmount' is required and cannot be empty.");
             }
@@ -436,7 +444,7 @@ namespace Zatca.EInvoice.Validation
         // Throw-based validation methods
         private static void ValidateSupplierAndThrow(Dictionary<string, object> data)
         {
-            if (!data.TryGetValue("supplier", out var supplierObj) || IsEmpty(supplierObj))
+            if (!data.TryGetValue(SupplierKey, out var supplierObj) || IsEmpty(supplierObj))
             {
                 throw new ArgumentException("Supplier data is required.");
             }
@@ -446,7 +454,7 @@ namespace Zatca.EInvoice.Validation
                 throw new ArgumentException("Supplier data must be a valid object.");
             }
 
-            var supplierRequired = new[] { "registrationName", "taxId", "address" };
+            var supplierRequired = new[] { "registrationName", "taxId", AddressKey };
             foreach (var field in supplierRequired)
             {
                 if (!supplier.TryGetValue(field, out var fieldValue) || IsEmpty(fieldValue))
@@ -456,7 +464,7 @@ namespace Zatca.EInvoice.Validation
             }
 
             // Validate supplier address fields.
-            if (!supplier.TryGetValue("address", out var addressObj) || !(addressObj is Dictionary<string, object> address))
+            if (!supplier.TryGetValue(AddressKey, out var addressObj) || !(addressObj is Dictionary<string, object> address))
             {
                 throw new ArgumentException("Supplier address must be a valid object.");
             }
@@ -473,7 +481,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateCustomerAndThrow(Dictionary<string, object> data)
         {
-            if (!data.TryGetValue("customer", out var customerObj) || IsEmpty(customerObj))
+            if (!data.TryGetValue(CustomerKey, out var customerObj) || IsEmpty(customerObj))
             {
                 throw new ArgumentException("Customer data is required for non-simplified invoices.");
             }
@@ -483,7 +491,7 @@ namespace Zatca.EInvoice.Validation
                 throw new ArgumentException("Customer data must be a valid object.");
             }
 
-            var customerRequired = new[] { "registrationName", "taxId", "address" };
+            var customerRequired = new[] { "registrationName", "taxId", AddressKey };
             foreach (var field in customerRequired)
             {
                 if (!customer.TryGetValue(field, out var fieldValue) || IsEmpty(fieldValue))
@@ -493,7 +501,7 @@ namespace Zatca.EInvoice.Validation
             }
 
             // Validate customer address fields.
-            if (!customer.TryGetValue("address", out var addressObj) || !(addressObj is Dictionary<string, object> address))
+            if (!customer.TryGetValue(AddressKey, out var addressObj) || !(addressObj is Dictionary<string, object> address))
             {
                 throw new ArgumentException("Customer address must be a valid object.");
             }
@@ -524,10 +532,10 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateTaxTotalAndThrow(Dictionary<string, object> data)
         {
-            if (!data.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            if (!data.TryGetValue(TaxTotalKey, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
 
-            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
+            if (!taxTotal.TryGetValue(TaxAmountKey, out var taxAmountObj) || !IsNumericValue(taxAmountObj))
             {
                 throw new ArgumentException("The field 'Tax Total taxAmount' is required and cannot be empty.");
             }
@@ -551,7 +559,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateSingleTaxSubTotalAndThrow(Dictionary<string, object> subTotal, int index)
         {
-            var subRequired = new[] { "taxableAmount", "taxCategory" };
+            var subRequired = new[] { "taxableAmount", TaxCategoryKey };
             foreach (var field in subRequired)
             {
                 if (!subTotal.TryGetValue(field, out var value) || IsEmpty(value))
@@ -565,8 +573,8 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateTaxSchemeIdAndThrow(Dictionary<string, object> subTotal, int index)
         {
-            if (!subTotal.TryGetValue("taxCategory", out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory ||
-                !taxCategory.TryGetValue("taxScheme", out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme ||
+            if (!subTotal.TryGetValue(TaxCategoryKey, out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory ||
+                !taxCategory.TryGetValue(TaxSchemeKey, out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme ||
                 !taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
             {
                 throw new ArgumentException($"The field 'Tax Total subTotals[{index}] TaxScheme id' is required and cannot be empty.");
@@ -575,7 +583,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateLegalMonetaryTotalAndThrow(Dictionary<string, object> data)
         {
-            if (!data.TryGetValue("legalMonetaryTotal", out var legalMonetaryTotalObj) || IsEmpty(legalMonetaryTotalObj))
+            if (!data.TryGetValue(LegalMonetaryTotalKey, out var legalMonetaryTotalObj) || IsEmpty(legalMonetaryTotalObj))
             {
                 throw new ArgumentException("Legal Monetary Total data is required.");
             }
@@ -585,7 +593,7 @@ namespace Zatca.EInvoice.Validation
                 throw new ArgumentException("Legal Monetary Total must be a valid object.");
             }
 
-            var lmtRequired = new[] { "lineExtensionAmount", "taxExclusiveAmount", "taxInclusiveAmount", "payableAmount" };
+            var lmtRequired = new[] { LineExtensionAmountKey, "taxExclusiveAmount", "taxInclusiveAmount", "payableAmount" };
             foreach (var field in lmtRequired)
             {
                 if (!lmt.TryGetValue(field, out var fieldValue) || !IsNumericValue(fieldValue))
@@ -623,7 +631,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateLineRequiredFieldsAndThrow(Dictionary<string, object> line, int lineIndex)
         {
-            var lineRequired = new[] { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
+            var lineRequired = new[] { "id", "unitCode", "quantity", LineExtensionAmountKey, "item", PriceKey, TaxTotalKey };
             foreach (var field in lineRequired)
             {
                 if (!line.TryGetValue(field, out var value) || (!IsNumericValue(value) && IsEmpty(value)))
@@ -658,7 +666,7 @@ namespace Zatca.EInvoice.Validation
                 throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item classifiedTaxCategory' is required.");
             }
 
-            if (!firstCategory.TryGetValue("taxScheme", out var schemeObj) ||
+            if (!firstCategory.TryGetValue(TaxSchemeKey, out var schemeObj) ||
                 schemeObj is not Dictionary<string, object> taxScheme ||
                 !taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
             {
@@ -673,7 +681,7 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateLinePriceAndThrow(Dictionary<string, object> line, int lineIndex)
         {
-            if (line["price"] is not Dictionary<string, object> price)
+            if (line[PriceKey] is not Dictionary<string, object> price)
             {
                 throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] price' must be a valid object.");
             }
@@ -686,12 +694,12 @@ namespace Zatca.EInvoice.Validation
 
         private static void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int lineIndex)
         {
-            if (line["taxTotal"] is not Dictionary<string, object> taxTotal)
+            if (line[TaxTotalKey] is not Dictionary<string, object> taxTotal)
             {
                 throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] taxTotal' must be a valid object.");
             }
 
-            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
+            if (!taxTotal.TryGetValue(TaxAmountKey, out var taxAmountObj) || !IsNumericValue(taxAmountObj))
             {
                 throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] TaxTotal taxAmount' is required and cannot be empty.");
             }

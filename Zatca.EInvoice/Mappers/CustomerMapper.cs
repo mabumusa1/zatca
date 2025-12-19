@@ -26,7 +26,7 @@ namespace Zatca.EInvoice.Mappers
     ///   "identificationType": "IDType"          // optional
     /// }
     /// </summary>
-    public class CustomerMapper
+    public static class CustomerMapper
     {
         /// <summary>
         /// Maps customer data dictionary to a Party object.

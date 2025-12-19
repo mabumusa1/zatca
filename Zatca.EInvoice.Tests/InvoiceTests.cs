@@ -369,7 +369,7 @@ public class InvoiceTests
     /// <summary>
     /// Helper method to create a complete valid invoice for testing.
     /// </summary>
-    private Invoice CreateCompleteInvoice()
+    private static Invoice CreateCompleteInvoice()
     {
         var invoice = new Invoice
         {

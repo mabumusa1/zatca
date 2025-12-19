@@ -22,21 +22,15 @@ namespace Zatca.EInvoice.Mappers
     ///   }
     /// }
     /// </summary>
-    public class InvoiceLineMapper
+    public static class InvoiceLineMapper
     {
-        /// <summary>
-        /// InvoiceLineMapper constructor.
-        /// </summary>
-        public InvoiceLineMapper()
-        {
-        }
 
         /// <summary>
         /// Maps an array of invoice line data to an array of InvoiceLine objects.
         /// </summary>
         /// <param name="lines">Array of invoice lines data.</param>
         /// <returns>Array of mapped InvoiceLine objects.</returns>
-        public List<InvoiceLine> MapInvoiceLines(IEnumerable<object>? lines)
+        public static List<InvoiceLine> MapInvoiceLines(IEnumerable<object>? lines)
         {
             var invoiceLines = new List<InvoiceLine>();
 

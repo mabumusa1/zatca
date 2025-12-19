@@ -15,17 +15,17 @@ namespace Zatca.EInvoice.Api
         /// <summary>
         /// Sandbox environment base URL.
         /// </summary>
-        public const string SandboxBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/";
+        public const string SandboxBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/"; // NOSONAR
 
         /// <summary>
         /// Simulation environment base URL.
         /// </summary>
-        public const string SimulationBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/";
+        public const string SimulationBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/"; // NOSONAR
 
         /// <summary>
         /// Production environment base URL.
         /// </summary>
-        public const string ProductionBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/core/";
+        public const string ProductionBaseUrl = "https://gw-fatoora.zatca.gov.sa/e-invoicing/core/"; // NOSONAR
 
         /// <summary>
         /// Gets the base URL for the specified environment.

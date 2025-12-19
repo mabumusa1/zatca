@@ -580,7 +580,7 @@ namespace Zatca.EInvoice.Tests.Signing
         /// <summary>
         /// Generates a large invoice XML for performance testing.
         /// </summary>
-        private string GenerateLargeInvoiceXml()
+        private static string GenerateLargeInvoiceXml()
         {
             var baseXml = TestInvoiceXml.Replace("</Invoice>", "");
             var invoiceLines = new StringBuilder();
@@ -609,6 +609,7 @@ namespace Zatca.EInvoice.Tests.Signing
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             _testCertificate?.Dispose();
         }
     }

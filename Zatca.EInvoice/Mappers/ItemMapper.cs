@@ -20,7 +20,7 @@ namespace Zatca.EInvoice.Mappers
     ///     ]
     /// }
     /// </summary>
-    public class ItemMapper
+    public static class ItemMapper
     {
         /// <summary>
         /// Maps item data dictionary to an Item object.

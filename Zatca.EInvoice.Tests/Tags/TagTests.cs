@@ -328,7 +328,7 @@ public class TagTests
     /// <summary>
     /// Helper method to create tags based on tag number.
     /// </summary>
-    private Tag CreateTag(byte tagNumber, string value)
+    private static Tag CreateTag(byte tagNumber, string value)
     {
         return tagNumber switch
         {

@@ -537,6 +537,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             foreach (var file in _tempFiles)
             {
                 try

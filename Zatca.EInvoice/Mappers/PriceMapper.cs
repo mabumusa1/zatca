@@ -23,7 +23,7 @@ namespace Zatca.EInvoice.Mappers
     ///   ]
     /// }
     /// </summary>
-    public class PriceMapper
+    public static class PriceMapper
     {
         /// <summary>
         /// Maps price data dictionary to a Price object.

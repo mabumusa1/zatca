@@ -45,8 +45,10 @@ namespace Zatca.EInvoice.Certificates
     /// <summary>
     /// Builds a Certificate Signing Request (CSR) and private key for ZATCA e-invoicing.
     /// </summary>
-    public class CertificateBuilder
+    public partial class CertificateBuilder
     {
+        [GeneratedRegex(@"^3\d{13}3$")]
+        private static partial Regex OrganizationIdRegex();
         private const string OidProduction = "ZATCA-Code-Signing";
         private const string OidTest = "ZATCA-Code-Signing"; // Same for test/simulation
         private const string TemplateIdentifierOid = "1.3.6.1.4.1.311.20.2";
@@ -72,7 +74,7 @@ namespace Zatca.EInvoice.Certificates
         /// <returns>The current builder instance.</returns>
         public CertificateBuilder SetOrganizationIdentifier(string identifier)
         {
-            if (!Regex.IsMatch(identifier, @"^3\d{13}3$"))
+            if (!OrganizationIdRegex().IsMatch(identifier))
             {
                 throw new CertificateBuilderException("Organization identifier must be 15 digits starting and ending with 3.");
             }

@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -11,8 +12,10 @@ namespace Zatca.EInvoice.Signing;
 /// <summary>
 /// Builds UBL signature XML structure with XAdES signature for ZATCA e-invoices.
 /// </summary>
-public class SignatureBuilder
+public partial class SignatureBuilder
 {
+    [GeneratedRegex(@"^([ ]+)(?=<)", RegexOptions.Multiline)]
+    private static partial Regex IndentationRegex();
     private const string SacNs = "urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2";
     private const string SbcNs = "urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2";
     private const string SigNs = "urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2";
@@ -102,7 +105,7 @@ public class SignatureBuilder
         }
 
         // Ensure proper indentation (double the spacing)
-        xml = System.Text.RegularExpressions.Regex.Replace(xml, @"^([ ]+)(?=<)", "$0$0", System.Text.RegularExpressions.RegexOptions.Multiline);
+        xml = IndentationRegex().Replace(xml, "$0$0");
 
         return xml;
     }

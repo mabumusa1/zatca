@@ -8,7 +8,7 @@ namespace Zatca.EInvoice.Helpers
     /// <summary>
     /// File I/O utility class for reading and writing files.
     /// </summary>
-    public class Storage
+    public static class Storage
     {
         private static string _basePath = string.Empty;
 
@@ -19,18 +19,6 @@ namespace Zatca.EInvoice.Helpers
         {
             get => _basePath;
             set => _basePath = value?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) ?? string.Empty;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Storage"/> class.
-        /// </summary>
-        /// <param name="basePath">Root directory for storage. Set to null if you want to handle files with a full path.</param>
-        public Storage(string? basePath = null)
-        {
-            if (!string.IsNullOrEmpty(basePath))
-            {
-                BasePath = basePath;
-            }
         }
 
         /// <summary>

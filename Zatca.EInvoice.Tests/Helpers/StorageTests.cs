@@ -18,8 +18,8 @@ public class StorageTests : IDisposable
         _tempDirectory = Path.Combine(Path.GetTempPath(), "ZatcaStorageTests_" + Guid.NewGuid().ToString());
         Directory.CreateDirectory(_tempDirectory);
 
-        // Set the static base path via constructor
-        _ = new Storage(_tempDirectory);
+        // Set the static base path
+        Storage.BasePath = _tempDirectory;
         _filesToCleanup = new List<string>();
     }
 
@@ -213,7 +213,7 @@ public class StorageTests : IDisposable
     public void TestStorageWithoutBasePath()
     {
         // Arrange
-        _ = new Storage(); // Reset base path
+        Storage.BasePath = string.Empty; // Reset base path
         var fullPath = Path.Combine(_tempDirectory, "absolute-path-test.txt");
         var content = "absolute path content";
 
@@ -229,7 +229,7 @@ public class StorageTests : IDisposable
         File.Delete(fullPath);
 
         // Restore base path for other tests
-        _ = new Storage(_tempDirectory);
+        Storage.BasePath = _tempDirectory;
     }
 
     [Fact]
@@ -280,6 +280,7 @@ public class StorageTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         // Clean up all test files and directories
         try
         {

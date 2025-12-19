@@ -10,8 +10,19 @@ namespace Zatca.EInvoice.Signing;
 /// Main orchestrator for signing ZATCA e-invoices with digital signatures and QR codes.
 /// This class implements the Category E digital signing requirements.
 /// </summary>
-public static class InvoiceSigner
+public static partial class InvoiceSigner
 {
+    [GeneratedRegex(@"^[ \t]*[\r\n]+", RegexOptions.Multiline)]
+    private static partial Regex BlankLinesRegex();
+
+    [GeneratedRegex(@"(<Invoice\s+[^>]*)(>)")]
+    private static partial Regex InvoiceTagRegex();
+
+    [GeneratedRegex(@"(<cbc:ProfileID>)")]
+    private static partial Regex ProfileIdRegex();
+
+    [GeneratedRegex(@"(<cac:Signature>)")]
+    private static partial Regex SignatureTagRegex();
     /// <summary>
     /// Signs an invoice XML with the provided certificate.
     /// </summary>
@@ -79,7 +90,7 @@ public static class InvoiceSigner
         );
 
         // Step 9: Clean up extra blank lines
-        signedXml = Regex.Replace(signedXml, @"^[ \t]*[\r\n]+", "", RegexOptions.Multiline);
+        signedXml = BlankLinesRegex().Replace(signedXml, "");
 
         return new SignedInvoiceResult
         {
@@ -158,9 +169,8 @@ public static class InvoiceSigner
         if (!signedXml.Contains("xmlns:ext="))
         {
             // Insert ext namespace after the Invoice opening tag's xmlns declarations
-            signedXml = Regex.Replace(
+            signedXml = InvoiceTagRegex().Replace(
                 signedXml,
-                @"(<Invoice\s+[^>]*)(>)",
                 $"$1 {extNamespaceDecl}$2"
             );
         }
@@ -168,9 +178,8 @@ public static class InvoiceSigner
         // Insert UBL Extension before cbc:ProfileID
         // IMPORTANT: Do NOT add extra whitespace between UBLExtensions and ProfileID
         // When ZATCA removes UBLExtensions, no extra whitespace should remain
-        signedXml = Regex.Replace(
+        signedXml = ProfileIdRegex().Replace(
             signedXml,
-            @"(<cbc:ProfileID>)",
             $"<ext:UBLExtensions>{ublExtension}</ext:UBLExtensions>$1"
         );
 
@@ -179,9 +188,8 @@ public static class InvoiceSigner
         // When ZATCA removes QR, no extra whitespace should remain
         if (signedXml.Contains("<cac:Signature>"))
         {
-            signedXml = Regex.Replace(
+            signedXml = SignatureTagRegex().Replace(
                 signedXml,
-                @"(<cac:Signature>)",
                 $"{qrNode}$1"
             );
         }

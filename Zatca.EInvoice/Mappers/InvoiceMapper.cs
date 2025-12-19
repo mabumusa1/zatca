@@ -27,25 +27,6 @@ namespace Zatca.EInvoice.Mappers
             PropertyNameCaseInsensitive = true
         };
 
-        private readonly InvoiceLineMapper _invoiceLineMapper;
-
-        /// <summary>
-        /// InvoiceMapper constructor.
-        /// Initializes all dependent mappers.
-        /// </summary>
-        public InvoiceMapper()
-        {
-            _invoiceLineMapper = new InvoiceLineMapper();
-        }
-
-        /// <summary>
-        /// InvoiceMapper constructor with dependency injection.
-        /// </summary>
-        public InvoiceMapper(InvoiceLineMapper invoiceLineMapper)
-        {
-            _invoiceLineMapper = invoiceLineMapper;
-        }
-
         /// <summary>
         /// Maps input data to an Invoice object.
         /// </summary>
@@ -84,7 +65,7 @@ namespace Zatca.EInvoice.Mappers
                 AllowanceCharges = MapAllowanceCharges(data),
                 TaxTotal = MapTaxTotal(DictionaryHelper.GetDictionary(data, "taxTotal")),
                 LegalMonetaryTotal = MapLegalMonetaryTotal(DictionaryHelper.GetDictionary(data, "legalMonetaryTotal")),
-                InvoiceLines = _invoiceLineMapper.MapInvoiceLines(DictionaryHelper.GetList(data, "invoiceLines")),
+                InvoiceLines = InvoiceLineMapper.MapInvoiceLines(DictionaryHelper.GetList(data, "invoiceLines")),
                 Signature = MapSignature(DictionaryHelper.GetDictionary(data, "signature"))
             };
 

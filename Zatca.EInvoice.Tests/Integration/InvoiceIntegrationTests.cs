@@ -746,7 +746,7 @@ namespace Zatca.EInvoice.Tests.Integration
         /// <summary>
         /// Creates comprehensive test invoice data for testing.
         /// </summary>
-        private Dictionary<string, object> CreateTestInvoiceData()
+        private static Dictionary<string, object> CreateTestInvoiceData()
         {
             return new Dictionary<string, object>
             {

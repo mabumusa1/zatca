@@ -385,7 +385,7 @@ namespace Zatca.EInvoice.Tests.Api
         /// <summary>
         /// Creates a mock HttpClient that returns predefined responses.
         /// </summary>
-        private HttpClient CreateMockHttpClient(HttpStatusCode statusCode, string responseContent)
+        private static HttpClient CreateMockHttpClient(HttpStatusCode statusCode, string responseContent)
         {
             var mockHandler = new Mock<HttpMessageHandler>();
             mockHandler.Protected()
@@ -754,7 +754,7 @@ namespace Zatca.EInvoice.Tests.Api
                     ItExpr.IsAny<CancellationToken>())
                 .Returns(async (HttpRequestMessage request, CancellationToken ct) =>
                 {
-                    capturedContent = await request.Content.ReadAsStringAsync();
+                    capturedContent = await request.Content.ReadAsStringAsync(ct);
                     return new HttpResponseMessage(HttpStatusCode.OK)
                     {
                         Content = new StringContent(JsonSerializer.Serialize(new
@@ -1027,6 +1027,7 @@ namespace Zatca.EInvoice.Tests.Api
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             foreach (var client in _clients)
             {
                 client.Dispose();

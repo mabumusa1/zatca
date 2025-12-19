@@ -26,7 +26,7 @@ namespace Zatca.EInvoice.Mappers
     ///   "identificationType": "CRN"              // Optional
     /// }
     /// </summary>
-    public class SupplierMapper
+    public static class SupplierMapper
     {
         /// <summary>
         /// Maps supplier data dictionary to a Party object.

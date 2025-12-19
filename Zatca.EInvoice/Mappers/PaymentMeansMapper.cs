@@ -14,7 +14,7 @@ namespace Zatca.EInvoice.Mappers
     ///     "note": "Payment note" // Optional instruction note
     /// }
     /// </summary>
-    public class PaymentMeansMapper
+    public static class PaymentMeansMapper
     {
         /// <summary>
         /// Maps payment means data dictionary to a PaymentMeans object.

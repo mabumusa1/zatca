@@ -23,6 +23,9 @@ namespace Zatca.EInvoice.Api
         private const string ContentTypeHeader = "Content-Type";
         private const string ValidationResultsKey = "validationResults";
         private const string MessageKey = "message";
+        private const string ErrorMessagesKey = "errorMessages";
+        private const string WarningMessagesKey = "warningMessages";
+        private const string InfoMessagesKey = "infoMessages";
 
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;
@@ -121,7 +124,7 @@ namespace Zatca.EInvoice.Api
                 throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
                 {
                     { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
-                    { "message", ex.Message }
+                    { MessageKey, ex.Message }
                 }, 0, ex);
             }
             catch (JsonException ex)
@@ -129,7 +132,7 @@ namespace Zatca.EInvoice.Api
                 throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
                 {
                     { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
-                    { "message", ex.Message }
+                    { MessageKey, ex.Message }
                 }, 0, ex);
             }
         }
@@ -364,7 +367,7 @@ namespace Zatca.EInvoice.Api
                 throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
                 {
                     { "endpoint", endpoint },
-                    { "message", ex.Message }
+                    { MessageKey, ex.Message }
                 }, 0, ex);
             }
             catch (JsonException ex)
@@ -372,7 +375,7 @@ namespace Zatca.EInvoice.Api
                 throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
                 {
                     { "endpoint", endpoint },
-                    { "message", ex.Message }
+                    { MessageKey, ex.Message }
                 }, 0, ex);
             }
         }

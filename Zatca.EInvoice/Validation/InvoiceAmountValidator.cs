@@ -13,7 +13,7 @@ namespace Zatca.EInvoice.Validation
     /// - Each invoice line has valid numeric values for quantity, price, and line extension amounts,
     ///   and that calculations (such as price * quantity) are consistent with the provided amounts.
     /// </summary>
-    public class InvoiceAmountValidator
+    public static class InvoiceAmountValidator
     {
         private const decimal Tolerance = 0.01m;
         private const string LegalMonetaryTotal = "legalMonetaryTotal";
