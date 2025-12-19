@@ -42,6 +42,7 @@ namespace Zatca.EInvoice.Xml
         /// </summary>
         public static readonly XNamespace Sbc = "urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2";
 
+#pragma warning disable S5332 // Using http protocol - these are W3C XML namespace URIs that must use http://
         /// <summary>
         /// XML Digital Signature namespace.
         /// </summary>
@@ -51,5 +52,6 @@ namespace Zatca.EInvoice.Xml
         /// XAdES namespace.
         /// </summary>
         public static readonly XNamespace Xades = "http://uri.etsi.org/01903/v1.3.2#";
+#pragma warning restore S5332
     }
 }

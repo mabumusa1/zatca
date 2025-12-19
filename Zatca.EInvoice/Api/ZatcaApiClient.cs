@@ -23,9 +23,6 @@ namespace Zatca.EInvoice.Api
         private const string ContentTypeHeader = "Content-Type";
         private const string ValidationResultsKey = "validationResults";
         private const string MessageKey = "message";
-        private const string ErrorMessagesKey = "errorMessages";
-        private const string WarningMessagesKey = "warningMessages";
-        private const string InfoMessagesKey = "infoMessages";
 
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;

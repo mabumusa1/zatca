@@ -19,8 +19,10 @@ public partial class SignatureBuilder
     private const string SacNs = "urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2";
     private const string SbcNs = "urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2";
     private const string SigNs = "urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2";
+#pragma warning disable S5332 // Using http protocol - these are W3C XML namespace URIs that must use http://
     private const string DsNs = "http://www.w3.org/2000/09/xmldsig#";
     private const string XadesNs = "http://uri.etsi.org/01903/v1.3.2#";
+#pragma warning restore S5332
     private const string Algorithm = "Algorithm";
     private const string Transform = "Transform";
 
