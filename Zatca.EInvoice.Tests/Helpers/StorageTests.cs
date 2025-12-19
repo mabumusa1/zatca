@@ -261,6 +261,70 @@ public class StorageTests : IDisposable
     }
 
     [Fact]
+    public void TestBasePathTrimsTrailingSeparators()
+    {
+        // Arrange - trailing forward slash (works on all platforms)
+        Storage.BasePath = "/test/path/";
+        Assert.Equal("/test/path", Storage.BasePath);
+
+        // Restore for other tests
+        Storage.BasePath = _tempDirectory;
+    }
+
+    [Fact]
+    public void TestBasePathNullSetsToEmpty()
+    {
+        // Arrange
+        Storage.BasePath = null!;
+
+        // Assert
+        Assert.Equal(string.Empty, Storage.BasePath);
+
+        // Restore for other tests
+        Storage.BasePath = _tempDirectory;
+    }
+
+    [Fact]
+    public void TestReadThrowsOnNullOrEmptyPath()
+    {
+        // Act & Assert - null path
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Read(null!));
+
+        // Act & Assert - empty path
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Read(string.Empty));
+    }
+
+    [Fact]
+    public void TestAppendThrowsOnNullOrEmptyPath()
+    {
+        // Act & Assert - null path
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Append(null!, "content"));
+
+        // Act & Assert - empty path
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Append(string.Empty, "content"));
+    }
+
+    [Fact]
+    public void TestExistsWithNullPath_ThrowsException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Exists(null!));
+    }
+
+    [Fact]
+    public void TestDeleteWithNullPath_ThrowsException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Delete(null!));
+    }
+
+    [Fact]
     public void TestMultipleAppends()
     {
         // Arrange
