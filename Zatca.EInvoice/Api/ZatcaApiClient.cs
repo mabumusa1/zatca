@@ -84,27 +84,46 @@ namespace Zatca.EInvoice.Api
             csr = csr.TrimStart('\uFEFF');
             var csrBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(csr));
 
-            var request = new HttpRequestMessage(HttpMethod.Post, ZatcaApiEndpoints.ComplianceCertificate);
-            request.Headers.TryAddWithoutValidation("OTP", otp);
-            request.Headers.TryAddWithoutValidation("Accept-Version", "V2");
-
-            var json = JsonSerializer.Serialize(new { csr = csrBase64 }, _jsonOptions);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!IsSuccessStatusCode(response.StatusCode))
+            try
             {
-                throw new ZatcaApiException(
-                    $"API request failed with status code {(int)response.StatusCode}",
-                    (int)response.StatusCode,
-                    content);
-            }
+                var request = new HttpRequestMessage(HttpMethod.Post, ZatcaApiEndpoints.ComplianceCertificate);
+                request.Headers.TryAddWithoutValidation("OTP", otp);
+                request.Headers.TryAddWithoutValidation("Accept-Version", "V2");
 
-            var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(content, _jsonOptions)
-                ?? throw new ZatcaApiException("Failed to parse API response", 0, content);
-            return ParseComplianceCertificateResult(responseDict);
+                var json = JsonSerializer.Serialize(new { csr = csrBase64 }, _jsonOptions);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.SendAsync(request, cancellationToken);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!IsSuccessStatusCode(response.StatusCode))
+                {
+                    throw new ZatcaApiException(
+                        $"API request failed with status code {(int)response.StatusCode}",
+                        (int)response.StatusCode,
+                        content);
+                }
+
+                var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(content, _jsonOptions)
+                    ?? throw new ZatcaApiException("Failed to parse API response", 0, content);
+                return ParseComplianceCertificateResult(responseDict);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
+                {
+                    { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
+                    { "message", ex.Message }
+                }, 0, ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
+                {
+                    { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
+                    { "message", ex.Message }
+                }, 0, ex);
+            }
         }
 
         /// <inheritdoc/>
