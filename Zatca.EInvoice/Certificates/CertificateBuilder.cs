@@ -437,7 +437,7 @@ namespace Zatca.EInvoice.Certificates
             return new GeneralNames(generalName);
         }
 
-        private string Sanitize(string input)
+        private static string Sanitize(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
             {

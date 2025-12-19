@@ -156,80 +156,59 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateSupplier(Dictionary<string, object> data, ValidationResult result)
         {
-            if (!data.ContainsKey("supplier") || IsEmpty(data["supplier"]))
+            if (!data.TryGetValue("supplier", out var supplierObj) || IsEmpty(supplierObj))
             {
                 result.AddError("Supplier data is required.");
                 return;
             }
 
-            if (!(data["supplier"] is Dictionary<string, object> supplier))
+            if (supplierObj is not Dictionary<string, object> supplier)
             {
                 result.AddError("Supplier data must be a valid object.");
                 return;
             }
 
-            var supplierRequired = new[] { "registrationName", "taxId", "address" };
-            foreach (var field in supplierRequired)
-            {
-                if (!supplier.ContainsKey(field) || IsEmpty(supplier[field]))
-                {
-                    result.AddError($"The field 'Supplier {field}' is required and cannot be empty.");
-                }
-            }
-
-            // Validate supplier address fields.
-            if (supplier.ContainsKey("address") && supplier["address"] is Dictionary<string, object> address)
-            {
-                var supplierAddressRequired = new[] { "street", "buildingNumber", "city", "postalZone", "country" };
-                foreach (var field in supplierAddressRequired)
-                {
-                    if (!address.ContainsKey(field) || IsEmpty(address[field]))
-                    {
-                        result.AddError($"The field 'Supplier Address {field}' is required and cannot be empty.");
-                    }
-                }
-            }
+            ValidateRequiredFields(supplier, new[] { "registrationName", "taxId", "address" }, "Supplier", result);
+            ValidateAddressFields(supplier, "Supplier Address", result);
         }
 
         private void ValidateCustomer(Dictionary<string, object> data, ValidationResult result)
         {
-            bool isSimplified = IsSimplifiedInvoice(data);
-            if (isSimplified)
-            {
+            if (IsSimplifiedInvoice(data))
                 return;
-            }
 
-            if (!data.ContainsKey("customer") || IsEmpty(data["customer"]))
+            if (!data.TryGetValue("customer", out var customerObj) || IsEmpty(customerObj))
             {
                 result.AddError("Customer data is required for non-simplified invoices.");
                 return;
             }
 
-            if (!(data["customer"] is Dictionary<string, object> customer))
+            if (customerObj is not Dictionary<string, object> customer)
             {
                 result.AddError("Customer data must be a valid object.");
                 return;
             }
 
-            var customerRequired = new[] { "registrationName", "taxId", "address" };
-            foreach (var field in customerRequired)
-            {
-                if (!customer.ContainsKey(field) || IsEmpty(customer[field]))
-                {
-                    result.AddError($"The field 'Customer {field}' is required and cannot be empty.");
-                }
-            }
+            ValidateRequiredFields(customer, new[] { "registrationName", "taxId", "address" }, "Customer", result);
+            ValidateAddressFields(customer, "Customer Address", result);
+        }
 
-            // Validate customer address fields.
-            if (customer.ContainsKey("address") && customer["address"] is Dictionary<string, object> address)
+        private void ValidateAddressFields(Dictionary<string, object> entity, string prefix, ValidationResult result)
+        {
+            if (!entity.TryGetValue("address", out var addressObj) || addressObj is not Dictionary<string, object> address)
+                return;
+
+            var addressRequired = new[] { "street", "buildingNumber", "city", "postalZone", "country" };
+            ValidateRequiredFields(address, addressRequired, prefix, result);
+        }
+
+        private void ValidateRequiredFields(Dictionary<string, object> data, string[] fields, string prefix, ValidationResult result)
+        {
+            foreach (var field in fields)
             {
-                var customerAddressRequired = new[] { "street", "buildingNumber", "city", "postalZone", "country" };
-                foreach (var field in customerAddressRequired)
+                if (!data.TryGetValue(field, out var value) || IsEmpty(value))
                 {
-                    if (!address.ContainsKey(field) || IsEmpty(address[field]))
-                    {
-                        result.AddError($"The field 'Customer Address {field}' is required and cannot be empty.");
-                    }
+                    result.AddError($"The field '{prefix} {field}' is required and cannot be empty.");
                 }
             }
         }
@@ -252,52 +231,54 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateTaxTotal(Dictionary<string, object> data, ValidationResult result)
         {
-            if (!data.ContainsKey("taxTotal"))
-            {
+            if (!data.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
-            }
 
-            if (!(data["taxTotal"] is Dictionary<string, object> taxTotal))
-            {
-                return;
-            }
-
-            if (!taxTotal.ContainsKey("taxAmount") || !IsNumericValue(taxTotal["taxAmount"]))
+            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
             {
                 result.AddError("The field 'Tax Total taxAmount' is required and cannot be empty.");
             }
 
-            // Validate subTotals if provided.
-            if (taxTotal.ContainsKey("subTotals") && taxTotal["subTotals"] is IList<object> subTotals)
+            ValidateTaxSubTotals(taxTotal, result);
+        }
+
+        private void ValidateTaxSubTotals(Dictionary<string, object> taxTotal, ValidationResult result)
+        {
+            if (!taxTotal.TryGetValue("subTotals", out var subTotalsObj) || subTotalsObj is not IList<object> subTotals)
+                return;
+
+            for (int i = 0; i < subTotals.Count; i++)
             {
-                for (int i = 0; i < subTotals.Count; i++)
+                if (subTotals[i] is Dictionary<string, object> subTotal)
                 {
-                    if (!(subTotals[i] is Dictionary<string, object> subTotal))
-                    {
-                        continue;
-                    }
-
-                    var subRequired = new[] { "taxableAmount", "taxCategory" };
-                    foreach (var field in subRequired)
-                    {
-                        if (!subTotal.ContainsKey(field) || IsEmpty(subTotal[field]))
-                        {
-                            result.AddError($"The field 'Tax Total subTotals[{i}] {field}' is required and cannot be empty.");
-                        }
-                    }
-
-                    // Validate taxScheme id in subTotal.
-                    if (subTotal.ContainsKey("taxCategory") &&
-                        subTotal["taxCategory"] is Dictionary<string, object> taxCategory &&
-                        taxCategory.ContainsKey("taxScheme") &&
-                        taxCategory["taxScheme"] is Dictionary<string, object> taxScheme)
-                    {
-                        if (!taxScheme.ContainsKey("id") || IsEmpty(taxScheme["id"]))
-                        {
-                            result.AddError($"The field 'Tax Total subTotals[{i}] TaxScheme id' is required and cannot be empty.");
-                        }
-                    }
+                    ValidateSingleTaxSubTotal(subTotal, i, result);
                 }
+            }
+        }
+
+        private void ValidateSingleTaxSubTotal(Dictionary<string, object> subTotal, int index, ValidationResult result)
+        {
+            var subRequired = new[] { "taxableAmount", "taxCategory" };
+            foreach (var field in subRequired)
+            {
+                if (!subTotal.TryGetValue(field, out var value) || IsEmpty(value))
+                {
+                    result.AddError($"The field 'Tax Total subTotals[{index}] {field}' is required and cannot be empty.");
+                }
+            }
+
+            ValidateTaxSchemeId(subTotal, index, result);
+        }
+
+        private void ValidateTaxSchemeId(Dictionary<string, object> subTotal, int index, ValidationResult result)
+        {
+            if (!subTotal.TryGetValue("taxCategory", out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory)
+                return;
+            if (!taxCategory.TryGetValue("taxScheme", out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme)
+                return;
+            if (!taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
+            {
+                result.AddError($"The field 'Tax Total subTotals[{index}] TaxScheme id' is required and cannot be empty.");
             }
         }
 
@@ -327,8 +308,8 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateInvoiceLines(Dictionary<string, object> data, ValidationResult result)
         {
-            if (!data.ContainsKey("invoiceLines") ||
-                !(data["invoiceLines"] is IList<object> invoiceLines) ||
+            if (!data.TryGetValue("invoiceLines", out var linesObj) ||
+                linesObj is not IList<object> invoiceLines ||
                 invoiceLines.Count == 0)
             {
                 result.AddError("At least one invoice line is required.");
@@ -337,64 +318,82 @@ namespace Zatca.EInvoice.Validation
 
             for (int lineIndex = 0; lineIndex < invoiceLines.Count; lineIndex++)
             {
-                if (!(invoiceLines[lineIndex] is Dictionary<string, object> line))
+                if (invoiceLines[lineIndex] is Dictionary<string, object> line)
                 {
-                    continue;
+                    ValidateSingleInvoiceLine(line, lineIndex, result);
                 }
+            }
+        }
 
-                var lineRequired = new[] { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
-                foreach (var field in lineRequired)
+        private void ValidateSingleInvoiceLine(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        {
+            var lineRequired = new[] { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
+            foreach (var field in lineRequired)
+            {
+                if (!line.TryGetValue(field, out var value) || (!IsNumericValue(value) && IsEmpty(value)))
                 {
-                    if (!line.ContainsKey(field) || (!IsNumericValue(line[field]) && IsEmpty(line[field])))
-                    {
-                        result.AddError($"The field 'Invoice Lines[{lineIndex}] {field}' is required and cannot be empty.");
-                    }
+                    result.AddError($"The field 'Invoice Lines[{lineIndex}] {field}' is required and cannot be empty.");
                 }
+            }
 
-                // Validate item within invoice line.
-                if (line.ContainsKey("item") && line["item"] is Dictionary<string, object> item)
-                {
-                    if (!item.ContainsKey("name") || IsEmpty(item["name"]))
-                    {
-                        result.AddError($"The field 'Invoice Lines[{lineIndex}] Item name' is required and cannot be empty.");
-                    }
+            ValidateLineItem(line, lineIndex, result);
+            ValidateLinePrice(line, lineIndex, result);
+            ValidateLineTaxTotal(line, lineIndex, result);
+        }
 
-                    if (item.ContainsKey("classifiedTaxCategory") &&
-                        item["classifiedTaxCategory"] is IList<object> classifiedTaxCategory &&
-                        classifiedTaxCategory.Count > 0 &&
-                        classifiedTaxCategory[0] is Dictionary<string, object> firstCategory)
-                    {
-                        if (!firstCategory.ContainsKey("taxScheme") ||
-                            !(firstCategory["taxScheme"] is Dictionary<string, object> taxScheme) ||
-                            !taxScheme.ContainsKey("id") || IsEmpty(taxScheme["id"]))
-                        {
-                            result.AddError($"The field 'Invoice Lines[{lineIndex}] Item TaxScheme id' is required and cannot be empty.");
-                        }
+        private void ValidateLineItem(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        {
+            if (!line.TryGetValue("item", out var itemObj) || itemObj is not Dictionary<string, object> item)
+                return;
 
-                        if (!firstCategory.ContainsKey("percent") || !IsNumericValue(firstCategory["percent"]))
-                        {
-                            result.AddError($"The field 'Invoice Lines[{lineIndex}] Item percent' is required and cannot be empty.");
-                        }
-                    }
-                }
+            if (!item.TryGetValue("name", out var nameObj) || IsEmpty(nameObj))
+            {
+                result.AddError($"The field 'Invoice Lines[{lineIndex}] Item name' is required and cannot be empty.");
+            }
 
-                // Validate price within invoice line.
-                if (line.ContainsKey("price") && line["price"] is Dictionary<string, object> price)
-                {
-                    if (!price.ContainsKey("amount") || !IsNumericValue(price["amount"]))
-                    {
-                        result.AddError($"The field 'Invoice Lines[{lineIndex}] Price amount' is required and cannot be empty.");
-                    }
-                }
+            ValidateLineItemTaxCategory(item, lineIndex, result);
+        }
 
-                // Validate taxTotal within invoice line.
-                if (line.ContainsKey("taxTotal") && line["taxTotal"] is Dictionary<string, object> taxTotal)
-                {
-                    if (!taxTotal.ContainsKey("taxAmount") || !IsNumericValue(taxTotal["taxAmount"]))
-                    {
-                        result.AddError($"The field 'Invoice Lines[{lineIndex}] TaxTotal taxAmount' is required and cannot be empty.");
-                    }
-                }
+        private void ValidateLineItemTaxCategory(Dictionary<string, object> item, int lineIndex, ValidationResult result)
+        {
+            if (!item.TryGetValue("classifiedTaxCategory", out var catObj) ||
+                catObj is not IList<object> classifiedTaxCategory ||
+                classifiedTaxCategory.Count == 0 ||
+                classifiedTaxCategory[0] is not Dictionary<string, object> firstCategory)
+                return;
+
+            if (!firstCategory.TryGetValue("taxScheme", out var schemeObj) ||
+                schemeObj is not Dictionary<string, object> taxScheme ||
+                !taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
+            {
+                result.AddError($"The field 'Invoice Lines[{lineIndex}] Item TaxScheme id' is required and cannot be empty.");
+            }
+
+            if (!firstCategory.TryGetValue("percent", out var percentObj) || !IsNumericValue(percentObj))
+            {
+                result.AddError($"The field 'Invoice Lines[{lineIndex}] Item percent' is required and cannot be empty.");
+            }
+        }
+
+        private void ValidateLinePrice(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        {
+            if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
+                return;
+
+            if (!price.TryGetValue("amount", out var amountObj) || !IsNumericValue(amountObj))
+            {
+                result.AddError($"The field 'Invoice Lines[{lineIndex}] Price amount' is required and cannot be empty.");
+            }
+        }
+
+        private void ValidateLineTaxTotal(Dictionary<string, object> line, int lineIndex, ValidationResult result)
+        {
+            if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+                return;
+
+            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
+            {
+                result.AddError($"The field 'Invoice Lines[{lineIndex}] TaxTotal taxAmount' is required and cannot be empty.");
             }
         }
 
@@ -522,49 +521,52 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateTaxTotalAndThrow(Dictionary<string, object> data)
         {
-            if (!data.ContainsKey("taxTotal"))
-            {
+            if (!data.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
                 return;
-            }
 
-            if (!(data["taxTotal"] is Dictionary<string, object> taxTotal))
-            {
-                return;
-            }
-
-            if (!taxTotal.ContainsKey("taxAmount") || !IsNumericValue(taxTotal["taxAmount"]))
+            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
             {
                 throw new ArgumentException("The field 'Tax Total taxAmount' is required and cannot be empty.");
             }
 
-            // Validate subTotals if provided.
-            if (taxTotal.ContainsKey("subTotals") && taxTotal["subTotals"] is IList<object> subTotals)
+            ValidateTaxSubTotalsAndThrow(taxTotal);
+        }
+
+        private void ValidateTaxSubTotalsAndThrow(Dictionary<string, object> taxTotal)
+        {
+            if (!taxTotal.TryGetValue("subTotals", out var subTotalsObj) || subTotalsObj is not IList<object> subTotals)
+                return;
+
+            for (int i = 0; i < subTotals.Count; i++)
             {
-                for (int i = 0; i < subTotals.Count; i++)
+                if (subTotals[i] is Dictionary<string, object> subTotal)
                 {
-                    if (!(subTotals[i] is Dictionary<string, object> subTotal))
-                    {
-                        continue;
-                    }
-
-                    var subRequired = new[] { "taxableAmount", "taxCategory" };
-                    foreach (var field in subRequired)
-                    {
-                        if (!subTotal.ContainsKey(field) || IsEmpty(subTotal[field]))
-                        {
-                            throw new ArgumentException($"The field 'Tax Total subTotals[{i}] {field}' is required and cannot be empty.");
-                        }
-                    }
-
-                    // Validate taxScheme id in subTotal.
-                    if (!(subTotal["taxCategory"] is Dictionary<string, object> taxCategory) ||
-                        !taxCategory.ContainsKey("taxScheme") ||
-                        !(taxCategory["taxScheme"] is Dictionary<string, object> taxScheme) ||
-                        !taxScheme.ContainsKey("id") || IsEmpty(taxScheme["id"]))
-                    {
-                        throw new ArgumentException($"The field 'Tax Total subTotals[{i}] TaxScheme id' is required and cannot be empty.");
-                    }
+                    ValidateSingleTaxSubTotalAndThrow(subTotal, i);
                 }
+            }
+        }
+
+        private void ValidateSingleTaxSubTotalAndThrow(Dictionary<string, object> subTotal, int index)
+        {
+            var subRequired = new[] { "taxableAmount", "taxCategory" };
+            foreach (var field in subRequired)
+            {
+                if (!subTotal.TryGetValue(field, out var value) || IsEmpty(value))
+                {
+                    throw new ArgumentException($"The field 'Tax Total subTotals[{index}] {field}' is required and cannot be empty.");
+                }
+            }
+
+            ValidateTaxSchemeIdAndThrow(subTotal, index);
+        }
+
+        private void ValidateTaxSchemeIdAndThrow(Dictionary<string, object> subTotal, int index)
+        {
+            if (!subTotal.TryGetValue("taxCategory", out var taxCatObj) || taxCatObj is not Dictionary<string, object> taxCategory ||
+                !taxCategory.TryGetValue("taxScheme", out var taxSchemeObj) || taxSchemeObj is not Dictionary<string, object> taxScheme ||
+                !taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
+            {
+                throw new ArgumentException($"The field 'Tax Total subTotals[{index}] TaxScheme id' is required and cannot be empty.");
             }
         }
 
@@ -592,8 +594,8 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateInvoiceLinesAndThrow(Dictionary<string, object> data)
         {
-            if (!data.ContainsKey("invoiceLines") ||
-                !(data["invoiceLines"] is IList<object> invoiceLines) ||
+            if (!data.TryGetValue("invoiceLines", out var linesObj) ||
+                linesObj is not IList<object> invoiceLines ||
                 invoiceLines.Count == 0)
             {
                 throw new ArgumentException("At least one invoice line is required.");
@@ -601,75 +603,94 @@ namespace Zatca.EInvoice.Validation
 
             for (int lineIndex = 0; lineIndex < invoiceLines.Count; lineIndex++)
             {
-                if (!(invoiceLines[lineIndex] is Dictionary<string, object> line))
+                if (invoiceLines[lineIndex] is Dictionary<string, object> line)
                 {
-                    continue;
+                    ValidateSingleInvoiceLineAndThrow(line, lineIndex);
                 }
+            }
+        }
 
-                var lineRequired = new[] { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
-                foreach (var field in lineRequired)
-                {
-                    if (!line.ContainsKey(field) || (!IsNumericValue(line[field]) && IsEmpty(line[field])))
-                    {
-                        throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] {field}' is required and cannot be empty.");
-                    }
-                }
+        private void ValidateSingleInvoiceLineAndThrow(Dictionary<string, object> line, int lineIndex)
+        {
+            ValidateLineRequiredFieldsAndThrow(line, lineIndex);
+            ValidateLineItemAndThrow(line, lineIndex);
+            ValidateLinePriceAndThrow(line, lineIndex);
+            ValidateLineTaxTotalAndThrow(line, lineIndex);
+        }
 
-                // Validate item within invoice line.
-                if (!(line["item"] is Dictionary<string, object> item))
+        private void ValidateLineRequiredFieldsAndThrow(Dictionary<string, object> line, int lineIndex)
+        {
+            var lineRequired = new[] { "id", "unitCode", "quantity", "lineExtensionAmount", "item", "price", "taxTotal" };
+            foreach (var field in lineRequired)
+            {
+                if (!line.TryGetValue(field, out var value) || (!IsNumericValue(value) && IsEmpty(value)))
                 {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] item' must be a valid object.");
+                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] {field}' is required and cannot be empty.");
                 }
+            }
+        }
 
-                if (!item.ContainsKey("name") || IsEmpty(item["name"]))
-                {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item name' is required and cannot be empty.");
-                }
+        private void ValidateLineItemAndThrow(Dictionary<string, object> line, int lineIndex)
+        {
+            if (line["item"] is not Dictionary<string, object> item)
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] item' must be a valid object.");
+            }
 
-                if (!(item.ContainsKey("classifiedTaxCategory") &&
-                      item["classifiedTaxCategory"] is IList<object> classifiedTaxCategory &&
-                      classifiedTaxCategory.Count > 0 &&
-                      classifiedTaxCategory[0] is Dictionary<string, object> firstCategory))
-                {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item classifiedTaxCategory' is required.");
-                }
-                else
-                {
-                    var categoryItem = firstCategory;
-                    if (!(categoryItem.ContainsKey("taxScheme") &&
-                          categoryItem["taxScheme"] is Dictionary<string, object> taxScheme &&
-                          taxScheme.ContainsKey("id") && !IsEmpty(taxScheme["id"])))
-                    {
-                        throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item TaxScheme id' is required and cannot be empty.");
-                    }
+            if (!item.TryGetValue("name", out var nameObj) || IsEmpty(nameObj))
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item name' is required and cannot be empty.");
+            }
 
-                    if (!categoryItem.ContainsKey("percent") || !IsNumericValue(categoryItem["percent"]))
-                    {
-                        throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item percent' is required and cannot be empty.");
-                    }
-                }
+            ValidateLineItemTaxCategoryAndThrow(item, lineIndex);
+        }
 
-                // Validate price within invoice line.
-                if (!(line["price"] is Dictionary<string, object> price))
-                {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] price' must be a valid object.");
-                }
+        private void ValidateLineItemTaxCategoryAndThrow(Dictionary<string, object> item, int lineIndex)
+        {
+            if (!item.TryGetValue("classifiedTaxCategory", out var catObj) ||
+                catObj is not IList<object> classifiedTaxCategory ||
+                classifiedTaxCategory.Count == 0 ||
+                classifiedTaxCategory[0] is not Dictionary<string, object> firstCategory)
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item classifiedTaxCategory' is required.");
+            }
 
-                if (!price.ContainsKey("amount") || !IsNumericValue(price["amount"]))
-                {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Price amount' is required and cannot be empty.");
-                }
+            if (!firstCategory.TryGetValue("taxScheme", out var schemeObj) ||
+                schemeObj is not Dictionary<string, object> taxScheme ||
+                !taxScheme.TryGetValue("id", out var idObj) || IsEmpty(idObj))
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item TaxScheme id' is required and cannot be empty.");
+            }
 
-                // Validate taxTotal within invoice line.
-                if (!(line["taxTotal"] is Dictionary<string, object> taxTotal))
-                {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] taxTotal' must be a valid object.");
-                }
+            if (!firstCategory.TryGetValue("percent", out var percentObj) || !IsNumericValue(percentObj))
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Item percent' is required and cannot be empty.");
+            }
+        }
 
-                if (!taxTotal.ContainsKey("taxAmount") || !IsNumericValue(taxTotal["taxAmount"]))
-                {
-                    throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] TaxTotal taxAmount' is required and cannot be empty.");
-                }
+        private void ValidateLinePriceAndThrow(Dictionary<string, object> line, int lineIndex)
+        {
+            if (line["price"] is not Dictionary<string, object> price)
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] price' must be a valid object.");
+            }
+
+            if (!price.TryGetValue("amount", out var amountObj) || !IsNumericValue(amountObj))
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] Price amount' is required and cannot be empty.");
+            }
+        }
+
+        private void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int lineIndex)
+        {
+            if (line["taxTotal"] is not Dictionary<string, object> taxTotal)
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] taxTotal' must be a valid object.");
+            }
+
+            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !IsNumericValue(taxAmountObj))
+            {
+                throw new ArgumentException($"The field 'Invoice Lines[{lineIndex}] TaxTotal taxAmount' is required and cannot be empty.");
             }
         }
 

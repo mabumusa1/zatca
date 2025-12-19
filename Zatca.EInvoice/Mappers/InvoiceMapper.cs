@@ -237,7 +237,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps BillingReferences data to an array of BillingReference objects.
         /// </summary>
-        private List<BillingReference> MapBillingReferences(IEnumerable<object>? data)
+        private static List<BillingReference> MapBillingReferences(IEnumerable<object>? data)
         {
             var billingReferences = new List<BillingReference>();
 
@@ -263,61 +263,61 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps AllowanceCharge data to an array of AllowanceCharge objects.
         /// </summary>
-        private List<AllowanceCharge> MapAllowanceCharges(Dictionary<string, object> data)
+        private static List<AllowanceCharge> MapAllowanceCharges(Dictionary<string, object> data)
         {
-            var allowanceCharges = new List<AllowanceCharge>();
-
-            if (!data.ContainsKey("allowanceCharges"))
-            {
-                return allowanceCharges;
-            }
-
             var allowanceChargesList = DictionaryHelper.GetList(data, "allowanceCharges");
             if (allowanceChargesList == null)
             {
-                return allowanceCharges;
+                return new List<AllowanceCharge>();
             }
 
+            var allowanceCharges = new List<AllowanceCharge>();
             foreach (var allowanceChargeObj in allowanceChargesList)
             {
                 if (allowanceChargeObj is Dictionary<string, object> allowanceCharge)
                 {
-                    var taxCategories = new List<TaxCategory>();
-
-                    // Check if taxCategories is provided and iterate over it
-                    if (allowanceCharge.ContainsKey("taxCategories") &&
-                        allowanceCharge["taxCategories"] is IEnumerable<object> taxCatList)
-                    {
-                        foreach (var taxCatObj in taxCatList)
-                        {
-                            if (taxCatObj is Dictionary<string, object> taxCatData)
-                            {
-                                var taxSchemeData = DictionaryHelper.GetDictionary(taxCatData, "taxScheme");
-                                var taxScheme = new TaxScheme
-                                {
-                                    Id = DictionaryHelper.GetString(taxSchemeData, "id", "VAT")
-                                };
-
-                                taxCategories.Add(new TaxCategory
-                                {
-                                    Percent = DictionaryHelper.GetDecimal(taxCatData, "percent", 15m),
-                                    TaxScheme = taxScheme
-                                });
-                            }
-                        }
-                    }
-
-                    allowanceCharges.Add(new AllowanceCharge
-                    {
-                        ChargeIndicator = DictionaryHelper.GetBoolean(allowanceCharge, "isCharge", false),
-                        AllowanceChargeReason = DictionaryHelper.GetString(allowanceCharge, "reason", "discount"),
-                        Amount = DictionaryHelper.GetDecimal(allowanceCharge, "amount", 0m),
-                        TaxCategories = taxCategories
-                    });
+                    allowanceCharges.Add(MapSingleAllowanceCharge(allowanceCharge));
                 }
             }
 
             return allowanceCharges;
+        }
+
+        private static AllowanceCharge MapSingleAllowanceCharge(Dictionary<string, object> allowanceCharge)
+        {
+            return new AllowanceCharge
+            {
+                ChargeIndicator = DictionaryHelper.GetBoolean(allowanceCharge, "isCharge", false),
+                AllowanceChargeReason = DictionaryHelper.GetString(allowanceCharge, "reason", "discount"),
+                Amount = DictionaryHelper.GetDecimal(allowanceCharge, "amount", 0m),
+                TaxCategories = MapTaxCategories(allowanceCharge)
+            };
+        }
+
+        private static List<TaxCategory> MapTaxCategories(Dictionary<string, object> allowanceCharge)
+        {
+            var taxCategories = new List<TaxCategory>();
+
+            if (!allowanceCharge.TryGetValue("taxCategories", out var taxCatValue) ||
+                taxCatValue is not IEnumerable<object> taxCatList)
+            {
+                return taxCategories;
+            }
+
+            foreach (var taxCatObj in taxCatList)
+            {
+                if (taxCatObj is Dictionary<string, object> taxCatData)
+                {
+                    var taxSchemeData = DictionaryHelper.GetDictionary(taxCatData, "taxScheme");
+                    taxCategories.Add(new TaxCategory
+                    {
+                        Percent = DictionaryHelper.GetDecimal(taxCatData, "percent", 15m),
+                        TaxScheme = new TaxScheme { Id = DictionaryHelper.GetString(taxSchemeData, "id", "VAT") }
+                    });
+                }
+            }
+
+            return taxCategories;
         }
 
         /// <summary>

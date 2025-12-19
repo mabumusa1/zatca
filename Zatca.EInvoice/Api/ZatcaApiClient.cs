@@ -17,9 +17,17 @@ namespace Zatca.EInvoice.Api
     /// </summary>
     public class ZatcaApiClient : IZatcaApiClient, IDisposable
     {
+        private const string ApplicationJson = "application/json";
+        private const string AcceptVersionHeader = "Accept-Version";
+        private const string AcceptVersionValue = "V2";
+        private const string ContentTypeHeader = "Content-Type";
+        private const string ValidationResultsKey = "validationResults";
+        private const string MessageKey = "message";
+
         private readonly HttpClient _httpClient;
         private readonly bool _disposeHttpClient;
         private bool _allowWarnings;
+        private bool _disposed;
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -57,7 +65,7 @@ namespace Zatca.EInvoice.Api
 
             // Set default headers
             _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(ApplicationJson));
         }
 
         /// <summary>
@@ -88,13 +96,13 @@ namespace Zatca.EInvoice.Api
             {
                 var request = new HttpRequestMessage(HttpMethod.Post, ZatcaApiEndpoints.ComplianceCertificate);
                 request.Headers.TryAddWithoutValidation("OTP", otp);
-                request.Headers.TryAddWithoutValidation("Accept-Version", "V2");
+                request.Headers.TryAddWithoutValidation(AcceptVersionHeader, AcceptVersionValue);
 
                 var json = JsonSerializer.Serialize(new { csr = csrBase64 }, _jsonOptions);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                request.Content = new StringContent(json, Encoding.UTF8, ApplicationJson);
 
                 var response = await _httpClient.SendAsync(request, cancellationToken);
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (!IsSuccessStatusCode(response.StatusCode))
                 {
@@ -145,9 +153,9 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
-            headers["Accept-Version"] = "V2";
+            headers[AcceptVersionHeader] = AcceptVersionValue;
             headers["Accept-Language"] = "en";
-            headers["Content-Type"] = "application/json";
+            headers[ContentTypeHeader] = ApplicationJson;
 
             var response = await SendRequestAsync<Dictionary<string, object>>(
                 HttpMethod.Post,
@@ -179,8 +187,8 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
-            headers["Accept-Version"] = "V2";
-            headers["Content-Type"] = "application/json";
+            headers[AcceptVersionHeader] = AcceptVersionValue;
+            headers[ContentTypeHeader] = ApplicationJson;
 
             var response = await SendRequestAsync<Dictionary<string, object>>(
                 HttpMethod.Post,
@@ -211,7 +219,7 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
-            headers["Accept-Version"] = "V2";
+            headers[AcceptVersionHeader] = AcceptVersionValue;
             headers["Clearance-Status"] = "1";
             headers["Accept-Language"] = "en";
 
@@ -244,7 +252,7 @@ namespace Zatca.EInvoice.Api
             };
 
             var headers = CreateAuthHeaders(certificate, secret);
-            headers["Accept-Version"] = "V2";
+            headers[AcceptVersionHeader] = AcceptVersionValue;
             headers["Accept-Language"] = "en";
 
             var response = await SendRequestAsync<Dictionary<string, object>>(
@@ -285,8 +293,8 @@ namespace Zatca.EInvoice.Api
 
             var headers = CreateAuthHeaders(certificate, secret);
             headers["OTP"] = otp;
-            headers["Accept-Version"] = "V2";
-            headers["Content-Type"] = "application/json";
+            headers[AcceptVersionHeader] = AcceptVersionValue;
+            headers[ContentTypeHeader] = ApplicationJson;
 
             var response = await SendRequestAsync<Dictionary<string, object>>(
                 new HttpMethod("PATCH"),
@@ -314,7 +322,7 @@ namespace Zatca.EInvoice.Api
                 {
                     foreach (var header in headers)
                     {
-                        if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                        if (header.Key.Equals(ContentTypeHeader, StringComparison.OrdinalIgnoreCase))
                         {
                             request.Content = new StringContent(
                                 JsonSerializer.Serialize(payload, _jsonOptions),
@@ -334,11 +342,11 @@ namespace Zatca.EInvoice.Api
                     request.Content = new StringContent(
                         JsonSerializer.Serialize(payload, _jsonOptions),
                         Encoding.UTF8,
-                        "application/json");
+                        ApplicationJson);
                 }
 
                 var response = await _httpClient.SendAsync(request, cancellationToken);
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (!IsSuccessStatusCode(response.StatusCode))
                 {
@@ -382,7 +390,7 @@ namespace Zatca.EInvoice.Api
             return false;
         }
 
-        private Dictionary<string, string> CreateAuthHeaders(string certificate, string secret)
+        private static Dictionary<string, string> CreateAuthHeaders(string certificate, string secret)
         {
             // ZATCA Basic Auth format (matching php-zatca-xml implementation):
             // 1. Get raw certificate content (base64 string from PEM, without headers)
@@ -421,7 +429,7 @@ namespace Zatca.EInvoice.Api
             };
         }
 
-        private void ValidateInvoiceParameters(string signedXml, string invoiceHash, string uuid, string certificate, string secret)
+        private static void ValidateInvoiceParameters(string signedXml, string invoiceHash, string uuid, string certificate, string secret)
         {
             if (string.IsNullOrWhiteSpace(signedXml))
                 throw new ArgumentNullException(nameof(signedXml));
@@ -442,8 +450,8 @@ namespace Zatca.EInvoice.Api
             var requestId = GetStringValue(response, "requestID");
             var dispositionMessage = GetStringValue(response, "dispositionMessage");
 
-            var errors = ParseValidationMessages(response, "validationResults", "ERROR");
-            var warnings = ParseValidationMessages(response, "validationResults", "WARNING");
+            var errors = ParseValidationMessages(response, ValidationResultsKey, "ERROR");
+            var warnings = ParseValidationMessages(response, ValidationResultsKey, "WARNING");
 
             // Decode the base64 certificate
             var certificate = !string.IsNullOrEmpty(binarySecurityToken)
@@ -466,8 +474,8 @@ namespace Zatca.EInvoice.Api
             var requestId = GetStringValue(response, "requestID");
             var dispositionMessage = GetStringValue(response, "dispositionMessage");
 
-            var errors = ParseValidationMessages(response, "validationResults", "ERROR");
-            var warnings = ParseValidationMessages(response, "validationResults", "WARNING");
+            var errors = ParseValidationMessages(response, ValidationResultsKey, "ERROR");
+            var warnings = ParseValidationMessages(response, ValidationResultsKey, "WARNING");
 
             // Decode the base64 certificate
             var certificate = !string.IsNullOrEmpty(binarySecurityToken)
@@ -490,9 +498,9 @@ namespace Zatca.EInvoice.Api
             var reportingStatus = GetStringValue(response, "reportingStatus");
             var clearedInvoice = GetStringValue(response, "clearedInvoice");
 
-            var errors = ParseValidationMessagesDetailed(response, "validationResults", "ERROR");
-            var warnings = ParseValidationMessagesDetailed(response, "validationResults", "WARNING");
-            var infoMessages = ParseValidationMessagesDetailed(response, "validationResults", "INFO");
+            var errors = ParseValidationMessagesDetailed(response, ValidationResultsKey, "ERROR");
+            var warnings = ParseValidationMessagesDetailed(response, ValidationResultsKey, "WARNING");
+            var infoMessages = ParseValidationMessagesDetailed(response, ValidationResultsKey, "INFO");
 
             // Decode cleared invoice if present
             if (!string.IsNullOrEmpty(clearedInvoice))
@@ -517,7 +525,7 @@ namespace Zatca.EInvoice.Api
                 infoMessages);
         }
 
-        private List<string> ParseValidationMessages(Dictionary<string, object> response, string key, string type)
+        private static List<string> ParseValidationMessages(Dictionary<string, object> response, string key, string type)
         {
             var messagesElement = GetValidationMessagesElement(response, key, type);
             if (messagesElement == null || messagesElement.Value.ValueKind != JsonValueKind.Array)
@@ -526,7 +534,7 @@ namespace Zatca.EInvoice.Api
             return ExtractMessageStrings(messagesElement.Value);
         }
 
-        private JsonElement? GetValidationMessagesElement(Dictionary<string, object> response, string key, string type)
+        private static JsonElement? GetValidationMessagesElement(Dictionary<string, object> response, string key, string type)
         {
             if (!response.TryGetValue(key, out var validationResults))
                 return null;
@@ -541,12 +549,12 @@ namespace Zatca.EInvoice.Api
             return messagesElement;
         }
 
-        private List<string> ExtractMessageStrings(JsonElement messagesElement)
+        private static List<string> ExtractMessageStrings(JsonElement messagesElement)
         {
             var messages = new List<string>();
             foreach (var message in messagesElement.EnumerateArray())
             {
-                if (message.TryGetProperty("message", out var msgText))
+                if (message.TryGetProperty(MessageKey, out var msgText))
                 {
                     var text = msgText.GetString();
                     if (text != null)
@@ -556,7 +564,7 @@ namespace Zatca.EInvoice.Api
             return messages;
         }
 
-        private List<ValidationMessage> ParseValidationMessagesDetailed(Dictionary<string, object> response, string key, string type)
+        private static List<ValidationMessage> ParseValidationMessagesDetailed(Dictionary<string, object> response, string key, string type)
         {
             var messagesElement = GetValidationMessagesElement(response, key, type);
             if (messagesElement == null || messagesElement.Value.ValueKind != JsonValueKind.Array)
@@ -565,7 +573,7 @@ namespace Zatca.EInvoice.Api
             return ExtractValidationMessages(messagesElement.Value, type);
         }
 
-        private List<ValidationMessage> ExtractValidationMessages(JsonElement messagesElement, string type)
+        private static List<ValidationMessage> ExtractValidationMessages(JsonElement messagesElement, string type)
         {
             var messages = new List<ValidationMessage>();
             foreach (var message in messagesElement.EnumerateArray())
@@ -575,14 +583,14 @@ namespace Zatca.EInvoice.Api
                     Type = GetJsonStringValue(message, "type") ?? type,
                     Code = GetJsonStringValue(message, "code") ?? string.Empty,
                     Category = GetJsonStringValue(message, "category") ?? string.Empty,
-                    Message = GetJsonStringValue(message, "message") ?? string.Empty,
+                    Message = GetJsonStringValue(message, MessageKey) ?? string.Empty,
                     Status = GetJsonStringValue(message, "status") ?? string.Empty
                 });
             }
             return messages;
         }
 
-        private string? GetStringValue(Dictionary<string, object> dict, string key)
+        private static string? GetStringValue(Dictionary<string, object> dict, string key)
         {
             if (dict.TryGetValue(key, out var value))
             {
@@ -604,7 +612,7 @@ namespace Zatca.EInvoice.Api
             return null;
         }
 
-        private string? GetJsonStringValue(JsonElement element, string propertyName)
+        private static string? GetJsonStringValue(JsonElement element, string propertyName)
         {
             if (element.TryGetProperty(propertyName, out var property))
             {
@@ -613,33 +621,30 @@ namespace Zatca.EInvoice.Api
             return null;
         }
 
-        private string ExtractBase64FromPem(string pem)
-        {
-            const string beginMarker = "-----BEGIN CERTIFICATE REQUEST-----";
-            const string endMarker = "-----END CERTIFICATE REQUEST-----";
-
-            var beginIndex = pem.IndexOf(beginMarker);
-            if (beginIndex == -1)
-                throw new ArgumentException("Invalid PEM format: missing begin marker");
-
-            beginIndex += beginMarker.Length;
-            var endIndex = pem.IndexOf(endMarker, beginIndex);
-            if (endIndex == -1)
-                throw new ArgumentException("Invalid PEM format: missing end marker");
-
-            var base64Content = pem[beginIndex..endIndex].Replace("\n", "").Replace("\r", "").Trim();
-            return base64Content;
-        }
-
         /// <summary>
         /// Disposes the HTTP client if it was created internally.
         /// </summary>
         public void Dispose()
         {
-            if (_disposeHttpClient)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing && _disposeHttpClient)
             {
                 _httpClient?.Dispose();
             }
+
+            _disposed = true;
         }
     }
 }

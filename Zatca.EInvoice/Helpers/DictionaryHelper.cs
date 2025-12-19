@@ -19,11 +19,7 @@ namespace Zatca.EInvoice.Helpers
         /// <returns>The string value or default.</returns>
         public static string? GetString(Dictionary<string, object>? data, string key, string? defaultValue = null)
         {
-            if (data == null || !data.ContainsKey(key))
-                return defaultValue;
-
-            var value = data[key];
-            if (value == null)
+            if (data == null || !data.TryGetValue(key, out var value) || value == null)
                 return defaultValue;
 
             if (value is JsonElement jsonElement)
@@ -45,11 +41,7 @@ namespace Zatca.EInvoice.Helpers
         /// <returns>The decimal value or default.</returns>
         public static decimal GetDecimal(Dictionary<string, object>? data, string key, decimal defaultValue = 0m)
         {
-            if (data == null || !data.ContainsKey(key))
-                return defaultValue;
-
-            var value = data[key];
-            if (value == null)
+            if (data == null || !data.TryGetValue(key, out var value) || value == null)
                 return defaultValue;
 
             if (value is JsonElement jsonElement)
@@ -92,11 +84,7 @@ namespace Zatca.EInvoice.Helpers
         /// <returns>The boolean value or default.</returns>
         public static bool GetBoolean(Dictionary<string, object>? data, string key, bool defaultValue = false)
         {
-            if (data == null || !data.ContainsKey(key))
-                return defaultValue;
-
-            var value = data[key];
-            if (value == null)
+            if (data == null || !data.TryGetValue(key, out var value) || value == null)
                 return defaultValue;
 
             if (value is JsonElement jsonElement)
@@ -128,11 +116,7 @@ namespace Zatca.EInvoice.Helpers
         /// <returns>The integer value or default.</returns>
         public static int GetInt(Dictionary<string, object>? data, string key, int defaultValue = 0)
         {
-            if (data == null || !data.ContainsKey(key))
-                return defaultValue;
-
-            var value = data[key];
-            if (value == null)
+            if (data == null || !data.TryGetValue(key, out var value) || value == null)
                 return defaultValue;
 
             if (value is JsonElement jsonElement)
@@ -165,11 +149,7 @@ namespace Zatca.EInvoice.Helpers
         /// <returns>The nested dictionary or an empty dictionary.</returns>
         public static Dictionary<string, object> GetDictionary(Dictionary<string, object>? data, string key)
         {
-            if (data == null || !data.ContainsKey(key))
-                return new Dictionary<string, object>();
-
-            var value = data[key];
-            if (value == null)
+            if (data == null || !data.TryGetValue(key, out var value) || value == null)
                 return new Dictionary<string, object>();
 
             if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Object)
@@ -196,39 +176,40 @@ namespace Zatca.EInvoice.Helpers
         /// <returns>The list or null.</returns>
         public static IEnumerable<object>? GetList(Dictionary<string, object>? data, string key)
         {
-            if (data == null || !data.ContainsKey(key))
-                return null;
-
-            var value = data[key];
-            if (value == null)
+            if (data == null || !data.TryGetValue(key, out var value) || value == null)
                 return null;
 
             if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
             {
-                var result = new List<object>();
-                foreach (var item in jsonElement.EnumerateArray())
-                {
-                    if (item.ValueKind == JsonValueKind.Object)
-                    {
-                        var dict = new Dictionary<string, object>();
-                        foreach (var prop in item.EnumerateObject())
-                        {
-                            dict[prop.Name] = prop.Value;
-                        }
-                        result.Add(dict);
-                    }
-                    else
-                    {
-                        result.Add(item);
-                    }
-                }
-                return result;
+                return ConvertJsonArrayToList(jsonElement);
             }
 
             if (value is IEnumerable<object> enumerable)
                 return enumerable;
 
             return null;
+        }
+
+        private static List<object> ConvertJsonArrayToList(JsonElement jsonElement)
+        {
+            var result = new List<object>();
+            foreach (var item in jsonElement.EnumerateArray())
+            {
+                result.Add(item.ValueKind == JsonValueKind.Object
+                    ? ConvertJsonObjectToDictionary(item)
+                    : item);
+            }
+            return result;
+        }
+
+        private static Dictionary<string, object> ConvertJsonObjectToDictionary(JsonElement item)
+        {
+            var dict = new Dictionary<string, object>();
+            foreach (var prop in item.EnumerateObject())
+            {
+                dict[prop.Name] = prop.Value;
+            }
+            return dict;
         }
     }
 }

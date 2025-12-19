@@ -109,12 +109,9 @@ namespace Zatca.EInvoice.Certificates
         /// <returns>Base64-encoded certificate hash.</returns>
         public string GetCertificateHash()
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var certBytes = Encoding.UTF8.GetBytes(RawCertificate);
-                var hash = sha256.ComputeHash(certBytes);
-                return Convert.ToBase64String(hash);
-            }
+            var certBytes = Encoding.UTF8.GetBytes(RawCertificate);
+            var hash = SHA256.HashData(certBytes);
+            return Convert.ToBase64String(hash);
         }
 
         /// <summary>
@@ -178,7 +175,7 @@ namespace Zatca.EInvoice.Certificates
             return sig;
         }
 
-        private X509Certificate2 LoadCertificateFromPem(string certificateContent)
+        private static X509Certificate2 LoadCertificateFromPem(string certificateContent)
         {
             try
             {
@@ -203,7 +200,7 @@ namespace Zatca.EInvoice.Certificates
             }
         }
 
-        private AsymmetricKeyParameter LoadPrivateKeyFromPem(string privateKeyContent)
+        private static AsymmetricKeyParameter LoadPrivateKeyFromPem(string privateKeyContent)
         {
             try
             {
@@ -243,7 +240,7 @@ namespace Zatca.EInvoice.Certificates
             }
         }
 
-        private string ExportCertificateToPem(X509Certificate2 certificate)
+        private static string ExportCertificateToPem(X509Certificate2 certificate)
         {
             var builder = new StringBuilder();
             builder.AppendLine("-----BEGIN CERTIFICATE-----");
@@ -252,7 +249,7 @@ namespace Zatca.EInvoice.Certificates
             return builder.ToString();
         }
 
-        private string ExportPublicKeyToPem(X509Certificate2 certificate)
+        private static string ExportPublicKeyToPem(X509Certificate2 certificate)
         {
             var publicKey = certificate.GetPublicKey();
             var builder = new StringBuilder();

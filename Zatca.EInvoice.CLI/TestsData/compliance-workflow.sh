@@ -721,8 +721,8 @@ Test Results:
 - Passed: $passed
 - Failed: $failed
 
-Simplified Invoice (Reporting): $([ -f "$submission_dir/simplified_reporting.json" ] && echo "Submitted" || echo "Failed")
-Standard Invoice (Clearance): $([ -f "$submission_dir/standard_clearance.json" ] && echo "Submitted" || echo "Failed")
+Simplified Invoice (Reporting): $([[ -f "$submission_dir/simplified_reporting.json" ]] && echo "Submitted" || echo "Failed")
+Standard Invoice (Clearance): $([[ -f "$submission_dir/standard_clearance.json" ]] && echo "Submitted" || echo "Failed")
 
 Files:
 - invoice_submissions/simplified_invoice*.* (Simplified invoice files)

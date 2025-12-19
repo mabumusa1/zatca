@@ -86,41 +86,56 @@ public class InvoiceType
         if (string.IsNullOrEmpty(Invoice) || string.IsNullOrEmpty(InvoiceSubType))
             throw new ArgumentException("Invoice category and type must be set.");
 
-        string invoiceTypeValue = Invoice?.ToLower() switch
+        string invoiceTypeValue = GetBaseInvoiceTypeValue();
+
+        return ApplyInvoiceFlags(invoiceTypeValue);
+    }
+
+    private string GetBaseInvoiceTypeValue()
+    {
+        var invoiceLower = Invoice?.ToLower();
+        var subTypeLower = InvoiceSubType?.ToLower();
+
+        return invoiceLower switch
         {
-            "standard" => InvoiceSubType?.ToLower() switch
-            {
-                "invoice" => InvoiceTypeCode.STANDARD_INVOICE,
-                "debit" => InvoiceTypeCode.STANDARD_INVOICE,
-                "credit" => InvoiceTypeCode.STANDARD_INVOICE,
-                "prepayment" => InvoiceTypeCode.STANDARD_INVOICE,
-                _ => throw new ArgumentException("Invalid invoice type provided.")
-            },
-            "simplified" => InvoiceSubType?.ToLower() switch
-            {
-                "invoice" => InvoiceTypeCode.SIMPLIFIED_INVOICE,
-                "debit" => InvoiceTypeCode.SIMPLIFIED_INVOICE,
-                "credit" => InvoiceTypeCode.SIMPLIFIED_INVOICE,
-                "prepayment" => InvoiceTypeCode.STANDARD_INVOICE,
-                _ => throw new ArgumentException("Invalid invoice type provided.")
-            },
+            "standard" => GetStandardInvoiceTypeValue(subTypeLower),
+            "simplified" => GetSimplifiedInvoiceTypeValue(subTypeLower),
             _ => throw new ArgumentException("Invalid invoice category provided.")
         };
+    }
 
-        // Adjust type value based on additional flags [PNESB]
-        if (invoiceTypeValue.Length >= 7)
+    private static string GetStandardInvoiceTypeValue(string? subType)
+    {
+        return subType switch
         {
-            string prefix = invoiceTypeValue.Substring(0, 2);
-            char p = IsThirdParty ? '1' : '0';     // Third-party transaction
-            char n = IsNominal ? '1' : '0';         // Nominal transaction
-            char e = IsExportInvoice ? '1' : '0';   // Export invoice
-            char s = IsSummary ? '1' : '0';         // Summary invoice
-            char b = IsSelfBilled ? '1' : '0';      // Self-billed invoice
+            "invoice" or "debit" or "credit" or "prepayment" => InvoiceTypeCode.STANDARD_INVOICE,
+            _ => throw new ArgumentException("Invalid invoice type provided.")
+        };
+    }
 
-            invoiceTypeValue = $"{prefix}{p}{n}{e}{s}{b}";
-        }
+    private static string GetSimplifiedInvoiceTypeValue(string? subType)
+    {
+        return subType switch
+        {
+            "invoice" or "debit" or "credit" => InvoiceTypeCode.SIMPLIFIED_INVOICE,
+            "prepayment" => InvoiceTypeCode.STANDARD_INVOICE,
+            _ => throw new ArgumentException("Invalid invoice type provided.")
+        };
+    }
 
-        return invoiceTypeValue;
+    private string ApplyInvoiceFlags(string invoiceTypeValue)
+    {
+        if (invoiceTypeValue.Length < 7)
+            return invoiceTypeValue;
+
+        string prefix = invoiceTypeValue.Substring(0, 2);
+        char p = IsThirdParty ? '1' : '0';
+        char n = IsNominal ? '1' : '0';
+        char e = IsExportInvoice ? '1' : '0';
+        char s = IsSummary ? '1' : '0';
+        char b = IsSelfBilled ? '1' : '0';
+
+        return $"{prefix}{p}{n}{e}{s}{b}";
     }
 
     /// <summary>

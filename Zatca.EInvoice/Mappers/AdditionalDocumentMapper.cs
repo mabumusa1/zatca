@@ -66,7 +66,7 @@ namespace Zatca.EInvoice.Mappers
             return docRef;
         }
 
-        private void MapPihAttachment(AdditionalDocumentReference docRef, Dictionary<string, object> doc)
+        private static void MapPihAttachment(AdditionalDocumentReference docRef, Dictionary<string, object> doc)
         {
             if (!doc.ContainsKey("attachment"))
                 return;
@@ -83,7 +83,7 @@ namespace Zatca.EInvoice.Mappers
             };
         }
 
-        private void EnsureQrDocumentExists(List<AdditionalDocumentReference> additionalDocs)
+        private static void EnsureQrDocumentExists(List<AdditionalDocumentReference> additionalDocs)
         {
             if (!additionalDocs.Any(d => d.Id == "QR"))
                 additionalDocs.Add(new AdditionalDocumentReference { Id = "QR" });

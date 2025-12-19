@@ -164,8 +164,11 @@ public class StorageTests : IDisposable
         // Arrange
         var fileName = "non-existent-delete.txt";
 
-        // Act & Assert - Should not throw
-        _storage.Delete(fileName);
+        // Act
+        var exception = Record.Exception(() => _storage.Delete(fileName));
+
+        // Assert - Should not throw
+        Assert.Null(exception);
     }
 
     [Fact]

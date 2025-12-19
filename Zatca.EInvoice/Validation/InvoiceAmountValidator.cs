@@ -125,99 +125,111 @@ namespace Zatca.EInvoice.Validation
         {
             for (int index = 0; index < invoiceLines.Count; index++)
             {
-                if (!(invoiceLines[index] is Dictionary<string, object> line))
+                if (invoiceLines[index] is Dictionary<string, object> line)
                 {
-                    continue;
+                    ValidateSingleLineAndThrow(line, index);
                 }
+            }
+        }
 
-                // Validate that 'quantity' and 'lineExtensionAmount' are provided, numeric, and non-negative.
-                var numericFields = new[] { "quantity", "lineExtensionAmount" };
-                foreach (var field in numericFields)
+        private void ValidateSingleLineAndThrow(Dictionary<string, object> line, int index)
+        {
+            ValidateLineNumericFieldsAndThrow(line, index);
+            var priceAmount = ValidateLinePriceAndThrow(line, index);
+            ValidateLineExtensionCalculationAndThrow(line, index, priceAmount);
+            ValidateLineItemTaxPercentAndThrow(line, index);
+            ValidateLineTaxTotalAndThrow(line, index);
+        }
+
+        private void ValidateLineNumericFieldsAndThrow(Dictionary<string, object> line, int index)
+        {
+            var numericFields = new[] { "quantity", "lineExtensionAmount" };
+            foreach (var field in numericFields)
+            {
+                if (!line.TryGetValue(field, out var fieldValue) || !TryGetDecimal(fieldValue, out decimal value))
                 {
-                    if (!line.ContainsKey(field) || !TryGetDecimal(line[field], out decimal value))
-                    {
-                        throw new ArgumentException($"Invoice Line [{index}] field '{field}' must be a numeric value.");
-                    }
-
-                    if (value < 0)
-                    {
-                        throw new ArgumentException($"Invoice Line [{index}] field '{field}' cannot be negative.");
-                    }
+                    throw new ArgumentException($"Invoice Line [{index}] field '{field}' must be a numeric value.");
                 }
-
-                // Validate that the price amount exists, is numeric, and non-negative.
-                if (!line.ContainsKey("price") || !(line["price"] is Dictionary<string, object> price))
+                if (value < 0)
                 {
-                    throw new ArgumentException($"Invoice Line [{index}] must have a valid price object.");
+                    throw new ArgumentException($"Invoice Line [{index}] field '{field}' cannot be negative.");
                 }
+            }
+        }
 
-                if (!price.ContainsKey("amount") || !TryGetDecimal(price["amount"], out decimal priceAmount))
-                {
-                    throw new ArgumentException($"Invoice Line [{index}] Price amount must be a numeric value.");
-                }
+        private decimal ValidateLinePriceAndThrow(Dictionary<string, object> line, int index)
+        {
+            if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
+            {
+                throw new ArgumentException($"Invoice Line [{index}] must have a valid price object.");
+            }
+            if (!price.TryGetValue("amount", out var amountObj) || !TryGetDecimal(amountObj, out decimal priceAmount))
+            {
+                throw new ArgumentException($"Invoice Line [{index}] Price amount must be a numeric value.");
+            }
+            if (priceAmount < 0)
+            {
+                throw new ArgumentException($"Invoice Line [{index}] Price amount cannot be negative.");
+            }
+            return priceAmount;
+        }
 
-                if (priceAmount < 0)
-                {
-                    throw new ArgumentException($"Invoice Line [{index}] Price amount cannot be negative.");
-                }
+        private void ValidateLineExtensionCalculationAndThrow(Dictionary<string, object> line, int index, decimal priceAmount)
+        {
+            decimal quantity = GetDecimal(line["quantity"]);
+            decimal expectedLineExtension = priceAmount * quantity;
+            decimal providedLineExtension = GetDecimal(line["lineExtensionAmount"]);
 
-                // Calculate expected lineExtensionAmount = price amount * quantity.
-                decimal quantity = GetDecimal(line["quantity"]);
-                decimal expectedLineExtension = priceAmount * quantity;
-                decimal providedLineExtension = GetDecimal(line["lineExtensionAmount"]);
+            if (Math.Abs(expectedLineExtension - providedLineExtension) > Tolerance)
+            {
+                throw new ArgumentException(
+                    $"Invoice Line [{index}] lineExtensionAmount is incorrect. Expected {expectedLineExtension}, got {providedLineExtension}.");
+            }
+        }
 
-                if (Math.Abs(expectedLineExtension - providedLineExtension) > Tolerance)
-                {
-                    throw new ArgumentException(
-                        $"Invoice Line [{index}] lineExtensionAmount is incorrect. Expected {expectedLineExtension}, got {providedLineExtension}."
-                    );
-                }
+        private void ValidateLineItemTaxPercentAndThrow(Dictionary<string, object> line, int index)
+        {
+            if (!line.TryGetValue("item", out var itemObj) || itemObj is not Dictionary<string, object> item)
+                return;
+            if (!item.TryGetValue("taxPercent", out var taxPercentObj))
+                return;
 
-                // Validate item taxPercent if provided.
-                if (line.ContainsKey("item") &&
-                    line["item"] is Dictionary<string, object> item &&
-                    item.ContainsKey("taxPercent"))
-                {
-                    if (!TryGetDecimal(item["taxPercent"], out decimal taxPercent))
-                    {
-                        throw new ArgumentException($"Invoice Line [{index}] item taxPercent must be a numeric value.");
-                    }
+            if (!TryGetDecimal(taxPercentObj, out decimal taxPercent))
+            {
+                throw new ArgumentException($"Invoice Line [{index}] item taxPercent must be a numeric value.");
+            }
+            if (taxPercent < 0 || taxPercent > 100)
+            {
+                throw new ArgumentException($"Invoice Line [{index}] item taxPercent must be between 0 and 100.");
+            }
+        }
 
-                    if (taxPercent < 0 || taxPercent > 100)
-                    {
-                        throw new ArgumentException($"Invoice Line [{index}] item taxPercent must be between 0 and 100.");
-                    }
-                }
+        private void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int index)
+        {
+            if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            {
+                throw new ArgumentException($"Invoice Line [{index}] must have a valid taxTotal object.");
+            }
+            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !TryGetDecimal(taxAmountObj, out decimal taxLineAmount))
+            {
+                throw new ArgumentException($"Invoice Line [{index}] TaxTotal taxAmount must be a numeric value.");
+            }
+            if (taxLineAmount < 0)
+            {
+                throw new ArgumentException($"Invoice Line [{index}] TaxTotal taxAmount cannot be negative.");
+            }
 
-                // Validate that taxTotal's taxAmount exists, is numeric, and non-negative.
-                if (!line.ContainsKey("taxTotal") || !(line["taxTotal"] is Dictionary<string, object> taxTotal))
-                {
-                    throw new ArgumentException($"Invoice Line [{index}] must have a valid taxTotal object.");
-                }
+            if (!taxTotal.TryGetValue("roundingAmount", out var roundingObj) || !TryGetDecimal(roundingObj, out decimal roundingAmount))
+            {
+                throw new ArgumentException($"Invoice Line [{index}] TaxTotal roundingAmount must be a numeric value.");
+            }
 
-                if (!taxTotal.ContainsKey("taxAmount") || !TryGetDecimal(taxTotal["taxAmount"], out decimal taxLineAmount))
-                {
-                    throw new ArgumentException($"Invoice Line [{index}] TaxTotal taxAmount must be a numeric value.");
-                }
-
-                if (taxLineAmount < 0)
-                {
-                    throw new ArgumentException($"Invoice Line [{index}] TaxTotal taxAmount cannot be negative.");
-                }
-
-                // Validate that taxTotal's roundingAmount exists, is numeric, and equals lineExtensionAmount + taxAmount.
-                if (!taxTotal.ContainsKey("roundingAmount") || !TryGetDecimal(taxTotal["roundingAmount"], out decimal roundingAmount))
-                {
-                    throw new ArgumentException($"Invoice Line [{index}] TaxTotal roundingAmount must be a numeric value.");
-                }
-
-                decimal expectedRounding = providedLineExtension + taxLineAmount;
-                if (Math.Abs(expectedRounding - roundingAmount) > Tolerance)
-                {
-                    throw new ArgumentException(
-                        $"Invoice Line [{index}] roundingAmount is incorrect. Expected {expectedRounding}, got {roundingAmount}."
-                    );
-                }
+            decimal providedLineExtension = GetDecimal(line["lineExtensionAmount"]);
+            decimal expectedRounding = providedLineExtension + taxLineAmount;
+            if (Math.Abs(expectedRounding - roundingAmount) > Tolerance)
+            {
+                throw new ArgumentException(
+                    $"Invoice Line [{index}] roundingAmount is incorrect. Expected {expectedRounding}, got {roundingAmount}.");
             }
         }
 
@@ -285,108 +297,122 @@ namespace Zatca.EInvoice.Validation
         {
             for (int index = 0; index < invoiceLines.Count; index++)
             {
-                if (!(invoiceLines[index] is Dictionary<string, object> line))
+                if (invoiceLines[index] is Dictionary<string, object> line)
                 {
+                    ValidateSingleLineInternal(line, index, result);
+                }
+            }
+        }
+
+        private void ValidateSingleLineInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        {
+            ValidateLineNumericFieldsInternal(line, index, result);
+            var priceAmount = ValidateLinePriceInternal(line, index, result);
+            if (priceAmount.HasValue)
+            {
+                ValidateLineExtensionCalculationInternal(line, index, priceAmount.Value, result);
+            }
+            ValidateLineItemTaxPercentInternal(line, index, result);
+            ValidateLineTaxTotalInternal(line, index, result);
+        }
+
+        private void ValidateLineNumericFieldsInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        {
+            var numericFields = new[] { "quantity", "lineExtensionAmount" };
+            foreach (var field in numericFields)
+            {
+                if (!line.TryGetValue(field, out var fieldValue) || !TryGetDecimal(fieldValue, out decimal value))
+                {
+                    result.AddError($"Invoice Line [{index}] field '{field}' must be a numeric value.");
                     continue;
                 }
-
-                // Validate that 'quantity' and 'lineExtensionAmount' are provided, numeric, and non-negative.
-                var numericFields = new[] { "quantity", "lineExtensionAmount" };
-                foreach (var field in numericFields)
+                if (value < 0)
                 {
-                    if (!line.ContainsKey(field) || !TryGetDecimal(line[field], out decimal value))
-                    {
-                        result.AddError($"Invoice Line [{index}] field '{field}' must be a numeric value.");
-                        continue;
-                    }
-
-                    if (value < 0)
-                    {
-                        result.AddError($"Invoice Line [{index}] field '{field}' cannot be negative.");
-                    }
+                    result.AddError($"Invoice Line [{index}] field '{field}' cannot be negative.");
                 }
+            }
+        }
 
-                // Validate that the price amount exists, is numeric, and non-negative.
-                if (!line.ContainsKey("price") || !(line["price"] is Dictionary<string, object> price))
+        private decimal? ValidateLinePriceInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        {
+            if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
+            {
+                result.AddError($"Invoice Line [{index}] must have a valid price object.");
+                return null;
+            }
+            if (!price.TryGetValue("amount", out var amountObj) || !TryGetDecimal(amountObj, out decimal priceAmount))
+            {
+                result.AddError($"Invoice Line [{index}] Price amount must be a numeric value.");
+                return null;
+            }
+            if (priceAmount < 0)
+            {
+                result.AddError($"Invoice Line [{index}] Price amount cannot be negative.");
+            }
+            return priceAmount;
+        }
+
+        private void ValidateLineExtensionCalculationInternal(Dictionary<string, object> line, int index, decimal priceAmount, ValidationResult result)
+        {
+            if (!TryGetDecimal(line["quantity"], out decimal quantity) ||
+                !TryGetDecimal(line["lineExtensionAmount"], out decimal providedLineExtension))
+                return;
+
+            decimal expectedLineExtension = priceAmount * quantity;
+            if (Math.Abs(expectedLineExtension - providedLineExtension) > Tolerance)
+            {
+                result.AddError(
+                    $"Invoice Line [{index}] lineExtensionAmount is incorrect. Expected {expectedLineExtension}, got {providedLineExtension}.");
+            }
+        }
+
+        private void ValidateLineItemTaxPercentInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        {
+            if (!line.TryGetValue("item", out var itemObj) || itemObj is not Dictionary<string, object> item)
+                return;
+            if (!item.TryGetValue("taxPercent", out var taxPercentObj))
+                return;
+
+            if (!TryGetDecimal(taxPercentObj, out decimal taxPercent))
+            {
+                result.AddError($"Invoice Line [{index}] item taxPercent must be a numeric value.");
+            }
+            else if (taxPercent < 0 || taxPercent > 100)
+            {
+                result.AddError($"Invoice Line [{index}] item taxPercent must be between 0 and 100.");
+            }
+        }
+
+        private void ValidateLineTaxTotalInternal(Dictionary<string, object> line, int index, ValidationResult result)
+        {
+            if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            {
+                result.AddError($"Invoice Line [{index}] must have a valid taxTotal object.");
+                return;
+            }
+            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !TryGetDecimal(taxAmountObj, out decimal taxLineAmount))
+            {
+                result.AddError($"Invoice Line [{index}] TaxTotal taxAmount must be a numeric value.");
+                return;
+            }
+            if (taxLineAmount < 0)
+            {
+                result.AddError($"Invoice Line [{index}] TaxTotal taxAmount cannot be negative.");
+            }
+
+            if (!taxTotal.TryGetValue("roundingAmount", out var roundingObj) || !TryGetDecimal(roundingObj, out decimal roundingAmount))
+            {
+                result.AddError($"Invoice Line [{index}] TaxTotal roundingAmount must be a numeric value.");
+                return;
+            }
+
+            if (TryGetDecimal(line["lineExtensionAmount"], out decimal lineExtAmount))
+            {
+                decimal expectedRounding = lineExtAmount + taxLineAmount;
+                if (Math.Abs(expectedRounding - roundingAmount) > Tolerance)
                 {
-                    result.AddError($"Invoice Line [{index}] must have a valid price object.");
-                    continue;
-                }
-
-                if (!price.ContainsKey("amount") || !TryGetDecimal(price["amount"], out decimal priceAmount))
-                {
-                    result.AddError($"Invoice Line [{index}] Price amount must be a numeric value.");
-                    continue;
-                }
-
-                if (priceAmount < 0)
-                {
-                    result.AddError($"Invoice Line [{index}] Price amount cannot be negative.");
-                }
-
-                // Calculate expected lineExtensionAmount = price amount * quantity.
-                if (TryGetDecimal(line["quantity"], out decimal quantity) &&
-                    TryGetDecimal(line["lineExtensionAmount"], out decimal providedLineExtension))
-                {
-                    decimal expectedLineExtension = priceAmount * quantity;
-
-                    if (Math.Abs(expectedLineExtension - providedLineExtension) > Tolerance)
-                    {
-                        result.AddError(
-                            $"Invoice Line [{index}] lineExtensionAmount is incorrect. Expected {expectedLineExtension}, got {providedLineExtension}."
-                        );
-                    }
-                }
-
-                // Validate item taxPercent if provided.
-                if (line.ContainsKey("item") &&
-                    line["item"] is Dictionary<string, object> item &&
-                    item.ContainsKey("taxPercent"))
-                {
-                    if (!TryGetDecimal(item["taxPercent"], out decimal taxPercent))
-                    {
-                        result.AddError($"Invoice Line [{index}] item taxPercent must be a numeric value.");
-                    }
-                    else if (taxPercent < 0 || taxPercent > 100)
-                    {
-                        result.AddError($"Invoice Line [{index}] item taxPercent must be between 0 and 100.");
-                    }
-                }
-
-                // Validate that taxTotal's taxAmount exists, is numeric, and non-negative.
-                if (!line.ContainsKey("taxTotal") || !(line["taxTotal"] is Dictionary<string, object> taxTotal))
-                {
-                    result.AddError($"Invoice Line [{index}] must have a valid taxTotal object.");
-                    continue;
-                }
-
-                if (!taxTotal.ContainsKey("taxAmount") || !TryGetDecimal(taxTotal["taxAmount"], out decimal taxLineAmount))
-                {
-                    result.AddError($"Invoice Line [{index}] TaxTotal taxAmount must be a numeric value.");
-                    continue;
-                }
-
-                if (taxLineAmount < 0)
-                {
-                    result.AddError($"Invoice Line [{index}] TaxTotal taxAmount cannot be negative.");
-                }
-
-                // Validate that taxTotal's roundingAmount exists, is numeric, and equals lineExtensionAmount + taxAmount.
-                if (!taxTotal.ContainsKey("roundingAmount") || !TryGetDecimal(taxTotal["roundingAmount"], out decimal roundingAmount))
-                {
-                    result.AddError($"Invoice Line [{index}] TaxTotal roundingAmount must be a numeric value.");
-                    continue;
-                }
-
-                if (TryGetDecimal(line["lineExtensionAmount"], out decimal lineExtAmount))
-                {
-                    decimal expectedRounding = lineExtAmount + taxLineAmount;
-                    if (Math.Abs(expectedRounding - roundingAmount) > Tolerance)
-                    {
-                        result.AddError(
-                            $"Invoice Line [{index}] roundingAmount is incorrect. Expected {expectedRounding}, got {roundingAmount}."
-                        );
-                    }
+                    result.AddError(
+                        $"Invoice Line [{index}] roundingAmount is incorrect. Expected {expectedRounding}, got {roundingAmount}.");
                 }
             }
         }
