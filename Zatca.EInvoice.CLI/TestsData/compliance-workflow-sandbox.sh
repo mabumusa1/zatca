@@ -19,6 +19,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_DIR="$SCRIPT_DIR/Output"
 CLI_DIR="$(dirname "$SCRIPT_DIR")"
 
+# String constants
+readonly FALLBACK_MSG='Unknown'
+
 # ZATCA Sandbox Credentials (developer-portal)
 USERNAME="m.abumusa@karage.co"
 PASSWORD="@hR8C8FQTxm9#ge"
@@ -120,7 +123,7 @@ EOF
             
             return 0
         else
-            local error=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.error' 2>/dev/null || echo "Unknown error")
+            local error=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.error' 2>/dev/null || echo "$FALLBACK_MSG")
             echo -e "${RED}❌ Failed to get compliance certificate${NC}" >&2
             echo -e "${RED}Error: $error${NC}" >&2
             return 1

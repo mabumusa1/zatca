@@ -23,6 +23,7 @@ readonly JQ_ERROR='.error'
 readonly SUCCESS_KEY='.success'
 readonly ERROR_KEY='.error'
 readonly SEPARATOR='===='
+readonly FALLBACK_MSG='Unknown'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_DIR="$SCRIPT_DIR/Output"
@@ -137,7 +138,7 @@ EOF
             
             return 0
         else
-            local error=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r "$JQ_ERROR" 2>/dev/null || echo "Unknown error")
+            local error=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r "$JQ_ERROR" 2>/dev/null || echo "$FALLBACK_MSG")
             echo -e "${RED}❌ Failed to get compliance certificate${NC}" >&2
             echo -e "${RED}Error: $error${NC}" >&2
             return 1
@@ -337,7 +338,7 @@ EOF
                 echo -e "${GREEN}  Status: $status${NC}"
                 passed=$((passed + 1))
             else
-                local error=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_compliance_result.json" | jq -r "$JQ_ERROR" 2>/dev/null || echo "Unknown")
+                local error=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_compliance_result.json" | jq -r "$JQ_ERROR" 2>/dev/null || echo "$FALLBACK_MSG")
                 local details=$(grep -A 100 '^{' "$invoice_dir/${invoice_type}_compliance_result.json" | jq -r '.validationResults.errorMessages[]?' 2>/dev/null | head -5)
                 
                 # Save failure summary
@@ -474,7 +475,7 @@ EOF
             echo ""
             return 0
         else
-            local error=$(grep -A 100 '^{' "$production_dir/production_response.json" | jq -r "$JQ_ERROR" 2>/dev/null || echo "Unknown error")
+            local error=$(grep -A 100 '^{' "$production_dir/production_response.json" | jq -r "$JQ_ERROR" 2>/dev/null || echo "$FALLBACK_MSG")
             echo -e "${RED}❌ Failed to get production certificate${NC}" >&2
             echo -e "${RED}Error: $error${NC}" >&2
             return 1
@@ -604,7 +605,7 @@ submit_invoices() {
                         echo -e "${GREEN}  Status: $status${NC}"
                         passed=$((passed + 1))
                     else
-                        local error=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "Unknown")
+                        local error=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "$FALLBACK_MSG")
                         # Check if it's a sandbox certificate error (expected in sandbox mode)
                         if echo "$error" | grep -q "certificate-hashing\|certificate-issuer-name"; then
                             echo -e "${YELLOW}⚠ Simplified invoice reporting - sandbox certificate limitation${NC}" >&2
@@ -690,7 +691,7 @@ submit_invoices() {
                         echo -e "${GREEN}  Status: $status${NC}"
                         passed=$((passed + 1))
                     else
-                        local error=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "Unknown")
+                        local error=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "$FALLBACK_MSG")
                         # Check if it's a sandbox certificate error (expected in sandbox mode)
                         if echo "$error" | grep -q "certificate-hashing\|certificate-issuer-name"; then
                             echo -e "${YELLOW}⚠ Standard invoice clearance - sandbox certificate limitation${NC}" >&2
@@ -816,7 +817,7 @@ EOF
             echo -e "${GREEN}  Summary saved to: $renewal_dir/phase5_summary.txt${NC}"
             return 0
         else
-            local error=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "Unknown error")
+            local error=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "$FALLBACK_MSG")
 
             # Save failure summary
             cat > "$renewal_dir/phase5_summary.txt" << EOF

@@ -14,6 +14,9 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# String constants
+readonly SEPARATOR='=========================================='
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INPUT_DIR="$SCRIPT_DIR/Input"
 OUTPUT_DIR="$SCRIPT_DIR/Output"
@@ -96,9 +99,9 @@ generate_certificate() {
     local config_name=$(basename "$props_file" .properties)
     
     echo ""
-    echo "=========================================="
+    echo "$SEPARATOR"
     echo -e "${BLUE}Processing: $config_name${NC}"
-    echo "=========================================="
+    echo "$SEPARATOR"
     
     # Parse properties
     local common_name=$(parse_property "$props_file" "csr.common.name")
@@ -201,10 +204,10 @@ EOF
 }
 
 # Main script execution
-echo "=========================================="
+echo "$SEPARATOR"
 echo "ZATCA Certificate Generation & Verification"
 echo "Testing ALL Certificate Configurations"
-echo "=========================================="
+echo "$SEPARATOR"
 echo ""
 echo "Script Directory: $SCRIPT_DIR"
 echo "Input Directory: $INPUT_DIR"
@@ -258,9 +261,9 @@ done
 
 # Summary
 echo ""
-echo "=========================================="
+echo "$SEPARATOR"
 echo "Summary"
-echo "=========================================="
+echo "$SEPARATOR"
 echo -e "Total configurations: ${BLUE}$total${NC}"
 echo -e "Passed: ${GREEN}$passed${NC}"
 echo -e "Failed: ${RED}$failed${NC}"
