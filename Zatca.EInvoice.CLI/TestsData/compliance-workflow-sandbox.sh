@@ -126,7 +126,7 @@ EOF
             return 1
         fi
     else
-        echo -e "${RED}❌ CLI command failed${NC}"
+        echo -e "${RED}❌ CLI command failed${NC}" >&2
         return 1
     fi
 }
@@ -208,7 +208,7 @@ main() {
         done
         
         if [[ ${#configs[@]} -eq 0 ]]; then
-            echo -e "${RED}❌ No configurations found in $OUTPUT_DIR${NC}"
+            echo -e "${RED}❌ No configurations found in $OUTPUT_DIR${NC}" >&2
             echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
             exit 1
         fi

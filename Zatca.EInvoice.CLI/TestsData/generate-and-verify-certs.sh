@@ -56,13 +56,13 @@ verify_csr() {
     
     # Verify CSR format
     if ! openssl req -in "$csr_file" -noout -text > /dev/null 2>&1; then
-        echo -e "${RED}❌ Invalid CSR format${NC}"
+        echo -e "${RED}❌ Invalid CSR format${NC}" >&2
         return 1
     fi
     
     # Verify private key format
     if ! openssl ec -in "$key_file" -noout -text > /dev/null 2>&1; then
-        echo -e "${RED}❌ Invalid private key format${NC}"
+        echo -e "${RED}❌ Invalid private key format${NC}" >&2
         return 1
     fi
     
@@ -73,7 +73,7 @@ verify_csr() {
     if [[ "$CSR_PUBKEY" == "$KEY_PUBKEY" ]]; then
         echo -e "${GREEN}✓ Public keys match - CSR and private key are a valid pair${NC}"
     else
-        echo -e "${RED}❌ Public keys do NOT match - Invalid key pair${NC}"
+        echo -e "${RED}❌ Public keys do NOT match - Invalid key pair${NC}" >&2
         return 1
     fi
     
@@ -191,11 +191,11 @@ EOF
             return 0
         else
             echo "FAILED" > "$config_output_dir/status.txt"
-            echo -e "${RED}✗✗ $config_name: VERIFICATION FAILED${NC}"
+            echo -e "${RED}✗✗ $config_name: VERIFICATION FAILED${NC}" >&2
             return 1
         fi
     else
-        echo -e "${RED}✗ Failed to generate certificate${NC}"
+        echo -e "${RED}✗ Failed to generate certificate${NC}" >&2
         return 1
     fi
 }
@@ -270,6 +270,6 @@ if [[ $failed -eq 0 ]]; then
     echo -e "${GREEN}✓✓ All certificates generated and verified successfully!${NC}"
     exit 0
 else
-    echo -e "${RED}✗✗ Some certificates failed verification${NC}"
+    echo -e "${RED}✗✗ Some certificates failed verification${NC}" >&2
     exit 1
 fi

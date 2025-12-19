@@ -559,7 +559,7 @@ submit_invoices() {
         --output "$simplified_json" > "$submission_dir/simplified_gen.log" 2>&1
 
     if [[ ! -f "$simplified_json" ]]; then
-        echo -e "${RED}❌ Failed to generate simplified invoice JSON${NC}"
+        echo -e "${RED}❌ Failed to generate simplified invoice JSON${NC}" >&2
         failed=$((failed + 1))
     else
         # Generate XML
@@ -620,11 +620,11 @@ submit_invoices() {
                     failed=$((failed + 1))
                 fi
             else
-                echo -e "${RED}✗ Failed to sign simplified invoice${NC}"
+                echo -e "${RED}✗ Failed to sign simplified invoice${NC}" >&2
                 failed=$((failed + 1))
             fi
         else
-            echo -e "${RED}✗ Sign command failed for simplified invoice${NC}"
+            echo -e "${RED}✗ Sign command failed for simplified invoice${NC}" >&2
             failed=$((failed + 1))
         fi
     fi
@@ -644,7 +644,7 @@ submit_invoices() {
         --output "$standard_json" > "$submission_dir/standard_gen.log" 2>&1
 
     if [[ ! -f "$standard_json" ]]; then
-        echo -e "${RED}❌ Failed to generate standard invoice JSON${NC}"
+        echo -e "${RED}❌ Failed to generate standard invoice JSON${NC}" >&2
         failed=$((failed + 1))
     else
         # Generate XML
@@ -706,11 +706,11 @@ submit_invoices() {
                     failed=$((failed + 1))
                 fi
             else
-                echo -e "${RED}✗ Failed to sign standard invoice${NC}"
+                echo -e "${RED}✗ Failed to sign standard invoice${NC}" >&2
                 failed=$((failed + 1))
             fi
         else
-            echo -e "${RED}✗ Sign command failed for standard invoice${NC}"
+            echo -e "${RED}✗ Sign command failed for standard invoice${NC}" >&2
             failed=$((failed + 1))
         fi
     fi
@@ -741,7 +741,7 @@ EOF
         echo -e "${GREEN}✓✓ All invoice submissions passed!${NC}"
         return 0
     else
-        echo -e "${RED}✗✗ Some invoice submissions failed${NC}"
+        echo -e "${RED}✗✗ Some invoice submissions failed${NC}" >&2
         return 1
     fi
 }
@@ -769,7 +769,7 @@ renew_certificate() {
     local csr_file="$config_dir/certificate.csr"
 
     if [[ ! -f "$prod_cert_file" ]] || [[ ! -f "$prod_secret_file" ]] || [[ ! -f "$csr_file" ]]; then
-        echo -e "${RED}❌ Production certificate or CSR not found${NC}"
+        echo -e "${RED}❌ Production certificate or CSR not found${NC}" >&2
         return 1
     fi
 
@@ -853,25 +853,25 @@ process_configuration() {
     
     # Phase 1: Request compliance certificate
     if ! request_compliance_cert "$config_name" "$otp" "$env"; then
-        echo -e "${RED}✗✗ Failed at Phase 1: Compliance Certificate${NC}"
+        echo -e "${RED}✗✗ Failed at Phase 1: Compliance Certificate${NC}" >&2
         return 1
     fi
     
     # Phase 2: Validate compliance
     if ! validate_compliance "$config_name" "$env"; then
-        echo -e "${RED}✗✗ Failed at Phase 2: Compliance Validation${NC}"
+        echo -e "${RED}✗✗ Failed at Phase 2: Compliance Validation${NC}" >&2
         return 1
     fi
     
     # Phase 3: Request production certificate
     if ! request_production_cert "$config_name" "$env"; then
-        echo -e "${RED}✗✗ Failed at Phase 3: Production Certificate${NC}"
+        echo -e "${RED}✗✗ Failed at Phase 3: Production Certificate${NC}" >&2
         return 1
     fi
 
     # Phase 4: Submit invoices with production certificate
     if ! submit_invoices "$config_name" "$env"; then
-        echo -e "${RED}✗✗ Failed at Phase 4: Invoice Submission${NC}"
+        echo -e "${RED}✗✗ Failed at Phase 4: Invoice Submission${NC}" >&2
         return 1
     fi
 
@@ -981,7 +981,7 @@ main() {
             echo -e "${YELLOW}  If this fails, get a fresh OTP from: https://sandbox.zatca.gov.sa/IntegrationSandbox${NC}"
             echo ""
         else
-            echo -e "${RED}❌ Error: OTP is required${NC}"
+            echo -e "${RED}❌ Error: OTP is required${NC}" >&2
             echo -e "${YELLOW}Get your OTP from: https://sandbox.zatca.gov.sa/IntegrationSandbox${NC}"
             echo ""
             usage
@@ -990,19 +990,19 @@ main() {
     
     # Validate inputs
     if [[ "$process_all" == false ]] && [[ -z "$config_name" ]]; then
-        echo -e "${RED}❌ Error: Configuration name is required (or use --all)${NC}"
+        echo -e "${RED}❌ Error: Configuration name is required (or use --all)${NC}" >&2
         usage
     fi
     
     # Check dependencies
     if ! command -v jq &> /dev/null; then
-        echo -e "${RED}❌ Error: jq is required but not installed${NC}"
+        echo -e "${RED}❌ Error: jq is required but not installed${NC}" >&2
         echo -e "${YELLOW}Install with: apt-get install jq${NC}"
         exit 1
     fi
     
     if [[ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]]; then
-        echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}"
+        echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}" >&2
         exit 1
     fi
     
@@ -1034,7 +1034,7 @@ main() {
         done
         
         if [[ ${#configs[@]} -eq 0 ]]; then
-            echo -e "${RED}❌ No configurations found in $OUTPUT_DIR${NC}"
+            echo -e "${RED}❌ No configurations found in $OUTPUT_DIR${NC}" >&2
             echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
             exit 1
         fi
@@ -1081,7 +1081,7 @@ main() {
         echo -e "${GREEN}✓✓✓ All workflows completed successfully!${NC}"
         exit 0
     else
-        echo -e "${RED}✗✗✗ Some workflows failed${NC}"
+        echo -e "${RED}✗✗✗ Some workflows failed${NC}" >&2
         exit 1
     fi
     return 0
