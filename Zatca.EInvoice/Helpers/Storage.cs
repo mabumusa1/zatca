@@ -10,7 +10,7 @@ namespace Zatca.EInvoice.Helpers
     /// </summary>
     public class Storage
     {
-        private static string _basePath;
+        private static string _basePath = string.Empty;
 
         /// <summary>
         /// Gets or sets the base storage path.
@@ -18,14 +18,14 @@ namespace Zatca.EInvoice.Helpers
         public static string BasePath
         {
             get => _basePath;
-            set => _basePath = value?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            set => _basePath = value?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) ?? string.Empty;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Storage"/> class.
         /// </summary>
         /// <param name="basePath">Root directory for storage. Set to null if you want to handle files with a full path.</param>
-        public Storage(string basePath = null)
+        public Storage(string? basePath = null)
         {
             if (!string.IsNullOrEmpty(basePath))
             {
@@ -42,7 +42,7 @@ namespace Zatca.EInvoice.Helpers
         public void Write(string path, string content)
         {
             var fullPath = GetFullPath(path);
-            var directory = Path.GetDirectoryName(fullPath);
+            var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
 
             EnsureDirectoryExists(directory);
 
@@ -68,7 +68,7 @@ namespace Zatca.EInvoice.Helpers
         public void Append(string path, string content)
         {
             var fullPath = GetFullPath(path);
-            var directory = Path.GetDirectoryName(fullPath);
+            var directory = Path.GetDirectoryName(fullPath) ?? string.Empty;
 
             EnsureDirectoryExists(directory);
 

@@ -61,14 +61,14 @@ namespace Zatca.EInvoice.Api
             string binarySecurityToken,
             string secret,
             string requestId,
-            string dispositionMessage,
-            List<string> errors,
-            List<string> warnings)
+            string? dispositionMessage,
+            List<string>? errors,
+            List<string>? warnings)
         {
             BinarySecurityToken = binarySecurityToken;
             Secret = secret;
             RequestId = requestId;
-            DispositionMessage = dispositionMessage;
+            DispositionMessage = dispositionMessage ?? string.Empty;
             Errors = errors ?? new List<string>();
             Warnings = warnings ?? new List<string>();
         }

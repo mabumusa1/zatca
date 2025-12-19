@@ -53,7 +53,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <param name="message">The message that describes the error.</param>
         /// <param name="context">Additional context information about the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
-        public ZatcaException(string message, Dictionary<string, object> context, Exception innerException) : base(message, innerException)
+        public ZatcaException(string message, Dictionary<string, object> context, Exception? innerException) : base(message, innerException)
         {
             Context = context ?? new Dictionary<string, object>();
         }

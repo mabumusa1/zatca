@@ -11,19 +11,19 @@ public class TagTests
 {
     /// <summary>
     /// Test data for all 9 tag types.
-    /// Parameters: Tag Number, Tag Value, Expected Tag Type Name
+    /// Parameters: Tag Number, Tag Value
     /// </summary>
-    public static TheoryData<byte, string, string> TagTestData => new()
+    public static TheoryData<byte, string> TagTestData => new()
     {
-        { 1, "Maximum Speed Tech Supply", "SellerTag" },
-        { 2, "399999999900003", "TaxNumberTag" },
-        { 3, "2024-09-07T17:41:08Z", "InvoiceDateTag" },
-        { 4, "4.60", "InvoiceTotalTag" },
-        { 5, "0.60", "TaxAmountTag" },
-        { 6, "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==", "InvoiceHashTag" },
-        { 7, "MEUCIQDu8CIDdlUsls8+5V4SugNPP+wzAxNIVZ/0M3h/E7LUgwIgMy4w4dA0nH4kzZ9LdJ0C5k1N3QqrMuNz8G2UbE4/qXE=", "DigitalSignatureTag" },
-        { 8, "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEjHSKTdSDJ7fZGP7WrRQ9K5cTi+8QYoIhKcCrJhHHBXQpJKbwHLRQCcEaG7pAFr4xkPcVH2QpZxXlKXFxHKkUXg==", "PublicKeyTag" },
-        { 9, "MEQCIBVx/MYt2PdEHLpOtGhJKjkDmvJdmF3V4Hkv8TnGc5y6AiBH7S0V7bMKVQXZGJpVp8W5VvQpWNP3hUcT3EQMJ2kKFA==", "CertificateSignatureTag" }
+        { 1, "Maximum Speed Tech Supply" },
+        { 2, "399999999900003" },
+        { 3, "2024-09-07T17:41:08Z" },
+        { 4, "4.60" },
+        { 5, "0.60" },
+        { 6, "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==" },
+        { 7, "MEUCIQDu8CIDdlUsls8+5V4SugNPP+wzAxNIVZ/0M3h/E7LUgwIgMy4w4dA0nH4kzZ9LdJ0C5k1N3QqrMuNz8G2UbE4/qXE=" },
+        { 8, "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEjHSKTdSDJ7fZGP7WrRQ9K5cTi+8QYoIhKcCrJhHHBXQpJKbwHLRQCcEaG7pAFr4xkPcVH2QpZxXlKXFxHKkUXg==" },
+        { 9, "MEQCIBVx/MYt2PdEHLpOtGhJKjkDmvJdmF3V4Hkv8TnGc5y6AiBH7S0V7bMKVQXZGJpVp8W5VvQpWNP3hUcT3EQMJ2kKFA==" }
     };
 
     /// <summary>
@@ -31,7 +31,7 @@ public class TagTests
     /// </summary>
     [Theory]
     [MemberData(nameof(TagTestData))]
-    public void TestGetTag(byte tagNumber, string value, string tagType)
+    public void TestGetTag(byte tagNumber, string value)
     {
         // Arrange & Act
         var tag = CreateTag(tagNumber, value);
@@ -46,7 +46,7 @@ public class TagTests
     /// </summary>
     [Theory]
     [MemberData(nameof(TagTestData))]
-    public void TestGetValue(byte tagNumber, string value, string tagType)
+    public void TestGetValue(byte tagNumber, string value)
     {
         // Arrange & Act
         var tag = CreateTag(tagNumber, value);
@@ -69,7 +69,7 @@ public class TagTests
     /// </summary>
     [Theory]
     [MemberData(nameof(TagTestData))]
-    public void TestGetLength(byte tagNumber, string value, string tagType)
+    public void TestGetLength(byte tagNumber, string value)
     {
         // Arrange
         var tag = CreateTag(tagNumber, value);
@@ -91,7 +91,7 @@ public class TagTests
     /// </summary>
     [Theory]
     [MemberData(nameof(TagTestData))]
-    public void TestEncode(byte tagNumber, string value, string tagType)
+    public void TestEncode(byte tagNumber, string value)
     {
         // Arrange
         var tag = CreateTag(tagNumber, value);

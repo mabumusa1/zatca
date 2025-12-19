@@ -474,7 +474,7 @@ namespace Zatca.EInvoice.Tests.Signing
         /// Test concurrent invoice signing (thread safety).
         /// </summary>
         [Fact]
-        public void TestConcurrentInvoiceSigning()
+        public async Task TestConcurrentInvoiceSigning()
         {
             // Arrange
             var certificate = CreateMockCertificate();
@@ -493,19 +493,19 @@ namespace Zatca.EInvoice.Tests.Signing
                 tasks.Add(task);
             }
 
-            Task.WaitAll(tasks.ToArray());
+            var results = await Task.WhenAll(tasks);
 
             // Assert
-            foreach (var task in tasks)
+            foreach (var result in results)
             {
-                Assert.NotNull(task.Result);
-                Assert.NotEmpty(task.Result.Hash);
-                Assert.NotEmpty(task.Result.SignedXml);
-                Assert.NotEmpty(task.Result.QrCode);
+                Assert.NotNull(result);
+                Assert.NotEmpty(result.Hash);
+                Assert.NotEmpty(result.SignedXml);
+                Assert.NotEmpty(result.QrCode);
             }
 
             // All signatures should be unique
-            var signatures = tasks.Select(t => t.Result.DigitalSignature).Distinct().ToList();
+            var signatures = results.Select(r => r.DigitalSignature).Distinct().ToList();
             Assert.Equal(numberOfConcurrentSigns, signatures.Count);
         }
 

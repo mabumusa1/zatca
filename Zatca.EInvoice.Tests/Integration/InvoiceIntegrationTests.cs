@@ -623,7 +623,7 @@ namespace Zatca.EInvoice.Tests.Integration
         /// Test concurrent invoice generation (thread safety).
         /// </summary>
         [Fact]
-        public void TestConcurrentInvoiceGeneration()
+        public async Task TestConcurrentInvoiceGeneration()
         {
             // Arrange
             var tasks = new List<Task<string>>();
@@ -649,22 +649,22 @@ namespace Zatca.EInvoice.Tests.Integration
                 tasks.Add(task);
             }
 
-            Task.WaitAll(tasks.ToArray());
+            var results = await Task.WhenAll(tasks);
 
             // Assert
-            foreach (var task in tasks)
+            foreach (var result in results)
             {
-                Assert.NotNull(task.Result);
-                Assert.NotEmpty(task.Result);
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
 
-                var doc = XDocument.Parse(task.Result);
+                var doc = XDocument.Parse(result);
                 Assert.NotNull(doc.Root);
             }
 
             // All invoices should be unique
-            var invoiceIds = tasks.Select(t =>
+            var invoiceIds = results.Select(r =>
             {
-                var doc = XDocument.Parse(t.Result);
+                var doc = XDocument.Parse(r);
                 var cbcNs = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
                 return doc.Root?.Element(XName.Get("ID", cbcNs))?.Value;
             }).Distinct().ToList();

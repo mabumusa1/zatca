@@ -36,7 +36,7 @@ namespace Zatca.EInvoice.Certificates
             {
                 return new DerPrintableString(value);
             }
-            
+
             // All other fields use UTF8String to support Arabic and other Unicode characters
             return new DerUtf8String(value);
         }
@@ -51,8 +51,8 @@ namespace Zatca.EInvoice.Certificates
         private const string OidTest = "ZATCA-Code-Signing"; // Same for test/simulation
         private const string TemplateIdentifierOid = "1.3.6.1.4.1.311.20.2";
 
-        private string _organizationIdentifier;
-        private string _serialNumber;
+        private string _organizationIdentifier = string.Empty;
+        private string _serialNumber = string.Empty;
         private string _commonName = string.Empty;
         private string _country = "SA";
         private string _organizationName = string.Empty;
@@ -62,8 +62,8 @@ namespace Zatca.EInvoice.Certificates
         private bool _production = false;
         private string _businessCategory = string.Empty;
 
-        private AsymmetricCipherKeyPair _keyPair;
-        private Pkcs10CertificationRequest _csr;
+        private AsymmetricCipherKeyPair? _keyPair;
+        private Pkcs10CertificationRequest? _csr;
 
         /// <summary>
         /// Sets the organization identifier (15 digits, starts and ends with 3).
@@ -319,7 +319,7 @@ namespace Zatca.EInvoice.Certificates
                 // The key is to use ECKeyGenerationParameters with the OID
                 var curveName = "secp256k1";
                 var curveOid = SecObjectIdentifiers.SecP256k1;
-                
+
                 // Get curve parameters - this will include the OID
                 var ecParams = CustomNamedCurves.GetByName(curveName);
                 if (ecParams == null)
@@ -334,7 +334,7 @@ namespace Zatca.EInvoice.Certificates
                     ecParams.N,
                     ecParams.H,
                     ecParams.GetSeed());
-                
+
                 // Use the OID directly in key generation parameters
                 var keyGenParams = new ECKeyGenerationParameters(curveOid, new SecureRandom());
                 var keyGenerator = new ECKeyPairGenerator();
@@ -350,7 +350,7 @@ namespace Zatca.EInvoice.Certificates
                     X509Name.O,
                     X509Name.CN
                 };
-                
+
                 var values = new List<string>
                 {
                     _country,
@@ -358,7 +358,7 @@ namespace Zatca.EInvoice.Certificates
                     _organizationName,
                     _commonName
                 };
-                
+
                 // Use custom converter to force UTF8String encoding for Arabic character support
                 var subject = new X509Name(ordering, values, new Utf8X509NameEntryConverter());
 

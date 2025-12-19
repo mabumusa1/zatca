@@ -28,16 +28,12 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="documents">An array of additional document data.</param>
         /// <returns>Array of mapped AdditionalDocumentReference objects.</returns>
-        public List<AdditionalDocumentReference> MapAdditionalDocuments(IEnumerable<object> documents)
+        public List<AdditionalDocumentReference> MapAdditionalDocuments(IEnumerable<object>? documents)
         {
             var additionalDocs = new List<AdditionalDocumentReference>();
+            var documentsList = documents ?? new List<object>();
 
-            if (documents == null)
-            {
-                documents = new List<object>();
-            }
-
-            foreach (var docObj in documents)
+            foreach (var docObj in documentsList)
             {
                 if (docObj is Dictionary<string, object> doc)
                 {
@@ -68,9 +64,9 @@ namespace Zatca.EInvoice.Mappers
                         {
                             var attachment = new Attachment
                             {
-                                EmbeddedDocumentBinaryObject = DictionaryHelper.GetString(attachmentData, "content", string.Empty),
-                                MimeCode = DictionaryHelper.GetString(attachmentData, "mimeCode", "base64"),
-                                MimeType = DictionaryHelper.GetString(attachmentData, "mimeType", "text/plain")
+                                EmbeddedDocumentBinaryObject = DictionaryHelper.GetString(attachmentData, "content") ?? string.Empty,
+                                MimeCode = DictionaryHelper.GetString(attachmentData, "mimeCode") ?? "base64",
+                                MimeType = DictionaryHelper.GetString(attachmentData, "mimeType") ?? "text/plain"
                             };
 
                             docRef.Attachment = attachment;

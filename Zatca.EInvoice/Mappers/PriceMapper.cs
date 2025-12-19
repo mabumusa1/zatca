@@ -38,7 +38,7 @@ namespace Zatca.EInvoice.Mappers
             }
 
             // Parse unit code - UnitCode is a static class with constants, not an enum
-            var unitCodeStr = DictionaryHelper.GetString(data, "unitCode", UnitCode.PCE);
+            var unitCodeStr = DictionaryHelper.GetString(data, "unitCode") ?? UnitCode.PCE;
 
             // Validate the unit code against known values or use as-is
             var resolvedUnitCode = unitCodeStr.ToUpperInvariant() switch

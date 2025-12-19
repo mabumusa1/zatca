@@ -294,7 +294,7 @@ public class SignatureBuilder
         var certHash = ComputeCertificateHash(_certificate!);
 
         // Get issuer and serial number (convert hex to decimal for XML)
-        var issuer = _certificate.IssuerName.Name;
+        var issuer = _certificate!.IssuerName.Name;
         var serialNumber = GetSerialNumberAsDecimal(_certificate);
 
         var signedProps = new XElement(xadesNs2 + "SignedProperties",
@@ -333,7 +333,7 @@ public class SignatureBuilder
         var certHash = ComputeCertificateHash(_certificate!);
 
         // Get issuer and serial number (convert hex to decimal for XML)
-        var issuer = _certificate.IssuerName.Name;
+        var issuer = _certificate!.IssuerName.Name;
         var serialNumber = GetSerialNumberAsDecimal(_certificate);
 
         // Build the XML with exact spacing as per ZATCA requirements

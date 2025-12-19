@@ -76,15 +76,15 @@ namespace Zatca.EInvoice.Mappers
             var invoice = new Invoice
             {
                 UblExtensions = MapUblExtensions(DictionaryHelper.GetDictionary(data, "ublExtensions")),
-                UUID = DictionaryHelper.GetString(data, "uuid"),
-                Id = DictionaryHelper.GetString(data, "id"),
-                IssueDate = MapDateOnly(DictionaryHelper.GetString(data, "issueDate")),
-                IssueTime = MapTimeOnly(DictionaryHelper.GetString(data, "issueTime", string.Empty)),
+                UUID = DictionaryHelper.GetString(data, "uuid") ?? string.Empty,
+                Id = DictionaryHelper.GetString(data, "id") ?? string.Empty,
+                IssueDate = MapDateOnly(DictionaryHelper.GetString(data, "issueDate") ?? string.Empty),
+                IssueTime = MapTimeOnly(DictionaryHelper.GetString(data, "issueTime") ?? string.Empty),
                 InvoiceType = MapInvoiceType(DictionaryHelper.GetDictionary(data, "invoiceType")),
-                Note = DictionaryHelper.GetString(data, "note", null),
-                LanguageID = DictionaryHelper.GetString(data, "languageID", "en"),
-                InvoiceCurrencyCode = DictionaryHelper.GetString(data, "currencyCode", "SAR"),
-                TaxCurrencyCode = DictionaryHelper.GetString(data, "taxCurrencyCode", "SAR"),
+                Note = DictionaryHelper.GetString(data, "note"),
+                LanguageID = DictionaryHelper.GetString(data, "languageID") ?? "en",
+                InvoiceCurrencyCode = DictionaryHelper.GetString(data, "currencyCode") ?? "SAR",
+                TaxCurrencyCode = DictionaryHelper.GetString(data, "taxCurrencyCode") ?? "SAR",
                 BillingReferences = MapBillingReferences(DictionaryHelper.GetList(data, "billingReferences")),
                 AdditionalDocumentReferences = _additionalDocumentMapper.MapAdditionalDocuments(
                     DictionaryHelper.GetList(data, "additionalDocuments")),
@@ -135,7 +135,7 @@ namespace Zatca.EInvoice.Mappers
                     PropertyNameCaseInsensitive = true
                 });
 
-                return MapToInvoice(data);
+                return MapToInvoice(data ?? new Dictionary<string, object>());
             }
             catch (JsonException ex)
             {
@@ -206,9 +206,9 @@ namespace Zatca.EInvoice.Mappers
 
             return new Signature
             {
-                Id = DictionaryHelper.GetString(data, "id", "urn:oasis:names:specification:ubl:signature:Invoice"),
-                SignatureMethod = DictionaryHelper.GetString(data, "method",
-                    "urn:oasis:names:specification:ubl:dsig:enveloped:xades")
+                Id = DictionaryHelper.GetString(data, "id") ?? "urn:oasis:names:specification:ubl:signature:Invoice",
+                SignatureMethod = DictionaryHelper.GetString(data, "method")
+                    ?? "urn:oasis:names:specification:ubl:dsig:enveloped:xades"
             };
         }
 
@@ -237,7 +237,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Maps BillingReferences data to an array of BillingReference objects.
         /// </summary>
-        private List<BillingReference> MapBillingReferences(IEnumerable<object> data)
+        private List<BillingReference> MapBillingReferences(IEnumerable<object>? data)
         {
             var billingReferences = new List<BillingReference>();
 

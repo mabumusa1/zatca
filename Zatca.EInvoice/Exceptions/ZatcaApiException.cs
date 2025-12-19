@@ -16,7 +16,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <summary>
         /// Gets the API response content.
         /// </summary>
-        public string Response { get; }
+        public string Response { get; } = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ZatcaApiException"/> class.
@@ -49,7 +49,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <param name="context">Additional context information about the error.</param>
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
-        public ZatcaApiException(string message, Dictionary<string, object> context, int statusCode, Exception innerException = null)
+        public ZatcaApiException(string message, Dictionary<string, object> context, int statusCode, Exception? innerException = null)
             : base(message ?? "ZATCA API request failed.", context, innerException)
         {
             StatusCode = statusCode;

@@ -486,7 +486,7 @@ namespace Zatca.EInvoice.Tests.Certificates
         /// Test concurrent certificate generation.
         /// </summary>
         [Fact]
-        public void TestConcurrentCertificateGeneration()
+        public async Task TestConcurrentCertificateGeneration()
         {
             // Arrange
             var tasks = new List<Task<string>>();
@@ -517,18 +517,18 @@ namespace Zatca.EInvoice.Tests.Certificates
                 tasks.Add(task);
             }
 
-            Task.WaitAll(tasks.ToArray());
+            var results = await Task.WhenAll(tasks);
 
             // Assert - All tasks should complete successfully
-            foreach (var task in tasks)
+            foreach (var result in results)
             {
-                Assert.NotNull(task.Result);
-                Assert.NotEmpty(task.Result);
-                Assert.Contains("BEGIN CERTIFICATE REQUEST", task.Result);
+                Assert.NotNull(result);
+                Assert.NotEmpty(result);
+                Assert.Contains("BEGIN CERTIFICATE REQUEST", result);
             }
 
             // Verify all CSRs are unique
-            var csrSet = new HashSet<string>(tasks.Select(t => t.Result));
+            var csrSet = new HashSet<string>(results);
             Assert.Equal(numberOfConcurrentBuilds, csrSet.Count);
         }
 

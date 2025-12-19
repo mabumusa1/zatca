@@ -53,7 +53,7 @@ namespace Zatca.EInvoice.Mappers
         /// </summary>
         /// <param name="lines">Array of invoice lines data.</param>
         /// <returns>Array of mapped InvoiceLine objects.</returns>
-        public List<InvoiceLine> MapInvoiceLines(IEnumerable<object> lines)
+        public List<InvoiceLine> MapInvoiceLines(IEnumerable<object>? lines)
         {
             var invoiceLines = new List<InvoiceLine>();
 
@@ -81,8 +81,8 @@ namespace Zatca.EInvoice.Mappers
                     // Create and populate the InvoiceLine object
                     var invoiceLine = new InvoiceLine
                     {
-                        Id = DictionaryHelper.GetString(line, "id", "1"),
-                        UnitCode = DictionaryHelper.GetString(line, "unitCode", "PCE"),
+                        Id = DictionaryHelper.GetString(line, "id") ?? "1",
+                        UnitCode = DictionaryHelper.GetString(line, "unitCode") ?? "PCE",
                         InvoicedQuantity = DictionaryHelper.GetDecimal(line, "quantity", 0m),
                         LineExtensionAmount = DictionaryHelper.GetDecimal(line, "lineExtensionAmount", 0m),
                         Item = item,

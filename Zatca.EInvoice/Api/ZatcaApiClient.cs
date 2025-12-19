@@ -36,7 +36,7 @@ namespace Zatca.EInvoice.Api
         /// </summary>
         /// <param name="environment">The ZATCA environment.</param>
         /// <param name="httpClient">Optional HttpClient instance. If not provided, a new one will be created.</param>
-        public ZatcaApiClient(ZatcaEnvironment environment, HttpClient httpClient = null)
+        public ZatcaApiClient(ZatcaEnvironment environment, HttpClient? httpClient = null)
         {
             Environment = environment;
 
@@ -102,7 +102,8 @@ namespace Zatca.EInvoice.Api
                     content);
             }
 
-            var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(content, _jsonOptions);
+            var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(content, _jsonOptions)
+                ?? throw new ZatcaApiException("Failed to parse API response", 0, content);
             return ParseComplianceCertificateResult(responseDict);
         }
 
@@ -328,7 +329,8 @@ namespace Zatca.EInvoice.Api
                         content);
                 }
 
-                return JsonSerializer.Deserialize<T>(content, _jsonOptions);
+                return JsonSerializer.Deserialize<T>(content, _jsonOptions)
+                    ?? throw new ZatcaApiException("Failed to deserialize API response", 0, content);
             }
             catch (HttpRequestException ex)
             {
@@ -431,8 +433,8 @@ namespace Zatca.EInvoice.Api
 
             return new ComplianceCertificateResult(
                 certificate,
-                secret,
-                requestId,
+                secret ?? string.Empty,
+                requestId ?? string.Empty,
                 dispositionMessage,
                 errors,
                 warnings);
@@ -455,8 +457,8 @@ namespace Zatca.EInvoice.Api
 
             return new ProductionCertificateResult(
                 certificate,
-                secret,
-                requestId,
+                secret ?? string.Empty,
+                requestId ?? string.Empty,
                 dispositionMessage,
                 errors,
                 warnings);
@@ -487,7 +489,7 @@ namespace Zatca.EInvoice.Api
             }
 
             return new InvoiceSubmissionResult(
-                status,
+                status ?? string.Empty,
                 clearanceStatus,
                 reportingStatus,
                 clearedInvoice,
@@ -512,7 +514,11 @@ namespace Zatca.EInvoice.Api
                             {
                                 if (message.TryGetProperty("message", out var msgText))
                                 {
-                                    messages.Add(msgText.GetString());
+                                    var text = msgText.GetString();
+                                    if (text != null)
+                                    {
+                                        messages.Add(text);
+                                    }
                                 }
                             }
                         }
@@ -541,10 +547,10 @@ namespace Zatca.EInvoice.Api
                                 var validationMessage = new ValidationMessage
                                 {
                                     Type = GetJsonStringValue(message, "type") ?? type,
-                                    Code = GetJsonStringValue(message, "code"),
-                                    Category = GetJsonStringValue(message, "category"),
-                                    Message = GetJsonStringValue(message, "message"),
-                                    Status = GetJsonStringValue(message, "status")
+                                    Code = GetJsonStringValue(message, "code") ?? string.Empty,
+                                    Category = GetJsonStringValue(message, "category") ?? string.Empty,
+                                    Message = GetJsonStringValue(message, "message") ?? string.Empty,
+                                    Status = GetJsonStringValue(message, "status") ?? string.Empty
                                 };
                                 messages.Add(validationMessage);
                             }
@@ -556,7 +562,7 @@ namespace Zatca.EInvoice.Api
             return messages;
         }
 
-        private string GetStringValue(Dictionary<string, object> dict, string key)
+        private string? GetStringValue(Dictionary<string, object> dict, string key)
         {
             if (dict.TryGetValue(key, out var value))
             {
@@ -578,7 +584,7 @@ namespace Zatca.EInvoice.Api
             return null;
         }
 
-        private string GetJsonStringValue(JsonElement element, string propertyName)
+        private string? GetJsonStringValue(JsonElement element, string propertyName)
         {
             if (element.TryGetProperty(propertyName, out var property))
             {

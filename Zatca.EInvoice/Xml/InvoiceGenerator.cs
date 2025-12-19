@@ -585,7 +585,7 @@ namespace Zatca.EInvoice.Xml
             return element;
         }
 
-        private XElement GenerateDelivery(Dictionary<string, object> delivery)
+        private XElement? GenerateDelivery(Dictionary<string, object> delivery)
         {
             var element = new XElement(_cac + "Delivery");
             bool hasContent = false;
@@ -1070,7 +1070,7 @@ namespace Zatca.EInvoice.Xml
         /// <summary>
         /// Tries to get a dictionary from an object, handling JsonElement conversion.
         /// </summary>
-        private Dictionary<string, object> TryGetDictionary(object value)
+        private Dictionary<string, object>? TryGetDictionary(object value)
         {
             if (value is Dictionary<string, object> dict)
             {
@@ -1088,7 +1088,7 @@ namespace Zatca.EInvoice.Xml
         /// <summary>
         /// Tries to get a list from an object, handling JsonElement conversion.
         /// </summary>
-        private List<object> TryGetList(object value)
+        private List<object>? TryGetList(object value)
         {
             if (value is IList<object> list)
             {

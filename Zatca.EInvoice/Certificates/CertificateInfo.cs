@@ -192,7 +192,9 @@ namespace Zatca.EInvoice.Certificates
                 {
                     // Raw base64 content - decode directly
                     var certBytes = Convert.FromBase64String(certificateContent.Trim());
+#pragma warning disable SYSLIB0057 // X509Certificate2 constructor is obsolete in .NET 9
                     return new X509Certificate2(certBytes);
+#pragma warning restore SYSLIB0057
                 }
             }
             catch (Exception ex)

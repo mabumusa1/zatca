@@ -635,7 +635,7 @@ namespace Zatca.EInvoice.Validation
                 }
                 else
                 {
-                    var categoryItem = classifiedTaxCategory[0] as Dictionary<string, object>;
+                    var categoryItem = firstCategory;
                     if (!(categoryItem.ContainsKey("taxScheme") &&
                           categoryItem["taxScheme"] is Dictionary<string, object> taxScheme &&
                           taxScheme.ContainsKey("id") && !IsEmpty(taxScheme["id"])))

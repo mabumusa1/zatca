@@ -10,22 +10,22 @@ namespace Zatca.EInvoice.Api
         /// <summary>
         /// Gets the overall status of the submission.
         /// </summary>
-        public string Status { get; }
+        public string Status { get; } = string.Empty;
 
         /// <summary>
         /// Gets the clearance status (for clearance invoices).
         /// </summary>
-        public string ClearanceStatus { get; }
+        public string? ClearanceStatus { get; }
 
         /// <summary>
         /// Gets the reporting status (for reporting invoices).
         /// </summary>
-        public string ReportingStatus { get; }
+        public string? ReportingStatus { get; }
 
         /// <summary>
         /// Gets the cleared invoice XML (for clearance invoices).
         /// </summary>
-        public string ClearedInvoice { get; }
+        public string? ClearedInvoice { get; }
 
         /// <summary>
         /// Gets the list of validation errors.
@@ -64,14 +64,14 @@ namespace Zatca.EInvoice.Api
         /// <param name="infoMessages">The list of informational messages.</param>
         public InvoiceSubmissionResult(
             string status,
-            string clearanceStatus,
-            string reportingStatus,
-            string clearedInvoice,
-            List<ValidationMessage> errors,
-            List<ValidationMessage> warnings,
-            List<ValidationMessage> infoMessages)
+            string? clearanceStatus,
+            string? reportingStatus,
+            string? clearedInvoice,
+            List<ValidationMessage>? errors,
+            List<ValidationMessage>? warnings,
+            List<ValidationMessage>? infoMessages)
         {
-            Status = status;
+            Status = status ?? string.Empty;
             ClearanceStatus = clearanceStatus;
             ReportingStatus = reportingStatus;
             ClearedInvoice = clearedInvoice;
@@ -109,27 +109,27 @@ namespace Zatca.EInvoice.Api
         /// <summary>
         /// Gets or sets the message type.
         /// </summary>
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the message code.
         /// </summary>
-        public string Code { get; set; }
+        public string Code { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the message category.
         /// </summary>
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the message text.
         /// </summary>
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the message status.
         /// </summary>
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationMessage"/> class.
