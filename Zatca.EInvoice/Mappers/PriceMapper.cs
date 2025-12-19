@@ -58,7 +58,7 @@ namespace Zatca.EInvoice.Mappers
             };
 
             // Map allowance charges if provided
-            if (data.ContainsKey("allowanceCharges") && data["allowanceCharges"] is IEnumerable<object> allowanceChargeList)
+            if (data.TryGetValue("allowanceCharges", out var allowanceChargesObj) && allowanceChargesObj is IEnumerable<object> allowanceChargeList)
             {
                 var allowanceCharges = new List<AllowanceCharge>();
 

@@ -9,10 +9,6 @@ public class TaxCategory
     public const string UNCL5153 = "UN/ECE 5153";
 
     private string? _id;
-    private string? _name;
-    private decimal? _percent;
-    private string? _taxExemptionReason;
-    private string? _taxExemptionReasonCode;
 
     /// <summary>
     /// Gets or sets the tax category identifier.
@@ -53,20 +49,12 @@ public class TaxCategory
     /// <summary>
     /// Gets or sets the tax category name.
     /// </summary>
-    public string? Name
-    {
-        get => _name;
-        set => _name = value;
-    }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the tax percentage.
     /// </summary>
-    public decimal? Percent
-    {
-        get => _percent;
-        set => _percent = value;
-    }
+    public decimal? Percent { get; set; }
 
     /// <summary>
     /// Gets or sets the tax scheme.
@@ -85,20 +73,12 @@ public class TaxCategory
     /// <summary>
     /// Gets or sets the tax exemption reason.
     /// </summary>
-    public string? TaxExemptionReason
-    {
-        get => _taxExemptionReason;
-        set => _taxExemptionReason = value;
-    }
+    public string? TaxExemptionReason { get; set; }
 
     /// <summary>
     /// Gets or sets the tax exemption reason code.
     /// </summary>
-    public string? TaxExemptionReasonCode
-    {
-        get => _taxExemptionReasonCode;
-        set => _taxExemptionReasonCode = value;
-    }
+    public string? TaxExemptionReasonCode { get; set; }
 
     /// <summary>
     /// Validates required fields before serialization.

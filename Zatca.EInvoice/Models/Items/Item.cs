@@ -7,7 +7,6 @@ public class Item
 {
     private string? _description;
     private string? _name;
-    private string? _standardItemIdentification;
     private string? _buyersItemIdentification;
     private string? _sellersItemIdentification;
 
@@ -42,11 +41,7 @@ public class Item
     /// <summary>
     /// Gets or sets the standard item identification.
     /// </summary>
-    public string? StandardItemIdentification
-    {
-        get => _standardItemIdentification;
-        set => _standardItemIdentification = value;
-    }
+    public string? StandardItemIdentification { get; set; }
 
     /// <summary>
     /// Gets or sets the buyers item identification.

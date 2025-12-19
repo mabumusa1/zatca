@@ -6,8 +6,6 @@ namespace Zatca.EInvoice.Models.Financial;
 public class TaxScheme
 {
     private string? _id;
-    private string? _taxTypeCode;
-    private string? _name;
 
     /// <summary>
     /// Gets or sets the tax scheme identifier.
@@ -26,18 +24,10 @@ public class TaxScheme
     /// <summary>
     /// Gets or sets the tax type code.
     /// </summary>
-    public string? TaxTypeCode
-    {
-        get => _taxTypeCode;
-        set => _taxTypeCode = value;
-    }
+    public string? TaxTypeCode { get; set; }
 
     /// <summary>
     /// Gets or sets the name of the tax scheme.
     /// </summary>
-    public string? Name
-    {
-        get => _name;
-        set => _name = value;
-    }
+    public string? Name { get; set; }
 }

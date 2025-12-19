@@ -222,7 +222,7 @@ public class InvoiceExtension
     public string GetIssueTime()
     {
         var time = GetElementValue("cbc:IssueTime");
-        return time.EndsWith("Z") ? time : time + "Z";
+        return time.EndsWith('Z') ? time : time + "Z";
     }
 
     /// <summary>
@@ -304,7 +304,7 @@ public class InvoiceExtension
     /// <summary>
     /// Splits a qualified name (prefix:localName) into its components.
     /// </summary>
-    private (string prefix, string localName) SplitQualifiedName(string qualifiedName)
+    private static (string prefix, string localName) SplitQualifiedName(string qualifiedName)
     {
         var parts = qualifiedName.Split(':');
         if (parts.Length == 2)
@@ -317,7 +317,7 @@ public class InvoiceExtension
     /// <summary>
     /// Gets the namespace URI for a given prefix.
     /// </summary>
-    private XNamespace GetNamespace(string prefix, XElement context)
+    private static XNamespace GetNamespace(string prefix, XElement context)
     {
         return prefix switch
         {

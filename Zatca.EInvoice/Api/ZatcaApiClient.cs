@@ -443,7 +443,7 @@ namespace Zatca.EInvoice.Api
                 throw new ArgumentNullException(nameof(secret));
         }
 
-        private ComplianceCertificateResult ParseComplianceCertificateResult(Dictionary<string, object> response)
+        private static ComplianceCertificateResult ParseComplianceCertificateResult(Dictionary<string, object> response)
         {
             var binarySecurityToken = GetStringValue(response, "binarySecurityToken");
             var secret = GetStringValue(response, "secret");
@@ -467,7 +467,7 @@ namespace Zatca.EInvoice.Api
                 warnings);
         }
 
-        private ProductionCertificateResult ParseProductionCertificateResult(Dictionary<string, object> response)
+        private static ProductionCertificateResult ParseProductionCertificateResult(Dictionary<string, object> response)
         {
             var binarySecurityToken = GetStringValue(response, "binarySecurityToken");
             var secret = GetStringValue(response, "secret");
@@ -491,7 +491,7 @@ namespace Zatca.EInvoice.Api
                 warnings);
         }
 
-        private InvoiceSubmissionResult ParseInvoiceSubmissionResult(Dictionary<string, object> response)
+        private static InvoiceSubmissionResult ParseInvoiceSubmissionResult(Dictionary<string, object> response)
         {
             var status = GetStringValue(response, "status");
             var clearanceStatus = GetStringValue(response, "clearanceStatus");

@@ -8,6 +8,8 @@ namespace Zatca.EInvoice.Exceptions
     /// </summary>
     public class ZatcaApiException : ZatcaException
     {
+        private const string DefaultMessage = "ZATCA API request failed.";
+
         /// <summary>
         /// Gets the HTTP status code associated with the error.
         /// </summary>
@@ -21,7 +23,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <summary>
         /// Initializes a new instance of the <see cref="ZatcaApiException"/> class.
         /// </summary>
-        public ZatcaApiException() : this("ZATCA API request failed.")
+        public ZatcaApiException() : this(DefaultMessage)
         {
         }
 
@@ -38,7 +40,7 @@ namespace Zatca.EInvoice.Exceptions
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="context">Additional context information about the error.</param>
-        public ZatcaApiException(string message, Dictionary<string, object> context) : base(message ?? "ZATCA API request failed.", context)
+        public ZatcaApiException(string message, Dictionary<string, object> context) : base(message ?? DefaultMessage, context)
         {
         }
 
@@ -50,7 +52,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
         public ZatcaApiException(string message, Dictionary<string, object> context, int statusCode, Exception? innerException = null)
-            : base(message ?? "ZATCA API request failed.", context, innerException)
+            : base(message ?? DefaultMessage, context, innerException)
         {
             StatusCode = statusCode;
         }
@@ -61,7 +63,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="response">The API response content.</param>
-        public ZatcaApiException(string message, int statusCode, string response) : base(message ?? "ZATCA API request failed.")
+        public ZatcaApiException(string message, int statusCode, string response) : base(message ?? DefaultMessage)
         {
             StatusCode = statusCode;
             Response = response;
@@ -75,7 +77,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <param name="response">The API response content.</param>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
         public ZatcaApiException(string message, int statusCode, string response, Exception innerException)
-            : base(message ?? "ZATCA API request failed.", innerException)
+            : base(message ?? DefaultMessage, innerException)
         {
             StatusCode = statusCode;
             Response = response;

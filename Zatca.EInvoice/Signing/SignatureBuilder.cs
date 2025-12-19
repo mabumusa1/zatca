@@ -18,6 +18,8 @@ public class SignatureBuilder
     private const string SigNs = "urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2";
     private const string DsNs = "http://www.w3.org/2000/09/xmldsig#";
     private const string XadesNs = "http://uri.etsi.org/01903/v1.3.2#";
+    private const string Algorithm = "Algorithm";
+    private const string Transform = "Transform";
 
     private X509Certificate2? _certificate;
     private string _invoiceDigest = string.Empty;
@@ -113,7 +115,6 @@ public class SignatureBuilder
         var sigNs2 = XNamespace.Get(SigNs);
         var sacNs2 = XNamespace.Get(SacNs);
         var sbcNs2 = XNamespace.Get(SbcNs);
-        var dsNs2 = XNamespace.Get(DsNs);
 
         var ublDocSigs = new XElement(sigNs2 + "UBLDocumentSignatures",
             new XAttribute(XNamespace.Xmlns + "sig", SigNs),
@@ -159,9 +160,9 @@ public class SignatureBuilder
 
         var signedInfo = new XElement(dsNs2 + "SignedInfo",
             new XElement(dsNs2 + "CanonicalizationMethod",
-                new XAttribute("Algorithm", "http://www.w3.org/2006/12/xml-c14n11")),
+                new XAttribute(Algorithm, "http://www.w3.org/2006/12/xml-c14n11")),
             new XElement(dsNs2 + "SignatureMethod",
-                new XAttribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256")),
+                new XAttribute(Algorithm, "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256")),
             CreateInvoiceReference(),
             CreateSignedPropertiesReference(signedPropertiesXml)
         );
@@ -181,7 +182,7 @@ public class SignatureBuilder
             new XAttribute("URI", ""),
             CreateTransforms(),
             new XElement(dsNs2 + "DigestMethod",
-                new XAttribute("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256")),
+                new XAttribute(Algorithm, "http://www.w3.org/2001/04/xmlenc#sha256")),
             new XElement(dsNs2 + "DigestValue", _invoiceDigest)
         );
 
@@ -191,29 +192,29 @@ public class SignatureBuilder
     /// <summary>
     /// Creates the Transforms element with XPath filters.
     /// </summary>
-    private XElement CreateTransforms()
+    private static XElement CreateTransforms()
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
         var transforms = new XElement(dsNs2 + "Transforms",
             // Exclude UBLExtensions
-            new XElement(dsNs2 + "Transform",
-                new XAttribute("Algorithm", "http://www.w3.org/TR/1999/REC-xpath-19991116"),
+            new XElement(dsNs2 + Transform,
+                new XAttribute(Algorithm, "http://www.w3.org/TR/1999/REC-xpath-19991116"),
                 new XElement(dsNs2 + "XPath", "not(//ancestor-or-self::ext:UBLExtensions)")
             ),
             // Exclude cac:Signature
-            new XElement(dsNs2 + "Transform",
-                new XAttribute("Algorithm", "http://www.w3.org/TR/1999/REC-xpath-19991116"),
+            new XElement(dsNs2 + Transform,
+                new XAttribute(Algorithm, "http://www.w3.org/TR/1999/REC-xpath-19991116"),
                 new XElement(dsNs2 + "XPath", "not(//ancestor-or-self::cac:Signature)")
             ),
             // Exclude QR AdditionalDocumentReference
-            new XElement(dsNs2 + "Transform",
-                new XAttribute("Algorithm", "http://www.w3.org/TR/1999/REC-xpath-19991116"),
+            new XElement(dsNs2 + Transform,
+                new XAttribute(Algorithm, "http://www.w3.org/TR/1999/REC-xpath-19991116"),
                 new XElement(dsNs2 + "XPath", "not(//ancestor-or-self::cac:AdditionalDocumentReference[cbc:ID='QR'])")
             ),
             // Canonicalization
-            new XElement(dsNs2 + "Transform",
-                new XAttribute("Algorithm", "http://www.w3.org/2006/12/xml-c14n11")
+            new XElement(dsNs2 + Transform,
+                new XAttribute(Algorithm, "http://www.w3.org/2006/12/xml-c14n11")
             )
         );
 
@@ -223,13 +224,12 @@ public class SignatureBuilder
     /// <summary>
     /// Creates the reference element for signed properties.
     /// </summary>
-    private XElement CreateSignedPropertiesReference(string signedPropertiesXml)
+    private static XElement CreateSignedPropertiesReference(string signedPropertiesXml)
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
         // Compute hash of signed properties in ZATCA format: base64(hex(sha256(...)))
-        using var sha256 = SHA256.Create();
-        var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(signedPropertiesXml));
+        var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(signedPropertiesXml));
         var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
         var digestValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
 
@@ -237,7 +237,7 @@ public class SignatureBuilder
             new XAttribute("Type", "http://www.w3.org/2000/09/xmldsig#SignatureProperties"),
             new XAttribute("URI", "#xadesSignedProperties"),
             new XElement(dsNs2 + "DigestMethod",
-                new XAttribute("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256")),
+                new XAttribute(Algorithm, "http://www.w3.org/2001/04/xmlenc#sha256")),
             new XElement(dsNs2 + "DigestValue", digestValue)
         );
 
@@ -306,7 +306,7 @@ public class SignatureBuilder
                     new XElement(xadesNs2 + "Cert",
                         new XElement(xadesNs2 + "CertDigest",
                             new XElement(dsNs2 + "DigestMethod",
-                                new XAttribute("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256")),
+                                new XAttribute(Algorithm, "http://www.w3.org/2001/04/xmlenc#sha256")),
                             new XElement(dsNs2 + "DigestValue", certHash)
                         ),
                         new XElement(xadesNs2 + "IssuerSerial",
@@ -327,7 +327,6 @@ public class SignatureBuilder
     /// </summary>
     private string CreateSignedPropertiesXml(string signingTime)
     {
-        var dsNs2 = XNamespace.Get(DsNs);
 
         // Compute certificate hash in ZATCA format: base64(hex(sha256(DER)))
         var certHash = ComputeCertificateHash(_certificate!);

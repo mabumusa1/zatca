@@ -12,7 +12,6 @@ public class Invoice
 {
     private string? _id;
     private string? _uuid;
-    private string _profileID = "reporting:1.0";
     private string _languageID = "en";
     private string _invoiceCurrencyCode = "SAR";
     private string _taxCurrencyCode = "SAR";
@@ -26,11 +25,7 @@ public class Invoice
     /// <summary>
     /// Gets or sets the profile ID (default: 'reporting:1.0').
     /// </summary>
-    public string ProfileID
-    {
-        get => _profileID;
-        set => _profileID = value;
-    }
+    public string ProfileID { get; set; } = "reporting:1.0";
 
     /// <summary>
     /// Gets or sets the invoice identifier.

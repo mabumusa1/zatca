@@ -45,7 +45,7 @@ namespace Zatca.EInvoice.Mappers
             return additionalDocs;
         }
 
-        private AdditionalDocumentReference? MapSingleDocument(object docObj)
+        private static AdditionalDocumentReference? MapSingleDocument(object docObj)
         {
             if (docObj is not Dictionary<string, object> doc)
                 return null;

@@ -37,11 +37,11 @@ namespace Zatca.EInvoice.Mappers
             // Map classified tax category for the item
             var classifiedTaxCategories = new List<ClassifiedTaxCategory>();
 
-            if (data.ContainsKey("classifiedTaxCategory") && data["classifiedTaxCategory"] is IEnumerable<object> taxCategoryList)
+            if (data.TryGetValue("classifiedTaxCategory", out var classifiedTaxCategoryObj) && classifiedTaxCategoryObj is IEnumerable<object> taxCategoryList)
             {
-                foreach (var taxCategoryObj in taxCategoryList)
+                foreach (var taxCategoryItem in taxCategoryList)
                 {
-                    if (taxCategoryObj is Dictionary<string, object> taxCategory)
+                    if (taxCategoryItem is Dictionary<string, object> taxCategory)
                     {
                         // Map TaxScheme for the item
                         var taxSchemeData = DictionaryHelper.GetDictionary(taxCategory, "taxScheme");

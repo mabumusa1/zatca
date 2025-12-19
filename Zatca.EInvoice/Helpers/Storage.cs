@@ -159,7 +159,7 @@ namespace Zatca.EInvoice.Helpers
         /// </summary>
         /// <param name="file">Relative or full path of the file.</param>
         /// <returns>Absolute path to the file.</returns>
-        private string GetFullPath(string file)
+        private static string GetFullPath(string file)
         {
             if (string.IsNullOrEmpty(file))
             {
@@ -179,7 +179,7 @@ namespace Zatca.EInvoice.Helpers
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <exception cref="ZatcaStorageException">Thrown if the directory cannot be created.</exception>
-        private void EnsureDirectoryExists(string path)
+        private static void EnsureDirectoryExists(string path)
         {
             if (string.IsNullOrEmpty(path))
             {

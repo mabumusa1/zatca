@@ -9,6 +9,8 @@ namespace Zatca.EInvoice.Xml
     /// </summary>
     public static class XmlSerializationExtensions
     {
+        private const string CurrencyIdAttribute = "currencyID";
+
         /// <summary>
         /// Formats an amount with 2 decimal places and adds the currencyID attribute.
         /// </summary>
@@ -81,7 +83,7 @@ namespace Zatca.EInvoice.Xml
         public static XElement CreateAmountElement(XName elementName, decimal amount, string currencyId = "SAR")
         {
             return new XElement(elementName,
-                new XAttribute("currencyID", currencyId),
+                new XAttribute(CurrencyIdAttribute, currencyId),
                 amount.FormatAmount(currencyId));
         }
 
@@ -95,7 +97,7 @@ namespace Zatca.EInvoice.Xml
         public static XElement CreateAmountElement(XName elementName, double amount, string currencyId = "SAR")
         {
             return new XElement(elementName,
-                new XAttribute("currencyID", currencyId),
+                new XAttribute(CurrencyIdAttribute, currencyId),
                 amount.FormatAmount(currencyId));
         }
 
@@ -109,7 +111,7 @@ namespace Zatca.EInvoice.Xml
         public static XElement CreatePriceElement(XName elementName, decimal price, string currencyId = "SAR")
         {
             return new XElement(elementName,
-                new XAttribute("currencyID", currencyId),
+                new XAttribute(CurrencyIdAttribute, currencyId),
                 price.FormatPrice());
         }
 
@@ -123,7 +125,7 @@ namespace Zatca.EInvoice.Xml
         public static XElement CreatePriceElement(XName elementName, double price, string currencyId = "SAR")
         {
             return new XElement(elementName,
-                new XAttribute("currencyID", currencyId),
+                new XAttribute(CurrencyIdAttribute, currencyId),
                 price.FormatPrice());
         }
 

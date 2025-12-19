@@ -16,6 +16,16 @@ namespace Zatca.EInvoice.Validation
     public class InvoiceAmountValidator
     {
         private const decimal Tolerance = 0.01m;
+        private const string LegalMonetaryTotal = "legalMonetaryTotal";
+        private const string LineExtensionAmount = "lineExtensionAmount";
+        private const string TaxExclusiveAmount = "taxExclusiveAmount";
+        private const string TaxInclusiveAmount = "taxInclusiveAmount";
+        private const string TaxTotal = "taxTotal";
+        private const string TaxAmount = "taxAmount";
+        private const string Quantity = "quantity";
+        private const string Price = "price";
+        private const string Amount = "amount";
+        private const string RoundingAmount = "roundingAmount";
 
         /// <summary>
         /// Validates the monetary totals in the invoice.
@@ -46,22 +56,22 @@ namespace Zatca.EInvoice.Validation
         public void ValidateMonetaryTotalsAndThrow(Dictionary<string, object> data)
         {
             // Check that the Legal Monetary Total section exists.
-            if (!data.ContainsKey("legalMonetaryTotal"))
+            if (!data.ContainsKey(LegalMonetaryTotal))
             {
                 throw new ArgumentException("Legal Monetary Total section is missing.");
             }
 
-            if (!(data["legalMonetaryTotal"] is Dictionary<string, object> lmt))
+            if (!(data[LegalMonetaryTotal] is Dictionary<string, object> lmt))
             {
                 throw new ArgumentException("Legal Monetary Total must be a valid object.");
             }
 
-            var requiredFields = new[] { "lineExtensionAmount", "taxExclusiveAmount", "taxInclusiveAmount", "payableAmount" };
+            var requiredFields = new[] { LineExtensionAmount, TaxExclusiveAmount, TaxInclusiveAmount, "payableAmount" };
 
             // Ensure that required fields exist, are numeric, and non-negative.
             foreach (var field in requiredFields)
             {
-                if (!lmt.ContainsKey(field) || !TryGetDecimal(lmt[field], out decimal value))
+                if (!lmt.TryGetValue(field, out var fieldValue) || !TryGetDecimal(fieldValue, out decimal value))
                 {
                     throw new ArgumentException($"Legal Monetary Total field '{field}' must be a numeric value.");
                 }
@@ -74,17 +84,17 @@ namespace Zatca.EInvoice.Validation
 
             // Retrieve taxTotal amount if available.
             decimal taxTotalAmount = 0.0m;
-            if (data.ContainsKey("taxTotal") &&
-                data["taxTotal"] is Dictionary<string, object> taxTotal &&
-                taxTotal.ContainsKey("taxAmount") &&
-                TryGetDecimal(taxTotal["taxAmount"], out decimal taxAmount))
+            if (data.TryGetValue(TaxTotal, out var taxTotalObj) &&
+                taxTotalObj is Dictionary<string, object> taxTotal &&
+                taxTotal.TryGetValue(TaxAmount, out var taxAmountValue) &&
+                TryGetDecimal(taxAmountValue, out decimal taxAmount))
             {
                 taxTotalAmount = taxAmount;
             }
 
-            decimal taxExclusiveAmount = GetDecimal(lmt["taxExclusiveAmount"]);
+            decimal taxExclusiveAmount = GetDecimal(lmt[TaxExclusiveAmount]);
             decimal expectedTaxInclusive = taxExclusiveAmount + taxTotalAmount;
-            decimal actualTaxInclusive = GetDecimal(lmt["taxInclusiveAmount"]);
+            decimal actualTaxInclusive = GetDecimal(lmt[TaxInclusiveAmount]);
 
             // Allow a small difference (e.g., 0.01) due to rounding differences.
             if (Math.Abs(expectedTaxInclusive - actualTaxInclusive) > Tolerance)
@@ -143,7 +153,7 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateLineNumericFieldsAndThrow(Dictionary<string, object> line, int index)
         {
-            var numericFields = new[] { "quantity", "lineExtensionAmount" };
+            var numericFields = new[] { Quantity, LineExtensionAmount };
             foreach (var field in numericFields)
             {
                 if (!line.TryGetValue(field, out var fieldValue) || !TryGetDecimal(fieldValue, out decimal value))
@@ -159,11 +169,11 @@ namespace Zatca.EInvoice.Validation
 
         private decimal ValidateLinePriceAndThrow(Dictionary<string, object> line, int index)
         {
-            if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
+            if (!line.TryGetValue(Price, out var priceObj) || priceObj is not Dictionary<string, object> price)
             {
                 throw new ArgumentException($"Invoice Line [{index}] must have a valid price object.");
             }
-            if (!price.TryGetValue("amount", out var amountObj) || !TryGetDecimal(amountObj, out decimal priceAmount))
+            if (!price.TryGetValue(Amount, out var amountObj) || !TryGetDecimal(amountObj, out decimal priceAmount))
             {
                 throw new ArgumentException($"Invoice Line [{index}] Price amount must be a numeric value.");
             }
@@ -176,9 +186,9 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateLineExtensionCalculationAndThrow(Dictionary<string, object> line, int index, decimal priceAmount)
         {
-            decimal quantity = GetDecimal(line["quantity"]);
+            decimal quantity = GetDecimal(line[Quantity]);
             decimal expectedLineExtension = priceAmount * quantity;
-            decimal providedLineExtension = GetDecimal(line["lineExtensionAmount"]);
+            decimal providedLineExtension = GetDecimal(line[LineExtensionAmount]);
 
             if (Math.Abs(expectedLineExtension - providedLineExtension) > Tolerance)
             {
@@ -206,11 +216,11 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateLineTaxTotalAndThrow(Dictionary<string, object> line, int index)
         {
-            if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            if (!line.TryGetValue(TaxTotal, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
             {
                 throw new ArgumentException($"Invoice Line [{index}] must have a valid taxTotal object.");
             }
-            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !TryGetDecimal(taxAmountObj, out decimal taxLineAmount))
+            if (!taxTotal.TryGetValue(TaxAmount, out var taxAmountObj) || !TryGetDecimal(taxAmountObj, out decimal taxLineAmount))
             {
                 throw new ArgumentException($"Invoice Line [{index}] TaxTotal taxAmount must be a numeric value.");
             }
@@ -219,12 +229,12 @@ namespace Zatca.EInvoice.Validation
                 throw new ArgumentException($"Invoice Line [{index}] TaxTotal taxAmount cannot be negative.");
             }
 
-            if (!taxTotal.TryGetValue("roundingAmount", out var roundingObj) || !TryGetDecimal(roundingObj, out decimal roundingAmount))
+            if (!taxTotal.TryGetValue(RoundingAmount, out var roundingObj) || !TryGetDecimal(roundingObj, out decimal roundingAmount))
             {
                 throw new ArgumentException($"Invoice Line [{index}] TaxTotal roundingAmount must be a numeric value.");
             }
 
-            decimal providedLineExtension = GetDecimal(line["lineExtensionAmount"]);
+            decimal providedLineExtension = GetDecimal(line[LineExtensionAmount]);
             decimal expectedRounding = providedLineExtension + taxLineAmount;
             if (Math.Abs(expectedRounding - roundingAmount) > Tolerance)
             {
@@ -236,24 +246,24 @@ namespace Zatca.EInvoice.Validation
         private void ValidateMonetaryTotalsInternal(Dictionary<string, object> data, ValidationResult result)
         {
             // Check that the Legal Monetary Total section exists.
-            if (!data.ContainsKey("legalMonetaryTotal"))
+            if (!data.ContainsKey(LegalMonetaryTotal))
             {
                 result.AddError("Legal Monetary Total section is missing.");
                 return;
             }
 
-            if (!(data["legalMonetaryTotal"] is Dictionary<string, object> lmt))
+            if (!(data[LegalMonetaryTotal] is Dictionary<string, object> lmt))
             {
                 result.AddError("Legal Monetary Total must be a valid object.");
                 return;
             }
 
-            var requiredFields = new[] { "lineExtensionAmount", "taxExclusiveAmount", "taxInclusiveAmount", "payableAmount" };
+            var requiredFields = new[] { LineExtensionAmount, TaxExclusiveAmount, TaxInclusiveAmount, "payableAmount" };
 
             // Ensure that required fields exist, are numeric, and non-negative.
             foreach (var field in requiredFields)
             {
-                if (!lmt.ContainsKey(field) || !TryGetDecimal(lmt[field], out decimal value))
+                if (!lmt.TryGetValue(field, out var fieldValueObj) || !TryGetDecimal(fieldValueObj, out decimal value))
                 {
                     result.AddError($"Legal Monetary Total field '{field}' must be a numeric value.");
                     continue;
@@ -272,17 +282,17 @@ namespace Zatca.EInvoice.Validation
 
             // Retrieve taxTotal amount if available.
             decimal taxTotalAmount = 0.0m;
-            if (data.ContainsKey("taxTotal") &&
-                data["taxTotal"] is Dictionary<string, object> taxTotal &&
-                taxTotal.ContainsKey("taxAmount") &&
-                TryGetDecimal(taxTotal["taxAmount"], out decimal taxAmount))
+            if (data.TryGetValue(TaxTotal, out var taxTotalInternalObj) &&
+                taxTotalInternalObj is Dictionary<string, object> taxTotalInternal &&
+                taxTotalInternal.TryGetValue(TaxAmount, out var taxAmountInternalValue) &&
+                TryGetDecimal(taxAmountInternalValue, out decimal taxAmountInternal))
             {
-                taxTotalAmount = taxAmount;
+                taxTotalAmount = taxAmountInternal;
             }
 
-            decimal taxExclusiveAmount = GetDecimal(lmt["taxExclusiveAmount"]);
+            decimal taxExclusiveAmount = GetDecimal(lmt[TaxExclusiveAmount]);
             decimal expectedTaxInclusive = taxExclusiveAmount + taxTotalAmount;
-            decimal actualTaxInclusive = GetDecimal(lmt["taxInclusiveAmount"]);
+            decimal actualTaxInclusive = GetDecimal(lmt[TaxInclusiveAmount]);
 
             // Allow a small difference (e.g., 0.01) due to rounding differences.
             if (Math.Abs(expectedTaxInclusive - actualTaxInclusive) > Tolerance)
@@ -318,7 +328,7 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateLineNumericFieldsInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
-            var numericFields = new[] { "quantity", "lineExtensionAmount" };
+            var numericFields = new[] { Quantity, LineExtensionAmount };
             foreach (var field in numericFields)
             {
                 if (!line.TryGetValue(field, out var fieldValue) || !TryGetDecimal(fieldValue, out decimal value))
@@ -335,12 +345,12 @@ namespace Zatca.EInvoice.Validation
 
         private decimal? ValidateLinePriceInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
-            if (!line.TryGetValue("price", out var priceObj) || priceObj is not Dictionary<string, object> price)
+            if (!line.TryGetValue(Price, out var priceObj) || priceObj is not Dictionary<string, object> price)
             {
                 result.AddError($"Invoice Line [{index}] must have a valid price object.");
                 return null;
             }
-            if (!price.TryGetValue("amount", out var amountObj) || !TryGetDecimal(amountObj, out decimal priceAmount))
+            if (!price.TryGetValue(Amount, out var amountObj) || !TryGetDecimal(amountObj, out decimal priceAmount))
             {
                 result.AddError($"Invoice Line [{index}] Price amount must be a numeric value.");
                 return null;
@@ -354,8 +364,8 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateLineExtensionCalculationInternal(Dictionary<string, object> line, int index, decimal priceAmount, ValidationResult result)
         {
-            if (!TryGetDecimal(line["quantity"], out decimal quantity) ||
-                !TryGetDecimal(line["lineExtensionAmount"], out decimal providedLineExtension))
+            if (!TryGetDecimal(line[Quantity], out decimal quantity) ||
+                !TryGetDecimal(line[LineExtensionAmount], out decimal providedLineExtension))
                 return;
 
             decimal expectedLineExtension = priceAmount * quantity;
@@ -385,12 +395,12 @@ namespace Zatca.EInvoice.Validation
 
         private void ValidateLineTaxTotalInternal(Dictionary<string, object> line, int index, ValidationResult result)
         {
-            if (!line.TryGetValue("taxTotal", out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
+            if (!line.TryGetValue(TaxTotal, out var taxTotalObj) || taxTotalObj is not Dictionary<string, object> taxTotal)
             {
                 result.AddError($"Invoice Line [{index}] must have a valid taxTotal object.");
                 return;
             }
-            if (!taxTotal.TryGetValue("taxAmount", out var taxAmountObj) || !TryGetDecimal(taxAmountObj, out decimal taxLineAmount))
+            if (!taxTotal.TryGetValue(TaxAmount, out var taxAmountObj) || !TryGetDecimal(taxAmountObj, out decimal taxLineAmount))
             {
                 result.AddError($"Invoice Line [{index}] TaxTotal taxAmount must be a numeric value.");
                 return;
@@ -400,13 +410,13 @@ namespace Zatca.EInvoice.Validation
                 result.AddError($"Invoice Line [{index}] TaxTotal taxAmount cannot be negative.");
             }
 
-            if (!taxTotal.TryGetValue("roundingAmount", out var roundingObj) || !TryGetDecimal(roundingObj, out decimal roundingAmount))
+            if (!taxTotal.TryGetValue(RoundingAmount, out var roundingObj) || !TryGetDecimal(roundingObj, out decimal roundingAmount))
             {
                 result.AddError($"Invoice Line [{index}] TaxTotal roundingAmount must be a numeric value.");
                 return;
             }
 
-            if (TryGetDecimal(line["lineExtensionAmount"], out decimal lineExtAmount))
+            if (TryGetDecimal(line[LineExtensionAmount], out decimal lineExtAmount))
             {
                 decimal expectedRounding = lineExtAmount + taxLineAmount;
                 if (Math.Abs(expectedRounding - roundingAmount) > Tolerance)
@@ -418,7 +428,7 @@ namespace Zatca.EInvoice.Validation
         }
 
         // Helper methods
-        private bool TryGetDecimal(object value, out decimal result)
+        private static bool TryGetDecimal(object value, out decimal result)
         {
             result = 0;
 

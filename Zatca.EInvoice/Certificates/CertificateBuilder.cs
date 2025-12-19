@@ -327,14 +327,6 @@ namespace Zatca.EInvoice.Certificates
                     ecParams = SecNamedCurves.GetByName(curveName);
                 }
 
-                // Create domain parameters WITH the OID to ensure named curve encoding
-                var domainParams = new ECDomainParameters(
-                    ecParams.Curve,
-                    ecParams.G,
-                    ecParams.N,
-                    ecParams.H,
-                    ecParams.GetSeed());
-
                 // Use the OID directly in key generation parameters
                 var keyGenParams = new ECKeyGenerationParameters(curveOid, new SecureRandom());
                 var keyGenerator = new ECKeyPairGenerator();

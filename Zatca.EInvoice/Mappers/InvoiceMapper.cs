@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Zatca.EInvoice.Models;
@@ -100,14 +101,12 @@ namespace Zatca.EInvoice.Mappers
             };
 
             // Add additional notes if available
-            if (data.ContainsKey("notes") && data["notes"] is IEnumerable<object> notesList)
+            if (data.TryGetValue("notes", out var notesValue) && notesValue is IEnumerable<object> notesList)
             {
                 foreach (var noteObj in notesList)
                 {
                     if (noteObj is Dictionary<string, object> note)
                     {
-                        var noteText = DictionaryHelper.GetString(note, "text", string.Empty);
-                        var languageId = DictionaryHelper.GetString(note, "languageId", null);
                         // Add note logic here if Invoice has a method to add multiple notes
                     }
                 }
@@ -133,9 +132,9 @@ namespace Zatca.EInvoice.Mappers
                 var data = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonData, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                });
+                }) ?? new Dictionary<string, object>();
 
-                return MapToInvoice(data ?? new Dictionary<string, object>());
+                return MapToInvoice(data);
             }
             catch (JsonException ex)
             {
@@ -353,7 +352,7 @@ namespace Zatca.EInvoice.Mappers
                 TaxSubTotals = new List<TaxSubTotal>()
             };
 
-            if (data.ContainsKey("subTotals") && data["subTotals"] is IEnumerable<object> subTotalsList)
+            if (data.TryGetValue("subTotals", out var subTotalsValue) && subTotalsValue is IEnumerable<object> subTotalsList)
             {
                 foreach (var subTotalObj in subTotalsList)
                 {
@@ -421,7 +420,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Converts a date string to a DateOnly object.
         /// </summary>
-        private DateOnly MapDateOnly(string dateTimeStr)
+        private static DateOnly MapDateOnly(string dateTimeStr)
         {
             if (string.IsNullOrEmpty(dateTimeStr))
             {
@@ -430,7 +429,7 @@ namespace Zatca.EInvoice.Mappers
 
             try
             {
-                if (DateTime.TryParse(dateTimeStr, out var dateTime))
+                if (DateTime.TryParse(dateTimeStr, CultureInfo.InvariantCulture, out var dateTime))
                 {
                     return DateOnly.FromDateTime(dateTime);
                 }
@@ -445,7 +444,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Converts a time string to a TimeOnly object.
         /// </summary>
-        private TimeOnly MapTimeOnly(string dateTimeStr)
+        private static TimeOnly MapTimeOnly(string dateTimeStr)
         {
             if (string.IsNullOrEmpty(dateTimeStr))
             {
@@ -454,11 +453,11 @@ namespace Zatca.EInvoice.Mappers
 
             try
             {
-                if (TimeOnly.TryParse(dateTimeStr, out var timeOnly))
+                if (TimeOnly.TryParse(dateTimeStr, CultureInfo.InvariantCulture, out var timeOnly))
                 {
                     return timeOnly;
                 }
-                if (DateTime.TryParse(dateTimeStr, out var dateTime))
+                if (DateTime.TryParse(dateTimeStr, CultureInfo.InvariantCulture, out var dateTime))
                 {
                     return TimeOnly.FromDateTime(dateTime);
                 }
@@ -473,7 +472,7 @@ namespace Zatca.EInvoice.Mappers
         /// <summary>
         /// Converts a date string to a nullable DateOnly object.
         /// </summary>
-        private DateOnly? MapNullableDateOnly(string? dateTimeStr)
+        private static DateOnly? MapNullableDateOnly(string? dateTimeStr)
         {
             if (string.IsNullOrEmpty(dateTimeStr))
             {
@@ -482,7 +481,7 @@ namespace Zatca.EInvoice.Mappers
 
             try
             {
-                if (DateTime.TryParse(dateTimeStr, out var dateTime))
+                if (DateTime.TryParse(dateTimeStr, CultureInfo.InvariantCulture, out var dateTime))
                 {
                     return DateOnly.FromDateTime(dateTime);
                 }

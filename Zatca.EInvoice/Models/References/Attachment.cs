@@ -5,67 +5,42 @@ namespace Zatca.EInvoice.Models.References;
 /// </summary>
 public class Attachment
 {
-    private string? _filePath;
-    private string? _externalReference;
-    private string? _base64Content;
-    private string? _fileName;
-    private string? _mimeType;
     private string _mimeCode = "base64";
 
     /// <summary>
     /// Gets or sets the file path.
     /// </summary>
-    public string? FilePath
-    {
-        get => _filePath;
-        set => _filePath = value;
-    }
+    public string? FilePath { get; set; }
 
     /// <summary>
     /// Gets or sets the external reference URL.
     /// </summary>
-    public string? ExternalReference
-    {
-        get => _externalReference;
-        set => _externalReference = value;
-    }
+    public string? ExternalReference { get; set; }
 
     /// <summary>
     /// Gets or sets the Base64 encoded content.
     /// Also known as EmbeddedDocumentBinaryObject in UBL.
     /// </summary>
-    public string? Base64Content
-    {
-        get => _base64Content;
-        set => _base64Content = value;
-    }
+    public string? Base64Content { get; set; }
 
     /// <summary>
     /// Gets or sets the embedded document binary object (alias for Base64Content).
     /// </summary>
     public string? EmbeddedDocumentBinaryObject
     {
-        get => _base64Content;
-        set => _base64Content = value;
+        get => Base64Content;
+        set => Base64Content = value;
     }
 
     /// <summary>
     /// Gets or sets the file name.
     /// </summary>
-    public string? FileName
-    {
-        get => _fileName;
-        set => _fileName = value;
-    }
+    public string? FileName { get; set; }
 
     /// <summary>
     /// Gets or sets the MIME type (e.g., "text/plain").
     /// </summary>
-    public string? MimeType
-    {
-        get => _mimeType;
-        set => _mimeType = value;
-    }
+    public string? MimeType { get; set; }
 
     /// <summary>
     /// Gets or sets the MIME code (default: "base64").

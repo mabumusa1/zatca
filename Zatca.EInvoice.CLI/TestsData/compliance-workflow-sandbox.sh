@@ -200,7 +200,7 @@ main() {
         local configs=()
         for config_dir in "$OUTPUT_DIR"/csr-config-*; do
             if [[ -d "$config_dir" ]] && [[ -f "$config_dir/certificate.csr" ]]; then
-                configs+=(\"$(basename \"$config_dir\")\")
+                configs+=("$(basename "$config_dir")")
             fi
         done
         
