@@ -51,6 +51,7 @@ namespace Zatca.EInvoice.Exceptions
         /// <summary>
         /// Initializes a new instance of the <see cref="ZatcaValidationException"/> class with a single validation error.
         /// </summary>
+        /// <param name="message">The message that describes the error.</param>
         /// <param name="error">The validation error.</param>
         public ZatcaValidationException(string message, string error) : this(message, new List<string> { error })
         {

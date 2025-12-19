@@ -7,6 +7,9 @@ namespace Zatca.EInvoice.Models.Items;
 /// </summary>
 public class ClassifiedTaxCategory
 {
+    /// <summary>
+    /// UN/ECE 5305 duty or tax or fee category code identifier.
+    /// </summary>
     public const string UNCL5305 = "UNCL5305";
 
     private string? _id;

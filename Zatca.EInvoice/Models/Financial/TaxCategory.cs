@@ -5,7 +5,14 @@ namespace Zatca.EInvoice.Models.Financial;
 /// </summary>
 public class TaxCategory
 {
+    /// <summary>
+    /// UN/ECE 5305 duty or tax or fee category code.
+    /// </summary>
     public const string UNCL5305 = "UN/ECE 5305";
+
+    /// <summary>
+    /// UN/ECE 5153 duty or tax or fee type name code.
+    /// </summary>
     public const string UNCL5153 = "UN/ECE 5153";
 
     private string? _id;

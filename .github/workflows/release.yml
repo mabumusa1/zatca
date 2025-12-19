@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event.release.tag_name || github.ref }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -41,7 +42,7 @@ jobs:
       - name: Display Version
         run: |
           echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
-          echo "NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
 
       - name: Restore dependencies
         run: dotnet restore
@@ -58,7 +59,7 @@ jobs:
             --configuration Release \
             --no-build \
             --output ./nupkg \
-            -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
+            -p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
 
       - name: Upload NuGet package artifact
         uses: actions/upload-artifact@v6
