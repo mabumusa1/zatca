@@ -1,3 +1,15 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mabumusa1_zatca&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=mabumusa1_zatca)
+
 # Zatca.EInvoice
 
 A comprehensive .NET library for generating **ZATCA-compliant** e-invoices in Saudi Arabia. This library provides everything you need to create, sign, validate, and submit electronic invoices to ZATCA's Fatoora platform.

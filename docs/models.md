@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Models Reference
+nav_order: 8
+description: "Data models documentation for Zatca.EInvoice"
 ---
 
 # Models Reference

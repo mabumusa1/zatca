@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Getting Started
+nav_order: 2
+description: "Complete setup guide for Zatca.EInvoice"
 ---
 
 # Getting Started

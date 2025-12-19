@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Validation
+nav_order: 6
+description: "Invoice validation before ZATCA submission"
 ---
 
 # Invoice Validation

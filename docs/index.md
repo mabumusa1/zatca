@@ -1,6 +1,9 @@
 ---
 layout: default
-title: Zatca.EInvoice
+title: Home
+nav_order: 1
+description: "A .NET library for generating ZATCA-compliant e-invoices in Saudi Arabia"
+permalink: /
 ---
 
 # Zatca.EInvoice

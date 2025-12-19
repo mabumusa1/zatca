@@ -1,16 +1,71 @@
 title: Zatca.EInvoice
 description: A .NET library for generating ZATCA-compliant e-invoices in Saudi Arabia
-theme: jekyll-theme-cayman
-baseurl: "/Zatca.EInvoice"
-url: ""
-show_downloads: true
-google_analytics:
-plugins:
-  - jekyll-relative-links
-relative_links:
-  enabled: true
-  collections: true
+
+# Theme settings
+remote_theme: just-the-docs/just-the-docs@v0.10.0
+color_scheme: light
+
+# URL settings
+baseurl: "/zatca"
+url: "https://mabumusa1.github.io"
+
+# Repository info
+gh_repo_url: "https://github.com/mabumusa1/zatca"
+aux_links:
+  "View on GitHub":
+    - "https://github.com/mabumusa1/zatca"
+
+# Footer
+footer_content: "Copyright &copy; 2024. Distributed under the MIT License."
+
+# Search
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+# Navigation
+nav_sort: case_insensitive
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# Heading anchor links
+heading_anchors: true
+
+# Markdown settings
 markdown: kramdown
 kramdown:
   input: GFM
   syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+# Plugins
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+
+relative_links:
+  enabled: true
+  collections: true
+
+# Collections for organized docs
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:path/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

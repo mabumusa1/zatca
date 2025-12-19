@@ -1,6 +1,8 @@
 ---
 layout: default
 title: API Reference
+nav_order: 7
+description: "ZATCA API client documentation"
 ---
 
 # API Reference

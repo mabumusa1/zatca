@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Invoice Generation
+nav_order: 4
+description: "Creating and generating ZATCA-compliant invoices in XML format"
 ---
 
 # Invoice Generation

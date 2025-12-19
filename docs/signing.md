@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Signing
+nav_order: 5
+description: "Digital signature and QR code generation for ZATCA e-invoices"
 ---
 
 # Signing

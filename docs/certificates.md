@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Certificates
+nav_order: 3
+description: "Certificate generation and management for ZATCA e-invoicing"
 ---
 
 # Certificate Management

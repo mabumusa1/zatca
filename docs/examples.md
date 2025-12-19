@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Examples
+nav_order: 9
+description: "Complete working examples for common ZATCA e-invoicing scenarios"
 ---
 
 # Examples
