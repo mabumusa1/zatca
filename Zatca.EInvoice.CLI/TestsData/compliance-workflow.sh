@@ -20,6 +20,9 @@ NC='\033[0m' # No Color
 # String constants for repeated literals
 readonly JQ_SUCCESS='.success'
 readonly JQ_ERROR='.error'
+readonly SUCCESS_KEY='.success'
+readonly ERROR_KEY='.error'
+readonly SEPARATOR='===='
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_DIR="$SCRIPT_DIR/Output"
@@ -59,6 +62,7 @@ usage() {
     echo "  $0 --all --otp 654321" >&2
     echo "" >&2
     exit 1
+    return 0
 }
 
 # Function to request compliance certificate
@@ -72,9 +76,9 @@ request_compliance_cert() {
     local cert_output_dir="$config_dir/compliance"
     
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${BLUE}Phase 1: Request Compliance Certificate${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${CYAN}Configuration: $config_name${NC}"
     echo -e "${CYAN}Environment: $env${NC}"
     echo ""
@@ -254,9 +258,9 @@ validate_compliance() {
     local invoice_dir="$compliance_dir/test_invoices"
     
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${BLUE}Phase 2: Compliance Validation${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${CYAN}Configuration: $config_name${NC}"
     echo ""
     
@@ -411,9 +415,9 @@ request_production_cert() {
     local production_dir="$config_dir/production"
     
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${BLUE}Phase 3: Request Production Certificate${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${CYAN}Configuration: $config_name${NC}"
     echo ""
     
@@ -492,9 +496,9 @@ submit_invoices() {
     local submission_dir="$production_dir/invoice_submissions"
 
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${BLUE}Phase 4: Invoice Submission${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${CYAN}Configuration: $config_name${NC}"
     echo ""
 
@@ -571,7 +575,7 @@ submit_invoices() {
             --output-hash "$submission_dir/simplified_hash.txt" \
             --json > "$submission_dir/simplified_sign.json" 2>&1; then
 
-            local success=$(grep -A 100 '^{' "$submission_dir/simplified_sign.json" | jq -r '.success' 2>/dev/null || echo "false")
+            local success=$(grep -A 100 '^{' "$submission_dir/simplified_sign.json" | jq -r "$SUCCESS_KEY" 2>/dev/null || echo "false")
 
             if [[ "$success" == "true" ]]; then
                 local hash=$(grep -A 100 '^{' "$submission_dir/simplified_sign.json" | jq -r '.hash')
@@ -592,7 +596,7 @@ submit_invoices() {
                     --env "$env" \
                     --json > "$submission_dir/simplified_reporting.json" 2>&1; then
 
-                    local report_success=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r '.success' 2>/dev/null || echo "false")
+                    local report_success=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r "$SUCCESS_KEY" 2>/dev/null || echo "false")
 
                     if [[ "$report_success" == "true" ]]; then
                         local status=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r '.reportingStatus')
@@ -600,19 +604,19 @@ submit_invoices() {
                         echo -e "${GREEN}  Status: $status${NC}"
                         passed=$((passed + 1))
                     else
-                        local error=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r '.error' 2>/dev/null || echo "Unknown")
+                        local error=$(grep -A 100 '^{' "$submission_dir/simplified_reporting.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "Unknown")
                         # Check if it's a sandbox certificate error (expected in sandbox mode)
                         if echo "$error" | grep -q "certificate-hashing\|certificate-issuer-name"; then
-                            echo -e "${YELLOW}⚠ Simplified invoice reporting - sandbox certificate limitation${NC}"
-                            echo -e "${YELLOW}  (This is expected in sandbox mode - the API flow works correctly)${NC}"
+                            echo -e "${YELLOW}⚠ Simplified invoice reporting - sandbox certificate limitation${NC}" >&2
+                            echo -e "${YELLOW}  (This is expected in sandbox mode - the API flow works correctly)${NC}" >&2
                             passed=$((passed + 1))
                         else
-                            echo -e "${RED}✗ Simplified invoice reporting FAILED: $error${NC}"
+                            echo -e "${RED}✗ Simplified invoice reporting FAILED: $error${NC}" >&2
                             failed=$((failed + 1))
                         fi
                     fi
                 else
-                    echo -e "${RED}✗ Reporting command failed${NC}"
+                    echo -e "${RED}✗ Reporting command failed${NC}" >&2
                     failed=$((failed + 1))
                 fi
             else
@@ -656,7 +660,7 @@ submit_invoices() {
             --output-hash "$submission_dir/standard_hash.txt" \
             --json > "$submission_dir/standard_sign.json" 2>&1; then
 
-            local success=$(grep -A 100 '^{' "$submission_dir/standard_sign.json" | jq -r '.success' 2>/dev/null || echo "false")
+            local success=$(grep -A 100 '^{' "$submission_dir/standard_sign.json" | jq -r "$SUCCESS_KEY" 2>/dev/null || echo "false")
 
             if [[ "$success" == "true" ]]; then
                 local hash=$(grep -A 100 '^{' "$submission_dir/standard_sign.json" | jq -r '.hash')
@@ -678,7 +682,7 @@ submit_invoices() {
                     --output "$submission_dir/standard_cleared.xml" \
                     --json > "$submission_dir/standard_clearance.json" 2>&1; then
 
-                    local clear_success=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r '.success' 2>/dev/null || echo "false")
+                    local clear_success=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r "$SUCCESS_KEY" 2>/dev/null || echo "false")
 
                     if [[ "$clear_success" == "true" ]]; then
                         local status=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r '.clearanceStatus')
@@ -686,19 +690,19 @@ submit_invoices() {
                         echo -e "${GREEN}  Status: $status${NC}"
                         passed=$((passed + 1))
                     else
-                        local error=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r '.error' 2>/dev/null || echo "Unknown")
+                        local error=$(grep -A 100 '^{' "$submission_dir/standard_clearance.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "Unknown")
                         # Check if it's a sandbox certificate error (expected in sandbox mode)
                         if echo "$error" | grep -q "certificate-hashing\|certificate-issuer-name"; then
-                            echo -e "${YELLOW}⚠ Standard invoice clearance - sandbox certificate limitation${NC}"
-                            echo -e "${YELLOW}  (This is expected in sandbox mode - the API flow works correctly)${NC}"
+                            echo -e "${YELLOW}⚠ Standard invoice clearance - sandbox certificate limitation${NC}" >&2
+                            echo -e "${YELLOW}  (This is expected in sandbox mode - the API flow works correctly)${NC}" >&2
                             passed=$((passed + 1))
                         else
-                            echo -e "${RED}✗ Standard invoice clearance FAILED: $error${NC}"
+                            echo -e "${RED}✗ Standard invoice clearance FAILED: $error${NC}" >&2
                             failed=$((failed + 1))
                         fi
                     fi
                 else
-                    echo -e "${RED}✗ Clearance command failed${NC}"
+                    echo -e "${RED}✗ Clearance command failed${NC}" >&2
                     failed=$((failed + 1))
                 fi
             else
@@ -753,9 +757,9 @@ renew_certificate() {
     local renewal_dir="$production_dir/renewal"
 
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${BLUE}Phase 5: Certificate Renewal Test${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${CYAN}Configuration: $config_name${NC}"
     echo ""
 
@@ -786,7 +790,7 @@ renew_certificate() {
         --output "$renewal_dir" \
         --json > "$renewal_dir/renewal_response.json" 2>&1; then
 
-        local success=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r '.success' 2>/dev/null || echo "false")
+        local success=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r "$SUCCESS_KEY" 2>/dev/null || echo "false")
 
         if [[ "$success" == "true" ]]; then
             local request_id=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r '.requestId')
@@ -812,7 +816,7 @@ EOF
             echo -e "${GREEN}  Summary saved to: $renewal_dir/phase5_summary.txt${NC}"
             return 0
         else
-            local error=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r '.error' 2>/dev/null || echo "Unknown error")
+            local error=$(grep -A 100 '^{' "$renewal_dir/renewal_response.json" | jq -r "$ERROR_KEY" 2>/dev/null || echo "Unknown error")
 
             # Save failure summary
             cat > "$renewal_dir/phase5_summary.txt" << EOF
@@ -824,13 +828,13 @@ Error: $error
 NOTE: Certificate renewal may require a valid OTP from ZATCA portal.
 EOF
 
-            echo -e "${RED}❌ Certificate renewal FAILED${NC}"
-            echo -e "${RED}Error: $error${NC}"
+            echo -e "${RED}❌ Certificate renewal FAILED${NC}" >&2
+            echo -e "${RED}Error: $error${NC}" >&2
             # Don't fail the whole workflow for renewal - it's optional
             return 0
         fi
     else
-        echo -e "${RED}❌ Renewal command failed${NC}"
+        echo -e "${RED}❌ Renewal command failed${NC}" >&2
         # Don't fail the whole workflow for renewal - it's optional
         return 0
     fi
@@ -843,9 +847,9 @@ process_configuration() {
     local env="$3"
     
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${MAGENTA}Processing Configuration: $config_name${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     
     # Phase 1: Request compliance certificate
     if ! request_compliance_cert "$config_name" "$otp" "$env"; then
@@ -877,9 +881,9 @@ process_configuration() {
     # Save complete workflow summary
     local config_dir="$OUTPUT_DIR/$config_name"
     cat > "$config_dir/workflow_complete.txt" << EOF
-========================================
+${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}
 ZATCA Compliance Workflow - COMPLETE
-========================================
+${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}
 Configuration: $config_name
 Completed: $(date)
 Environment: $env
@@ -940,17 +944,19 @@ main() {
     
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
-        case $1 in
+        local current_arg="$1"
+        local next_arg="${2:-}"
+        case $current_arg in
             -c|--config)
-                config_name="$2"
+                config_name="$next_arg"
                 shift 2
                 ;;
             -e|--env)
-                ENVIRONMENT="$2"
+                ENVIRONMENT="$next_arg"
                 shift 2
                 ;;
             -o|--otp)
-                otp="$2"
+                otp="$next_arg"
                 shift 2
                 ;;
             -a|--all)
@@ -961,7 +967,7 @@ main() {
                 usage
                 ;;
             *)
-                echo -e "${RED}Unknown option: $1${NC}"
+                echo -e "${RED}Unknown option: $current_arg${NC}" >&2
                 usage
                 ;;
         esac
@@ -1001,12 +1007,12 @@ main() {
     fi
     
     # Display banner
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${MAGENTA}ZATCA Compliance Workflow${NC}"
     if [[ "$process_all" == true ]]; then
         echo -e "${MAGENTA}Testing ALL Certificate Configurations${NC}"
     fi
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "Environment: ${CYAN}$ENVIRONMENT${NC}"
     echo -e "Credentials: ${CYAN}$USERNAME${NC}"
     echo -e "OTP: ${CYAN}$otp${NC}"
@@ -1063,9 +1069,9 @@ main() {
     
     # Final summary
     echo ""
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "${MAGENTA}Final Summary${NC}"
-    echo "=========================================="
+    echo "${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}${SEPARATOR}"
     echo -e "Total configurations: ${BLUE}$total${NC}"
     echo -e "Passed: ${GREEN}$passed${NC}"
     echo -e "Failed: ${RED}$failed${NC}"
@@ -1078,6 +1084,7 @@ main() {
         echo -e "${RED}✗✗✗ Some workflows failed${NC}"
         exit 1
     fi
+    return 0
 }
 
 # Run main function

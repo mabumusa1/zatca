@@ -45,6 +45,7 @@ usage() {
     echo "  $0 --all"
     echo ""
     exit 1
+    return 0
 }
 
 # Function to request compliance certificate
@@ -67,7 +68,7 @@ request_compliance_cert() {
     
     # Check if CSR exists
     if [[ ! -f "$csr_file" ]]; then
-        echo -e "${RED}❌ Error: CSR not found at $csr_file${NC}"
+        echo -e "${RED}❌ Error: CSR not found at $csr_file${NC}" >&2
         echo -e "${YELLOW}Run generate-and-verify-certs.sh first${NC}"
         return 1
     fi
@@ -120,8 +121,8 @@ EOF
             return 0
         else
             local error=$(grep -A 100 '^{' "$cert_output_dir/compliance_response.json" | jq -r '.error' 2>/dev/null || echo "Unknown error")
-            echo -e "${RED}❌ Failed to get compliance certificate${NC}"
-            echo -e "${RED}Error: $error${NC}"
+            echo -e "${RED}❌ Failed to get compliance certificate${NC}" >&2
+            echo -e "${RED}Error: $error${NC}" >&2
             return 1
         fi
     else
@@ -138,12 +139,14 @@ EOF
 main() {
     local config_name=""
     local process_all=false
-    
+
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
-        case $1 in
+        local arg="$1"
+        case $arg in
             -c|--config)
-                config_name="$2"
+                local config_arg="$2"
+                config_name="$config_arg"
                 shift 2
                 ;;
             -a|--all)
@@ -154,7 +157,7 @@ main() {
                 usage
                 ;;
             *)
-                echo -e "${RED}Unknown option: $1${NC}"
+                echo -e "${RED}Unknown option: $arg${NC}" >&2
                 usage
                 ;;
         esac
@@ -162,19 +165,19 @@ main() {
     
     # Validate inputs
     if [[ "$process_all" == false ]] && [[ -z "$config_name" ]]; then
-        echo -e "${RED}❌ Error: Configuration name is required (or use --all)${NC}"
+        echo -e "${RED}❌ Error: Configuration name is required (or use --all)${NC}" >&2
         usage
     fi
     
     # Check dependencies
     if ! command -v jq &> /dev/null; then
-        echo -e "${RED}❌ Error: jq is required but not installed${NC}"
+        echo -e "${RED}❌ Error: jq is required but not installed${NC}" >&2
         echo -e "${YELLOW}Install with: apt-get install jq${NC}"
         exit 1
     fi
     
     if [[ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]]; then
-        echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}"
+        echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}" >&2
         exit 1
     fi
     
@@ -222,6 +225,8 @@ main() {
     else
         request_compliance_cert "$config_name"
     fi
+
+    return 0
 }
 
 # Run main function

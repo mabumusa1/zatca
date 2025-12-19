@@ -31,6 +31,7 @@ parse_property() {
     local file="$1"
     local key="$2"
     grep "^${key}=" "$file" | cut -d'=' -f2-
+    return 0
 }
 
 # Function to verify CSR
@@ -44,12 +45,12 @@ verify_csr() {
     
     # Check if files exist
     if [[ ! -f "$csr_file" ]]; then
-        echo -e "${RED}❌ Error: $csr_file not found${NC}"
+        echo -e "${RED}❌ Error: $csr_file not found${NC}" >&2
         return 1
     fi
     
     if [[ ! -f "$key_file" ]]; then
-        echo -e "${RED}❌ Error: $key_file not found${NC}"
+        echo -e "${RED}❌ Error: $key_file not found${NC}" >&2
         return 1
     fi
     
@@ -213,7 +214,7 @@ echo ""
 
 # Check if CLI project exists
 if [[ ! -f "$CLI_DIR/Zatca.EInvoice.CLI.csproj" ]]; then
-    echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}"
+    echo -e "${RED}❌ Error: CLI project not found at $CLI_DIR${NC}" >&2
     exit 1
 fi
 
