@@ -56,7 +56,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 ### Code Contributions
 
 1. Fork the repository
-2. Create a feature branch from `main`
+2. Create a feature branch from `develop`
 3. Make your changes
 4. Write or update tests as needed
 5. Ensure all tests pass
@@ -126,7 +126,7 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
    git push origin feature/your-feature-name
    ```
 
-8. **Open a Pull Request** against the `main` branch
+8. **Open a Pull Request** against the `develop` branch
 
 ### Pull Request Requirements
 
