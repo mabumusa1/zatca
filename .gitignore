@@ -486,3 +486,9 @@ $RECYCLE.BIN/
 
 # ZATCA TestsData Output folder (contains generated certificates and API responses)
 Zatca.EInvoice.CLI/TestsData/Output/
+
+# Code signing certificates
+certs/
+*.key
+*.crt
+*.pem
