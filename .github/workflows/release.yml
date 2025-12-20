@@ -64,15 +64,18 @@ jobs:
             -p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
 
       - name: Sign NuGet package
-        if: ${{ secrets.NUGET_SIGNING_CERT != '' }}
+        env:
+          SIGNING_CERT: ${{ secrets.NUGET_SIGNING_CERT }}
+          SIGNING_CERT_PASSWORD: ${{ secrets.NUGET_SIGNING_CERT_PASSWORD }}
+        if: env.SIGNING_CERT != ''
         run: |
           # Decode the certificate from base64
-          echo "${{ secrets.NUGET_SIGNING_CERT }}" | base64 -d > ./signing-cert.pfx
+          echo "$SIGNING_CERT" | base64 -d > ./signing-cert.pfx
 
           # Sign the NuGet package
           dotnet nuget sign ./nupkg/*.nupkg \
             --certificate-path ./signing-cert.pfx \
-            --certificate-password "${{ secrets.NUGET_SIGNING_CERT_PASSWORD }}" \
+            --certificate-password "$SIGNING_CERT_PASSWORD" \
             --timestamper http://timestamp.digicert.com \
             --overwrite
 
