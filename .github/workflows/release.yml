@@ -63,24 +63,8 @@ jobs:
             --output ./nupkg \
             -p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
 
-      - name: Sign NuGet package
-        env:
-          SIGNING_CERT: ${{ secrets.NUGET_SIGNING_CERT }}
-          SIGNING_CERT_PASSWORD: ${{ secrets.NUGET_SIGNING_CERT_PASSWORD }}
-        if: env.SIGNING_CERT != ''
-        run: |
-          # Decode the certificate from base64
-          echo "$SIGNING_CERT" | base64 -d > ./signing-cert.pfx
-
-          # Sign the NuGet package
-          dotnet nuget sign ./nupkg/*.nupkg \
-            --certificate-path ./signing-cert.pfx \
-            --certificate-password "$SIGNING_CERT_PASSWORD" \
-            --timestamper http://timestamp.digicert.com \
-            --overwrite
-
-          # Clean up
-          rm -f ./signing-cert.pfx
+      # Package signing disabled - requires trusted CA certificate
+      # To enable: add NUGET_SIGNING_CERT (base64 PFX) and NUGET_SIGNING_CERT_PASSWORD secrets
 
       - name: Upload NuGet package artifact
         uses: actions/upload-artifact@v6
