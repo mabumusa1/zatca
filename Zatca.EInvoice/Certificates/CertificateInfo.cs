@@ -105,14 +105,17 @@ namespace Zatca.EInvoice.Certificates
 
         /// <summary>
         /// Gets the certificate hash (SHA-256) in ZATCA format.
-        /// Returns: base64(hex(sha256(DER)))
-        /// where DER is the raw certificate bytes.
+        /// Returns: base64(hex(sha256(base64_certificate_string)))
+        /// where the input is the base64-encoded certificate content.
         /// </summary>
         /// <returns>Base64-encoded certificate hash.</returns>
         public string GetCertificateHash()
         {
-            // ZATCA format: base64(hex(sha256(DER)))
-            var hashBytes = SHA256.HashData(_certificate.RawData);
+            // Get the base64 string representation of the certificate
+            var certBase64 = Convert.ToBase64String(_certificate.RawData);
+
+            // ZATCA format: base64(hex(sha256(base64_certificate_string)))
+            var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(certBase64));
             var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
         }
