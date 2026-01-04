@@ -315,8 +315,12 @@ public partial class SignatureBuilder
                             new XElement(dsNs2 + "DigestValue", certHash)
                         ),
                         new XElement(xadesNs2 + "IssuerSerial",
-                            new XElement(dsNs2 + "X509IssuerName", issuer),
-                            new XElement(dsNs2 + "X509SerialNumber", serialNumber)
+                            new XElement(dsNs2 + "X509IssuerName",
+                                new XAttribute(XNamespace.Xmlns + "ds", DsNs),
+                                issuer),
+                            new XElement(dsNs2 + "X509SerialNumber",
+                                new XAttribute(XNamespace.Xmlns + "ds", DsNs),
+                                serialNumber)
                         )
                     )
                 )
@@ -379,14 +383,13 @@ public partial class SignatureBuilder
 
     /// <summary>
     /// Computes the certificate hash in ZATCA format.
-    /// ZATCA expects: base64(hex(sha256(rawCertificate)))
-    /// where rawCertificate is the base64 content of the certificate (DER bytes).
+    /// ZATCA expects: base64(hex(sha256(DER)))
+    /// where DER is the raw certificate bytes.
     /// </summary>
     private static string ComputeCertificateHash(X509Certificate2 certificate)
     {
         // ZATCA format: base64(hex(sha256(DER)))
         var hashBytes = SHA256.HashData(certificate.RawData);
-        // Convert hash to lowercase hex string, then base64 encode
         var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
     }
