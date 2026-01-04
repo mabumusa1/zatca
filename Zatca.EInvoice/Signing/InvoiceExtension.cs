@@ -220,8 +220,7 @@ public class InvoiceExtension
     /// </summary>
     public string GetIssueTime()
     {
-        var time = GetElementValue("cbc:IssueTime");
-        return time.EndsWith('Z') ? time : time + "Z";
+        return GetElementValue("cbc:IssueTime");
     }
 
     /// <summary>
