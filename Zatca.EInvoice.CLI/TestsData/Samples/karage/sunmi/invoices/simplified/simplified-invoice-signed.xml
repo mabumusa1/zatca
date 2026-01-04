@@ -29,10 +29,10 @@
                         </ds:Reference>
                         <ds:Reference Type="http://www.w3.org/2000/09/xmldsig#SignatureProperties" URI="#xadesSignedProperties">
                             <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-                            <ds:DigestValue>OTJjNGE5MWVjMGVmNzAwMzI3YjNmMGVhZGRmNTVmMTdjMTQzZTE3ZmI0NzA2ZTQyZjU1NDI1OTg1N2FlYzU1Nw==</ds:DigestValue>
+                            <ds:DigestValue>YzU4YzU3MGRkZGE2MzQ0NjMxOTMwMDU5MDQ3ZDMxZWUxOGQ1OWIyZGFiNzdhNzhhZmZiMjVhMDBlNWE2NGJjZA==</ds:DigestValue>
                         </ds:Reference>
                     </ds:SignedInfo>
-                    <ds:SignatureValue>m1Z2TaOqAjyzoTOh0jubN3DCNoPvoh9grc7Jx4oVmcEC8Vt9Na4z8WNuNiZM3TaUGv0ITaJk6YlGY0Zv5l7XPg==</ds:SignatureValue>
+                    <ds:SignatureValue>auUTsNWzaF2n5xTXSilFdqIlt1hoibmpJV/8O5ak9r+3PIdH7vLAOxd9L3Gv9+5bUGKiJMftq8RIEv4/10xNrQ==</ds:SignatureValue>
                     <ds:KeyInfo>
                         <ds:X509Data>
                             <ds:X509Certificate>MIICXTCCAgSgAwIBAgIGAZuIcGYbMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCmVJbnZvaWNpbmcwHhcNMjYwMTA0MDk1NzAxWhcNMzEwMTAzMjEwMDAwWjCBizELMAkGA1UEBhMCU0ExEjAQBgNVBAsMCUtBUkFHRSBIUTFBMD8GA1UECgw42LTYsdmD2Kkg2YPYsdin2Kwg2YTYqtmC2YbZitipINmG2LjZhSDYp9mE2YXYudmE2YjZhdin2KoxJTAjBgNVBAMMHFNVTk1JLUtBUkFHRS0zMTI5OTgzNjEyMDAwMDMwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAQkGDTinopr0nMPHDVdfxND7Qy90Tgw9xqEj08JlgNyfo8/gQjVpE5BRJJkdRkRegFfh/htJVSKdNii9ZP6y+Bpo4HLMIHIMAwGA1UdEwEB/wQCMAAwgbcGA1UdEQSBrzCBrKSBqTCBpjE/MD0GA1UEBAw2MS1TVU5NSXwyLVNVTk1JfDMtZWQyMmYxZDgtZTZhMi0xMTE4LTliNTgtZDlhOGYxMWU0NDVmMR8wHQYKCZImiZPyLGQBAQwPMzEyOTk4MzYxMjAwMDAzMQ0wCwYDVQQMDAQxMTAwMREwDwYDVQQaDAhSUVJBMjkzNTEgMB4GA1UEDwwX2KfZhti42YXYqSDZhdio2YrYudin2KowCgYIKoZIzj0EAwIDRwAwRAIgMf3Si7puj8RGIrc7vGSkX2ybb10hdo+LIUZ/FRN9ZpICIEOc2qDZNMwXZyrX4amvdG1LxLV1HBtAz4wigQBku0A+</ds:X509Certificate>
@@ -42,7 +42,7 @@
                         <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="signature">
                             <xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
                                 <xades:SignedSignatureProperties>
-                                    <xades:SigningTime>2026-01-04T11:52:37</xades:SigningTime>
+                                    <xades:SigningTime>2026-01-04T11:56:07</xades:SigningTime>
                                     <xades:SigningCertificate>
                                         <xades:Cert>
                                             <xades:CertDigest>
@@ -85,7 +85,7 @@
     <cac:AdditionalDocumentReference>
         <cbc:ID>QR</cbc:ID>
         <cac:Attachment>
-            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzMxMjk5ODM2MTIwMDAwMwMUMjAyNi0wMS0wNFQxMTowMjozOVoEBjExNS4wMAUFMTUuMDAGLHVKdlZQR0RLTGNwMjV2ZnBWTzAzYTlQc1hIOWpoSFBaSm4xRVlhVDJFc1E9B1htMVoyVGFPcUFqeXpvVE9oMGp1Yk4zRENOb1B2b2g5Z3JjN0p4NG9WbWNFQzhWdDlOYTR6OFdOdU5pWk0zVGFVR3YwSVRhSms2WWxHWTBadjVsN1hQZz09CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAQkGDTinopr0nMPHDVdfxND7Qy90Tgw9xqEj08JlgNyfo8/gQjVpE5BRJJkdRkRegFfh/htJVSKdNii9ZP6y+BpCUYwRAIgMf3Si7puj8RGIrc7vGSkX2ybb10hdo+LIUZ/FRN9ZpICIEOc2qDZNMwXZyrX4amvdG1LxLV1HBtAz4wigQBku0A+</cbc:EmbeddedDocumentBinaryObject>
+            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzMxMjk5ODM2MTIwMDAwMwMUMjAyNi0wMS0wNFQxMTowMjozOVoEBjExNS4wMAUFMTUuMDAGLHVKdlZQR0RLTGNwMjV2ZnBWTzAzYTlQc1hIOWpoSFBaSm4xRVlhVDJFc1E9B1hhdVVUc05XemFGMm41eFRYU2lsRmRxSWx0MWhvaWJtcEpWLzhPNWFrOXIrM1BJZEg3dkxBT3hkOUwzR3Y5KzViVUdLaUpNZnRxOFJJRXY0LzEweE5yUT09CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAQkGDTinopr0nMPHDVdfxND7Qy90Tgw9xqEj08JlgNyfo8/gQjVpE5BRJJkdRkRegFfh/htJVSKdNii9ZP6y+BpCUYwRAIgMf3Si7puj8RGIrc7vGSkX2ybb10hdo+LIUZ/FRN9ZpICIEOc2qDZNMwXZyrX4amvdG1LxLV1HBtAz4wigQBku0A+</cbc:EmbeddedDocumentBinaryObject>
         </cac:Attachment>
     </cac:AdditionalDocumentReference><cac:Signature>
         <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>

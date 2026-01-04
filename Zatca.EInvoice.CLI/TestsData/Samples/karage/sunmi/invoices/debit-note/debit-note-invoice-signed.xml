@@ -29,10 +29,10 @@
                         </ds:Reference>
                         <ds:Reference Type="http://www.w3.org/2000/09/xmldsig#SignatureProperties" URI="#xadesSignedProperties">
                             <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-                            <ds:DigestValue>ZmIxZTA5ZTM3ZmUwNjY4YWFmMmNiMzA0ZThiMDI4MjU3YWU0ZGQzZWU4NWU0NjAyZjdlNjEzODU3ZTE5ZDIxNQ==</ds:DigestValue>
+                            <ds:DigestValue>YzAzNTliNzY3MDI1NjFmNmU4OWRhYTI4OTc0ODI4OTNiMWZiNDc4YWZmYTBiZTY1MzBiMTExYjkwMmYxZGQwMA==</ds:DigestValue>
                         </ds:Reference>
                     </ds:SignedInfo>
-                    <ds:SignatureValue>uw35CXSkmoKVQo1FnDOuniooYWSAoGXk2MDMbuVEMzJbK/UUJyNurH3bATao+4sOEYCJXOcU41ek0h+0/88mcw==</ds:SignatureValue>
+                    <ds:SignatureValue>7Xfnf44T+mbxCJDElD5kxCaKVpGuOmV3e3RXAV57spXidk5DumFesLrUQMXPr0KNpJOnlGf7MM5jcxT3S2xhSQ==</ds:SignatureValue>
                     <ds:KeyInfo>
                         <ds:X509Data>
                             <ds:X509Certificate>MIICXTCCAgSgAwIBAgIGAZuIcGYbMAoGCCqGSM49BAMCMBUxEzARBgNVBAMMCmVJbnZvaWNpbmcwHhcNMjYwMTA0MDk1NzAxWhcNMzEwMTAzMjEwMDAwWjCBizELMAkGA1UEBhMCU0ExEjAQBgNVBAsMCUtBUkFHRSBIUTFBMD8GA1UECgw42LTYsdmD2Kkg2YPYsdin2Kwg2YTYqtmC2YbZitipINmG2LjZhSDYp9mE2YXYudmE2YjZhdin2KoxJTAjBgNVBAMMHFNVTk1JLUtBUkFHRS0zMTI5OTgzNjEyMDAwMDMwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAQkGDTinopr0nMPHDVdfxND7Qy90Tgw9xqEj08JlgNyfo8/gQjVpE5BRJJkdRkRegFfh/htJVSKdNii9ZP6y+Bpo4HLMIHIMAwGA1UdEwEB/wQCMAAwgbcGA1UdEQSBrzCBrKSBqTCBpjE/MD0GA1UEBAw2MS1TVU5NSXwyLVNVTk1JfDMtZWQyMmYxZDgtZTZhMi0xMTE4LTliNTgtZDlhOGYxMWU0NDVmMR8wHQYKCZImiZPyLGQBAQwPMzEyOTk4MzYxMjAwMDAzMQ0wCwYDVQQMDAQxMTAwMREwDwYDVQQaDAhSUVJBMjkzNTEgMB4GA1UEDwwX2KfZhti42YXYqSDZhdio2YrYudin2KowCgYIKoZIzj0EAwIDRwAwRAIgMf3Si7puj8RGIrc7vGSkX2ybb10hdo+LIUZ/FRN9ZpICIEOc2qDZNMwXZyrX4amvdG1LxLV1HBtAz4wigQBku0A+</ds:X509Certificate>
@@ -42,12 +42,12 @@
                         <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="signature">
                             <xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
                                 <xades:SignedSignatureProperties>
-                                    <xades:SigningTime>2026-01-04T11:21:01</xades:SigningTime>
+                                    <xades:SigningTime>2026-01-04T11:56:40</xades:SigningTime>
                                     <xades:SigningCertificate>
                                         <xades:Cert>
                                             <xades:CertDigest>
                                                 <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-                                                <ds:DigestValue>ZjI0MGNhZjQ1NzUxNTkwNWU5ZThhNmJjZmFjMzI0YjBjMWNiMTFiZGZmYjU2ZTk0NzQ0M2EzNGZhMzk4OTFlNA==</ds:DigestValue>
+                                                <ds:DigestValue>MzQ5MTRhMTg0NmM0M2I1YjUwYzM1OWU4MzZiMmYyZDhkMTdjZWE3ZDIzMjgxY2ZhODA4ZDcyMjU3ZDRhOWY1ZA==</ds:DigestValue>
                                             </xades:CertDigest>
                                             <xades:IssuerSerial>
                                                 <ds:X509IssuerName xmlns:ds="http://www.w3.org/2000/09/xmldsig#">CN=eInvoicing</ds:X509IssuerName>
@@ -85,7 +85,7 @@
     <cac:AdditionalDocumentReference>
         <cbc:ID>QR</cbc:ID>
         <cac:Attachment>
-            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzMxMjk5ODM2MTIwMDAwMwMUMjAyNi0wMS0wNFQxMTowMjo0MVoEBjExNS4wMAUFMTUuMDAGLFhTcE1WMFQweFJFcDZLb1cwNGRQaWhyMEJYenk5cHVySE5ka01BY3ZqRmM9B1h1dzM1Q1hTa21vS1ZRbzFGbkRPdW5pb29ZV1NBb0dYazJNRE1idVZFTXpKYksvVVVKeU51ckgzYkFUYW8rNHNPRVlDSlhPY1U0MWVrMGgrMC84OG1jdz09CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAQkGDTinopr0nMPHDVdfxND7Qy90Tgw9xqEj08JlgNyfo8/gQjVpE5BRJJkdRkRegFfh/htJVSKdNii9ZP6y+Bp</cbc:EmbeddedDocumentBinaryObject>
+            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">AW/YtNix2YPYqSDYqtmI2LHZitivINin2YTYqtmD2YbZiNmE2YjYrNmK2Kcg2KjYo9mC2LXZiSDYs9ix2LnYqSDYp9mE2YXYrdiv2YjYr9ipIHwgTWF4aW11bSBTcGVlZCBUZWNoIFN1cHBseSBMVEQCDzMxMjk5ODM2MTIwMDAwMwMUMjAyNi0wMS0wNFQxMTowMjo0MVoEBjExNS4wMAUFMTUuMDAGLFhTcE1WMFQweFJFcDZLb1cwNGRQaWhyMEJYenk5cHVySE5ka01BY3ZqRmM9B1g3WGZuZjQ0VCttYnhDSkRFbEQ1a3hDYUtWcEd1T21WM2UzUlhBVjU3c3BYaWRrNUR1bUZlc0xyVVFNWFByMEtOcEpPbmxHZjdNTTVqY3hUM1MyeGhTUT09CFgwVjAQBgcqhkjOPQIBBgUrgQQACgNCAAQkGDTinopr0nMPHDVdfxND7Qy90Tgw9xqEj08JlgNyfo8/gQjVpE5BRJJkdRkRegFfh/htJVSKdNii9ZP6y+Bp</cbc:EmbeddedDocumentBinaryObject>
         </cac:Attachment>
     </cac:AdditionalDocumentReference><cac:Signature>
         <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>
