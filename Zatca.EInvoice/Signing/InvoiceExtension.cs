@@ -216,11 +216,16 @@ public class InvoiceExtension
     }
 
     /// <summary>
-    /// Gets the invoice issue time.
+    /// Gets the invoice issue time. Ensures UTC 'Z' suffix is present.
     /// </summary>
     public string GetIssueTime()
     {
-        return GetElementValue("cbc:IssueTime");
+        var time = GetElementValue("cbc:IssueTime");
+        if (!string.IsNullOrEmpty(time) && !time.EndsWith("Z"))
+        {
+            time += "Z";
+        }
+        return time;
     }
 
     /// <summary>
