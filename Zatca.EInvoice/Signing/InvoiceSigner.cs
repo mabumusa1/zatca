@@ -136,8 +136,7 @@ public static partial class InvoiceSigner
 
     /// <summary>
     /// Extracts the certificate signature bytes from the X509 certificate.
-    /// This extracts the actual digital signature value from the certificate structure,
-    /// not the certificate hash.
+    /// This extracts the actual digital signature value from the certificate structure.
     /// </summary>
     /// <param name="certificate">The X509Certificate2.</param>
     /// <returns>Certificate signature bytes.</returns>
@@ -147,7 +146,7 @@ public static partial class InvoiceSigner
         var parser = new X509CertificateParser();
         var bcCert = parser.ReadCertificate(certificate.RawData);
 
-        // Get the signature bytes from the certificate
+        // Get the signature bytes from the certificate (ASN.1 DER encoded)
         return bcCert.GetSignature();
     }
 

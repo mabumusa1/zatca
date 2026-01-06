@@ -102,7 +102,7 @@ public class InvoiceGeneratorTests
 
         var xml = _generator.Generate(data);
 
-        xml.Should().Contain("<cbc:IssueTime>14:30:45</cbc:IssueTime>");
+        xml.Should().Contain("<cbc:IssueTime>14:30:45Z</cbc:IssueTime>");
     }
 
     [Fact]
