@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.Security.Cryptography.X509Certificates;
 using Zatca.EInvoice.CLI.Output;
 using Zatca.EInvoice.CLI.Services;
+using Zatca.EInvoice.Pdf;
 
 namespace Zatca.EInvoice.CLI.Commands;
 
@@ -19,6 +20,7 @@ public static class InvoiceCommands
         invoiceCommand.AddCommand(CreateXmlCommand(invoiceService, formatter, fileWriter));
         invoiceCommand.AddCommand(CreateSignCommand(invoiceService, formatter, fileWriter));
         invoiceCommand.AddCommand(CreateHashCommand(invoiceService, formatter));
+        invoiceCommand.AddCommand(CreatePdfCommand(formatter, fileWriter));
 
         return invoiceCommand;
     }
@@ -377,5 +379,94 @@ public static class InvoiceCommands
         }, inputOption, jsonOption);
 
         return hashCommand;
+    }
+
+    private static Command CreatePdfCommand(IOutputFormatter formatter, FileWriter fileWriter)
+    {
+        var pdfCommand = new Command("pdf", "Generate PDF from signed invoice XML");
+
+        var inputOption = new Option<string>(new[] { "-i", "--input" }, "Signed invoice XML file path") { IsRequired = true };
+        var outputOption = new Option<string?>(new[] { "-o", "--output" }, "PDF output file path");
+        var jsonOption = new Option<bool>("--json", () => false, "Output as JSON");
+
+        pdfCommand.AddOption(inputOption);
+        pdfCommand.AddOption(outputOption);
+        pdfCommand.AddOption(jsonOption);
+
+        pdfCommand.SetHandler(async (context) =>
+        {
+            var input = context.ParseResult.GetValueForOption(inputOption)!;
+            var output = context.ParseResult.GetValueForOption(outputOption);
+            var jsonOutput = context.ParseResult.GetValueForOption(jsonOption);
+
+            // Validate input file exists
+            if (!File.Exists(input))
+            {
+                if (jsonOutput)
+                {
+                    formatter.WriteJson(new { success = false, error = $"File not found: {input}" });
+                }
+                else
+                {
+                    formatter.WriteError($"File not found: {input}");
+                }
+                context.ExitCode = 1;
+                return;
+            }
+
+            try
+            {
+                // Read XML content
+                var xmlContent = await File.ReadAllTextAsync(input);
+
+                // Map XML to PDF data
+                var pdfData = InvoiceXmlToPdfMapper.MapFromXml(xmlContent);
+
+                // Extract QR code from signed XML
+                var qrCodeBase64 = InvoiceXmlToPdfMapper.ExtractQrCode(xmlContent);
+
+                // Generate PDF
+                var pdfGenerator = new InvoicePdfGenerator(pdfData, qrCodeBase64);
+
+                // Determine output path
+                var outputPath = output ?? Path.ChangeExtension(input, ".pdf");
+
+                // Generate and save PDF
+                pdfGenerator.GeneratePdf(outputPath, xmlContent);
+
+                if (jsonOutput)
+                {
+                    formatter.WriteJson(new
+                    {
+                        success = true,
+                        savedTo = outputPath,
+                        invoiceId = pdfData.Id,
+                        invoiceType = pdfData.InvoiceType?.TypeCode
+                    });
+                }
+                else
+                {
+                    formatter.WriteHeader("PDF Generation");
+                    formatter.WriteSuccess("PDF generated successfully");
+                    formatter.WriteKeyValue("Invoice ID", pdfData.Id);
+                    formatter.WriteKeyValue("Invoice Type", pdfData.InvoiceType?.TypeCode?.ToString());
+                    formatter.WriteKeyValue("Saved to", outputPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (jsonOutput)
+                {
+                    formatter.WriteJson(new { success = false, error = ex.Message });
+                }
+                else
+                {
+                    formatter.WriteError($"Failed to generate PDF: {ex.Message}");
+                }
+                context.ExitCode = 1;
+            }
+        });
+
+        return pdfCommand;
     }
 }

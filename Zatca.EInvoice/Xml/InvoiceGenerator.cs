@@ -104,7 +104,7 @@ namespace Zatca.EInvoice.Xml
                 invoice.Add(new XElement(_cbc + "IssueDate", GetDateTime(issueDateValue).ToString("yyyy-MM-dd")));
 
             if (invoiceData.TryGetValue("issueTime", out var issueTimeValue))
-                invoice.Add(new XElement(_cbc + "IssueTime", GetDateTime(issueTimeValue).ToString("HH:mm:ss")));
+                invoice.Add(new XElement(_cbc + "IssueTime", GetDateTime(issueTimeValue).ToString("HH:mm:ssZ")));
         }
 
         private void AddInvoiceTypeCode(XElement invoice, Dictionary<string, object> invoiceData)
