@@ -51,14 +51,14 @@ jobs:
             --logger "trx;LogFileName=test-results.trx"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-${{ matrix.dotnet-version }}
           path: ./coverage/*.trx
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-reports-${{ matrix.dotnet-version }}
           path: ./coverage/**/coverage.cobertura.xml
@@ -150,7 +150,7 @@ jobs:
           fi
 
       - name: Upload vulnerability report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: vulnerability-report
           path: vulnerability-report.txt
