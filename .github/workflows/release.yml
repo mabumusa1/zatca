@@ -33,13 +33,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v4.2.0
+        uses: gittools/actions/gitversion/setup@v4.3.3
         with:
           versionSpec: '6.x'
 
       - name: Determine Version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v4.2.0
+        uses: gittools/actions/gitversion/execute@v4.3.3
 
       - name: Display Version
         run: |
@@ -67,7 +67,7 @@ jobs:
       # To enable: add NUGET_SIGNING_CERT (base64 PFX) and NUGET_SIGNING_CERT_PASSWORD secrets
 
       - name: Upload NuGet package artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: nuget-package
           path: ./nupkg/*.*nupkg
