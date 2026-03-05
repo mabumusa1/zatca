@@ -96,6 +96,11 @@ public class InvoicePdfGenerator
 
     private Document CreateDocument(string? xmlContent)
     {
+        if (IsSimplifiedInvoice())
+        {
+            return CreateReceiptDocument(xmlContent);
+        }
+
         return Document.Create(container =>
         {
             container.Page(page =>
@@ -112,9 +117,33 @@ public class InvoicePdfGenerator
         });
     }
 
+    /// <summary>
+    /// Creates a POS receipt-style document for simplified invoices.
+    /// Uses 80mm thermal printer width format.
+    /// </summary>
+    private Document CreateReceiptDocument(string? xmlContent)
+    {
+        // Standard thermal receipt width: 80mm (approximately 226 points)
+        const float receiptWidth = 226f;
+
+        return Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Size(receiptWidth, PageSizes.A4.Height);
+                page.MarginVertical(10);
+                page.MarginHorizontal(8);
+                page.DefaultTextStyle(x => x.FontSize(8).FontFamily(ArabicFontFamily));
+
+                page.Content().Element(ComposeReceiptContent);
+            });
+        });
+    }
+
     private void ComposeHeader(IContainer container)
     {
         var invoiceTitle = GetInvoiceTitle();
+        var idLabel = GetInvoiceIdLabel();
 
         container.Column(column =>
         {
@@ -144,7 +173,7 @@ public class InvoicePdfGenerator
                 {
                     col.Item().Text(text =>
                     {
-                        text.Span("رقم الفاتورة / Invoice No: ").Bold();
+                        text.Span($"{idLabel.Arabic} / {idLabel.English}: ").Bold();
                         text.Span(_data.Id ?? "");
                     });
                     col.Item().Text(text =>
@@ -414,14 +443,32 @@ public class InvoicePdfGenerator
 
         // Check if simplified (starts with 02)
         var isSimplified = typeName.StartsWith("02");
-        var prefix = isSimplified ? "مبسطة / Simplified " : "";
+        var arabicPrefix = isSimplified ? "مبسطة " : "";
+        var englishPrefix = isSimplified ? "Simplified " : "";
 
         return typeCode switch
         {
-            381 => ($"إشعار دائن {prefix}", $"{prefix}Credit Note"),
-            383 => ($"إشعار مدين {prefix}", $"{prefix}Debit Note"),
-            386 => ($"فاتورة دفعة مقدمة {prefix}", $"{prefix}Prepayment Invoice"),
-            _ => ($"فاتورة ضريبية {prefix}", $"{prefix}Tax Invoice")
+            381 => ($"إشعار دائن {arabicPrefix}".Trim(), $"{englishPrefix}Credit Note".Trim()),
+            383 => ($"إشعار مدين {arabicPrefix}".Trim(), $"{englishPrefix}Debit Note".Trim()),
+            386 => ($"فاتورة دفعة مقدمة {arabicPrefix}".Trim(), $"{englishPrefix}Prepayment Invoice".Trim()),
+            _ => ($"فاتورة ضريبية {arabicPrefix}".Trim(), $"{englishPrefix}Tax Invoice".Trim())
+        };
+    }
+
+    private bool IsSimplifiedInvoice()
+    {
+        var typeName = _data.InvoiceType?.Name ?? "";
+        return typeName.StartsWith("02"); // Simplified invoices start with 02
+    }
+
+    private (string Arabic, string English) GetInvoiceIdLabel()
+    {
+        var typeCode = _data.InvoiceType?.TypeCode;
+        return typeCode switch
+        {
+            381 => ("رقم إشعار الدائن", "Credit Note No"),
+            383 => ("رقم إشعار المدين", "Debit Note No"),
+            _ => ("رقم الفاتورة", "Invoice No")
         };
     }
 
@@ -439,4 +486,276 @@ public class InvoicePdfGenerator
         using var qrCode = new PngByteQRCode(qrCodeData);
         return qrCode.GetGraphic(5);
     }
+
+    #region POS Receipt Layout Methods
+
+    /// <summary>
+    /// Main content composer for POS receipt-style layout.
+    /// </summary>
+    private void ComposeReceiptContent(IContainer container)
+    {
+        container.Column(column =>
+        {
+            // Store header
+            column.Item().Element(ComposeReceiptHeader);
+
+            // Divider
+            column.Item().PaddingVertical(5).Element(ReceiptDivider);
+
+            // Invoice info
+            column.Item().Element(ComposeReceiptInvoiceInfo);
+
+            // Divider
+            column.Item().PaddingVertical(5).Element(ReceiptDivider);
+
+            // Line items
+            column.Item().Element(ComposeReceiptItems);
+
+            // Divider
+            column.Item().PaddingVertical(3).Element(ReceiptDivider);
+
+            // Totals
+            column.Item().Element(ComposeReceiptTotals);
+
+            // Double divider before QR
+            column.Item().PaddingVertical(5).Element(ReceiptDoubleDivider);
+
+            // QR Code
+            column.Item().Element(ComposeReceiptQrCode);
+
+            // Footer
+            column.Item().PaddingTop(5).Element(ComposeReceiptFooter);
+        });
+    }
+
+    private void ComposeReceiptHeader(IContainer container)
+    {
+        var invoiceTitle = GetInvoiceTitle();
+
+        container.Column(column =>
+        {
+            // Store name - large and centered
+            var storeName = _data.Supplier?.RegistrationName ?? "";
+            var parts = storeName.Split('|');
+
+            if (parts.Length >= 2)
+            {
+                // Arabic name
+                column.Item().AlignCenter().Text(parts[0].Trim())
+                    .FontSize(12).Bold().FontColor(Colors.Green.Darken3);
+                // English name
+                column.Item().AlignCenter().Text(parts[1].Trim())
+                    .FontSize(10).Bold().FontColor(Colors.Green.Darken3);
+            }
+            else
+            {
+                column.Item().AlignCenter().Text(storeName)
+                    .FontSize(11).Bold().FontColor(Colors.Green.Darken3);
+            }
+
+            // VAT number
+            if (!string.IsNullOrEmpty(_data.Supplier?.TaxId))
+            {
+                column.Item().PaddingTop(3).AlignCenter().Text(text =>
+                {
+                    text.Span("الرقم الضريبي: ").FontSize(7);
+                    text.Span(_data.Supplier.TaxId).FontSize(7).Bold();
+                });
+            }
+
+            // Address (compact)
+            if (_data.Supplier?.Address != null)
+            {
+                var addr = _data.Supplier.Address;
+                var addressLine = string.Join(" - ", new[] { addr.City, addr.CitySubdivisionName }
+                    .Where(x => !string.IsNullOrEmpty(x)));
+                if (!string.IsNullOrEmpty(addressLine))
+                {
+                    column.Item().AlignCenter().Text(addressLine).FontSize(7);
+                }
+            }
+
+            // Invoice title - shows "فاتورة ضريبية مبسطة" and "Simplified Tax Invoice"
+            column.Item().PaddingTop(5).AlignCenter().Background(Colors.Green.Darken3).Padding(4).Column(titleCol =>
+            {
+                titleCol.Item().AlignCenter().Text(invoiceTitle.Arabic).FontSize(9).Bold().FontColor(Colors.White);
+                titleCol.Item().AlignCenter().Text(invoiceTitle.English).FontSize(8).FontColor(Colors.White);
+            });
+        });
+    }
+
+    private void ComposeReceiptInvoiceInfo(IContainer container)
+    {
+        var idLabel = GetInvoiceIdLabel();
+
+        container.Column(column =>
+        {
+            // Invoice number
+            column.Item().Row(row =>
+            {
+                row.RelativeItem().Text($"{idLabel.Arabic}:").FontSize(7);
+                row.RelativeItem().AlignRight().Text(_data.Id ?? "").FontSize(7).Bold();
+            });
+
+            // Date and time
+            column.Item().Row(row =>
+            {
+                row.RelativeItem().Text("التاريخ:").FontSize(7);
+                row.RelativeItem().AlignRight().Text($"{_data.IssueDate} {_data.IssueTime}").FontSize(7);
+            });
+
+            // UUID
+            if (!string.IsNullOrEmpty(_data.Uuid))
+            {
+                column.Item().Row(row =>
+                {
+                    row.RelativeItem().Text("UUID:").FontSize(6);
+                    row.RelativeItem().AlignRight().Text(_data.Uuid).FontSize(5);
+                });
+            }
+        });
+    }
+
+    private void ComposeReceiptItems(IContainer container)
+    {
+        container.Column(column =>
+        {
+            // Items header
+            column.Item().Row(row =>
+            {
+                row.RelativeItem(2).Text("الصنف").FontSize(7).Bold();
+                row.RelativeItem().AlignCenter().Text("الكمية").FontSize(7).Bold();
+                row.RelativeItem().AlignRight().Text("المبلغ").FontSize(7).Bold();
+            });
+
+            column.Item().PaddingVertical(2).LineHorizontal(0.5f).LineColor(Colors.Grey.Medium);
+
+            // Items
+            foreach (var line in _data.InvoiceLines ?? Enumerable.Empty<InvoiceLinePdfData>())
+            {
+                // Item name on first row
+                column.Item().Text(line.Item?.Name ?? "").FontSize(7);
+
+                // Qty x Price = Total on second row
+                column.Item().Row(row =>
+                {
+                    row.RelativeItem(2).Text(text =>
+                    {
+                        text.Span($"  {line.Quantity?.ToString("N0") ?? "1"} x ").FontSize(6);
+                        text.Span($"{line.Price?.Amount?.ToString("N2") ?? "0"}").FontSize(6);
+                    });
+                    row.RelativeItem().AlignCenter().Text($"{line.Quantity?.ToString("N0") ?? "1"}").FontSize(7);
+                    row.RelativeItem().AlignRight().Text($"{line.LineExtensionAmount?.ToString("N2") ?? "0"}").FontSize(7);
+                });
+
+                // VAT info
+                var vatPercent = line.Item?.ClassifiedTaxCategory?.FirstOrDefault()?.Percent ?? 15;
+                var vatAmount = line.TaxTotal?.TaxAmount ?? 0;
+                column.Item().Row(row =>
+                {
+                    row.RelativeItem().Text($"  ض.ق.م {vatPercent}%: {vatAmount:N2}").FontSize(6).FontColor(Colors.Grey.Darken1);
+                });
+
+                column.Item().PaddingVertical(1);
+            }
+        });
+    }
+
+    private void ComposeReceiptTotals(IContainer container)
+    {
+        var totals = _data.LegalMonetaryTotal;
+        var taxTotal = _data.TaxTotal;
+
+        container.Column(column =>
+        {
+            // Subtotal
+            column.Item().Row(row =>
+            {
+                row.RelativeItem().Text("المجموع الفرعي:").FontSize(7);
+                row.RelativeItem().AlignRight().Text($"{totals?.LineExtensionAmount?.ToString("N2") ?? "0"}").FontSize(7);
+            });
+
+            // Discounts if any
+            if (_data.AllowanceCharges?.Any(x => x.ChargeIndicator == "false" && x.Amount > 0) == true)
+            {
+                var totalDiscount = _data.AllowanceCharges
+                    .Where(x => x.ChargeIndicator == "false")
+                    .Sum(x => x.Amount ?? 0);
+                column.Item().Row(row =>
+                {
+                    row.RelativeItem().Text("الخصم:").FontSize(7);
+                    row.RelativeItem().AlignRight().Text($"-{totalDiscount:N2}").FontSize(7);
+                });
+            }
+
+            // VAT
+            column.Item().Row(row =>
+            {
+                row.RelativeItem().Text("ضريبة القيمة المضافة (15%):").FontSize(7);
+                row.RelativeItem().AlignRight().Text($"{taxTotal?.TaxAmount?.ToString("N2") ?? "0"}").FontSize(7);
+            });
+
+            // Grand total - highlighted
+            column.Item().PaddingTop(3).Background(Colors.Grey.Lighten3).Padding(4).Row(row =>
+            {
+                row.RelativeItem().Text("الإجمالي:").FontSize(9).Bold();
+                row.RelativeItem().AlignRight().Text($"{totals?.TaxInclusiveAmount?.ToString("N2") ?? "0"} {_data.CurrencyCode ?? "SAR"}").FontSize(9).Bold();
+            });
+
+            // Payment method
+            column.Item().PaddingTop(3).AlignCenter().Text("طريقة الدفع: نقداً").FontSize(6);
+        });
+    }
+
+    private void ComposeReceiptQrCode(IContainer container)
+    {
+        if (_qrCodeImage == null) return;
+
+        container.Column(column =>
+        {
+            column.Item().AlignCenter().Text("امسح للتحقق").FontSize(7);
+            column.Item().AlignCenter().Text("Scan to Verify").FontSize(6);
+            column.Item().PaddingTop(3).AlignCenter().Width(100).Image(_qrCodeImage);
+        });
+    }
+
+    private void ComposeReceiptFooter(IContainer container)
+    {
+        container.Column(column =>
+        {
+            column.Item().Element(ReceiptDivider);
+
+            column.Item().PaddingTop(3).AlignCenter()
+                .Text("شكراً لزيارتكم").FontSize(8).Bold();
+            column.Item().AlignCenter()
+                .Text("Thank you for visiting").FontSize(7);
+
+            column.Item().PaddingTop(5).AlignCenter()
+                .Text("فاتورة ضريبية مبسطة").FontSize(6);
+            column.Item().AlignCenter()
+                .Text("Simplified Tax Invoice").FontSize(5);
+
+            column.Item().PaddingTop(3).AlignCenter()
+                .Text("متوافق مع متطلبات هيئة الزكاة والضريبة والجمارك")
+                .FontSize(5).FontColor(Colors.Grey.Darken1);
+            column.Item().AlignCenter()
+                .Text("ZATCA Compliant")
+                .FontSize(5).FontColor(Colors.Grey.Darken1);
+        });
+    }
+
+    private static void ReceiptDivider(IContainer container)
+    {
+        container.AlignCenter().Text("--------------------------------").FontSize(6);
+    }
+
+    private static void ReceiptDoubleDivider(IContainer container)
+    {
+        container.Column(col =>
+        {
+            col.Item().AlignCenter().Text("================================").FontSize(6);
+        });
+    }
+
+    #endregion
 }

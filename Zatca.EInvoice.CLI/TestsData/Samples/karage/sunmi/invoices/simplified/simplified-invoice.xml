@@ -102,7 +102,7 @@
             <cbc:RoundingAmount currencyID="SAR">115.00</cbc:RoundingAmount>
         </cac:TaxTotal>
         <cac:Item>
-            <cbc:Name>Test Product</cbc:Name>
+            <cbc:Name>منتج تجريبي | Test Product</cbc:Name>
             <cac:ClassifiedTaxCategory>
                 <cbc:ID>S</cbc:ID>
                 <cbc:Percent>15.00</cbc:Percent>
