@@ -5,10 +5,15 @@
     <cbc:UUID>a60ebdbb-b799-40c9-a62b-ae61fe9ccaf3</cbc:UUID>
     <cbc:IssueDate>2026-01-04</cbc:IssueDate>
     <cbc:IssueTime>11:02:41Z</cbc:IssueTime>
-    <cbc:InvoiceTypeCode name="0100000">388</cbc:InvoiceTypeCode>
+    <cbc:InvoiceTypeCode name="0100000">383</cbc:InvoiceTypeCode>
     <cbc:Note languageID="en">Sample invoice for testing</cbc:Note>
     <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
     <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
+    <cac:BillingReference>
+        <cac:InvoiceDocumentReference>
+            <cbc:ID>INV-ORIGINAL-001</cbc:ID>
+        </cac:InvoiceDocumentReference>
+    </cac:BillingReference>
     <cac:AdditionalDocumentReference>
         <cbc:ID>ICV</cbc:ID>
         <cbc:UUID>10</cbc:UUID>

@@ -6,9 +6,12 @@
   "currencyCode": "SAR",
   "taxCurrencyCode": "SAR",
   "invoiceType": {
-    "typeCode": "388",
+    "typeCode": "381",
     "name": "0100000"
   },
+  "billingReferences": [
+    { "id": "INV-ORIGINAL-001" }
+  ],
   "additionalDocuments": [
     {
       "id": "ICV",
