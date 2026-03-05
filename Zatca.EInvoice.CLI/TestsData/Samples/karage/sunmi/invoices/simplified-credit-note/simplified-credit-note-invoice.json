@@ -1,0 +1,126 @@
+{
+  "uuid": "c8a5e2d1-9f3b-4c7e-a1d2-5e6f7a8b9c0d",
+  "id": "SCN-20260104-001",
+  "issueDate": "2026-01-04",
+  "issueTime": "11:05:00",
+  "currencyCode": "SAR",
+  "taxCurrencyCode": "SAR",
+  "invoiceType": {
+    "typeCode": "381",
+    "name": "0200000"
+  },
+  "billingReferences": [
+    { "id": "INV-ORIGINAL-001" }
+  ],
+  "additionalDocuments": [
+    {
+      "id": "ICV",
+      "uuid": "11"
+    },
+    {
+      "id": "PIH",
+      "attachment": {
+        "embeddedDocument": "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==",
+        "mimeCode": "text/plain"
+      }
+    }
+  ],
+  "signature": {
+    "id": "urn:oasis:names:specification:ubl:signature:Invoice",
+    "signatureMethod": "urn:oasis:names:specification:ubl:dsig:enveloped:xades"
+  },
+  "supplier": {
+    "registrationName": "شركة توريد التكنولوجيا بأقصى سرعة المحدودة | Maximum Speed Tech Supply LTD",
+    "taxId": "312998361200003",
+    "partyIdentification": "1010010000",
+    "partyIdentificationId": "CRN",
+    "taxScheme": {
+      "id": "VAT"
+    },
+    "address": {
+      "street": "الامير سلطان | Prince Sultan",
+      "buildingNumber": "2322",
+      "citySubdivisionName": "المربع | Al-Murabba",
+      "city": "الرياض | Riyadh",
+      "postalZone": "23333",
+      "country": "SA"
+    }
+  },
+  "paymentMeans": {
+    "code": "10"
+  },
+  "taxTotal": {
+    "taxAmount": 15,
+    "subTotals": [
+      {
+        "taxableAmount": 100,
+        "taxAmount": 15,
+        "taxCategory": {
+          "id": "S",
+          "percent": 15,
+          "taxScheme": {
+            "id": "VAT"
+          }
+        }
+      }
+    ]
+  },
+  "legalMonetaryTotal": {
+    "lineExtensionAmount": 100,
+    "taxExclusiveAmount": 100,
+    "taxInclusiveAmount": 115,
+    "prepaidAmount": 0,
+    "payableAmount": 115,
+    "allowanceTotalAmount": 0
+  },
+  "invoiceLines": [
+    {
+      "id": "1",
+      "unitCode": "PCE",
+      "quantity": 1,
+      "lineExtensionAmount": 100,
+      "item": {
+        "name": "منتج تجريبي | Test Product",
+        "classifiedTaxCategory": [
+          {
+            "id": "S",
+            "percent": 15,
+            "taxScheme": {
+              "id": "VAT"
+            }
+          }
+        ]
+      },
+      "price": {
+        "amount": 100,
+        "baseQuantity": 1
+      },
+      "taxTotal": {
+        "taxAmount": 15,
+        "roundingAmount": 115
+      }
+    }
+  ],
+  "customer": {},
+  "note": "إشعار دائن مبسط للاختبار | Simplified credit note for testing",
+  "languageID": "ar",
+  "delivery": {
+    "actualDeliveryDate": "2026-01-04"
+  },
+  "allowanceCharges": [
+    {
+      "chargeIndicator": "false",
+      "allowanceChargeReason": "discount",
+      "amount": 0,
+      "taxCategories": [
+        {
+          "id": "S",
+          "percent": 15,
+          "taxScheme": {
+            "id": "VAT"
+          }
+        }
+      ]
+    }
+  ]
+}

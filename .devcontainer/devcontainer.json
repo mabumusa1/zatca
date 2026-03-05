@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
     "name": "Zatca.EInvoice",
-    "image": "mcr.microsoft.com/dotnet/sdk:9.0",
+    "image": "mcr.microsoft.com/dotnet/sdk:10.0",
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
 
@@ -12,19 +12,16 @@
             "configureZshAsDefaultShell": true,
             "installOhMyZsh": true,
             "upgradePackages": true,
-            "username": "vscode",
-            "userUid": "automatic",
-            "userGid": "automatic"
+            "username": "ubuntu"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers-extra/features/claude-code:1": {},
         "ghcr.io/devcontainers/features/java:1": {}
     },
 
-    // Run as non-root user for consistent file permissions
-    "remoteUser": "vscode",
-    "containerUser": "vscode",
-    "updateRemoteUserUID": true,
+    // Use existing ubuntu user (UID 1000) from .NET 10 SDK image
+    "remoteUser": "ubuntu",
+    "containerUser": "ubuntu",
 
     // Configure tool-specific properties.
     "customizations": {
