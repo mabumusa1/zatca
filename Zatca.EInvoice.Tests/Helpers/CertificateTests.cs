@@ -49,7 +49,9 @@ public class CertificateTests
 
         // Verify it's valid base64
         var hashBytes = Convert.FromBase64String(certHash);
-        Assert.Equal(32, hashBytes.Length); // SHA-256 produces 32 bytes
+        // ZATCA format: base64(hex(sha256(DER)))
+        // SHA-256 produces 32 bytes → 64 hex chars → 64 UTF-8 bytes when encoded
+        Assert.Equal(64, hashBytes.Length);
 
         // Verify hash is consistent
         var certHash2 = certInfo.GetCertificateHash();
