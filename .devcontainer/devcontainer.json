@@ -1,9 +1,16 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
     "name": "Zatca.EInvoice",
-    "image": "mcr.microsoft.com/dotnet/sdk:9.0",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+    // Mount SSH keys for git authentication
+    "mounts": [
+        "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,readonly"
+    ],
 
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
@@ -12,19 +19,16 @@
             "configureZshAsDefaultShell": true,
             "installOhMyZsh": true,
             "upgradePackages": true,
-            "username": "vscode",
-            "userUid": "automatic",
-            "userGid": "automatic"
+            "username": "none"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers-extra/features/claude-code:1": {},
         "ghcr.io/devcontainers/features/java:1": {}
     },
 
-    // Run as non-root user for consistent file permissions
-    "remoteUser": "vscode",
-    "containerUser": "vscode",
-    "updateRemoteUserUID": true,
+    // Run as non-root user (ubuntu user has UID 1000, matching host)
+    "remoteUser": "ubuntu",
+    "containerUser": "ubuntu",
 
     // Configure tool-specific properties.
     "customizations": {
@@ -45,5 +49,5 @@
         }
     },
 
-    "postCreateCommand": "dotnet restore && dotnet build"
+    "postCreateCommand": "dotnet restore Zatca.EInvoice.slnx && dotnet build Zatca.EInvoice.slnx"
 }
