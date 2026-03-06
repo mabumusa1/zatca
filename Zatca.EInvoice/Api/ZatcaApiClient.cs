@@ -817,6 +817,10 @@ namespace Zatca.EInvoice.Api
             var messages = new List<ValidationMessage>();
             foreach (var message in messagesElement.EnumerateArray())
             {
+                // Skip non-object elements
+                if (message.ValueKind != JsonValueKind.Object)
+                    continue;
+
                 messages.Add(new ValidationMessage
                 {
                     Type = GetJsonStringValue(message, "type") ?? type,
