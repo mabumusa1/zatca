@@ -1,4 +1,4 @@
-mode: ContinuousDeployment
+mode: ContinuousDelivery
 tag-prefix: v
 branches:
   stable:
@@ -10,6 +10,7 @@ branches:
     regex: ^develop$
     mode: ContinuousDelivery
     label: alpha
+    tag: 'alpha.{increment}'
     increment: Minor
   release:
     regex: ^release[/-]
