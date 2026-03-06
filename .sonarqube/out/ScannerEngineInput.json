@@ -1,0 +1,140 @@
+{
+  "scannerProperties": [
+    {
+      "key": "sonar.scanner.app",
+      "value": "ScannerMSBuild"
+    },
+    {
+      "key": "sonar.scanner.appVersion",
+      "value": "11.1"
+    },
+    {
+      "key": "sonar.scanner.bootstrapStartTime",
+      "value": "1772792267000"
+    },
+    {
+      "key": "sonar.projectKey",
+      "value": "mabumusa1_zatca"
+    },
+    {
+      "key": "sonar.working.directory",
+      "value": "/workspace/.sonarqube/out/.sonar"
+    },
+    {
+      "key": "sonar.projectBaseDir",
+      "value": "/workspace"
+    },
+    {
+      "key": "sonar.pullrequest.cache.basepath",
+      "value": "/workspace"
+    },
+    {
+      "key": "sonar.sources",
+      "value": "/workspace/.sonarlint/Zatca.EInvoice.json,/workspace/.devcontainer/devcontainer.json,/workspace/.claude/settings.local.json,/workspace/docs/_config.yml,/workspace/.vscode/settings.json,/workspace/.github/dependabot.yml,/workspace/Zatca.EInvoice.CLI/TestsData/compliance-workflow.sh,/workspace/Zatca.EInvoice.CLI/TestsData/compliance-workflow-sandbox.sh,/workspace/Zatca.EInvoice.CLI/TestsData/generate-and-verify-certs.sh,/workspace/Zatca.EInvoice.CLI/obj/Zatca.EInvoice.CLI.csproj.nuget.dgspec.json,/workspace/Zatca.EInvoice.CLI/obj/project.assets.json,/workspace/Zatca.EInvoice.CLI/.claude/settings.local.json,/workspace/.github/workflows/docs.yml,/workspace/.github/workflows/release.yml,/workspace/.github/workflows/ci.yml,/workspace/Zatca.EInvoice.CLI/TestsData/Input/csr-config-example-EN.properties,/workspace/Zatca.EInvoice.CLI/TestsData/Input/karage.properties,/workspace/Zatca.EInvoice.CLI/TestsData/Input/csr-config-example-EN-NEW.properties,/workspace/Zatca.EInvoice.CLI/TestsData/Input/csr-config-example-AR.properties,/workspace/Zatca.EInvoice.CLI/TestsData/Input/csr-config-example-AR-VAT-Group.properties,/workspace/Zatca.EInvoice.CLI/TestsData/Input/csr-config-template.properties,/workspace/Zatca.EInvoice.CLI/TestsData/Input/csr-config-example-EN-VAT-group.properties,/workspace/Zatca.EInvoice.CLI/bin/Debug/net8.0/zatca-cli.deps.json,/workspace/Zatca.EInvoice.CLI/bin/Debug/net8.0/zatca-cli.runtimeconfig.json,/workspace/Zatca.EInvoice.CLI/obj/Debug/net8.0/Zatca.EInvoice.CLI.sourcelink.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/server/private.pem,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/certificates/private.pem,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/.claude/settings.local.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/invoices/simplified-debit-note/simplified-debit-note-invoice.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/invoices/debit-note/debit-note-invoice.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/invoices/simplified/simplified-invoice.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/invoices/standard/standard-invoice.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/invoices/credit-note/credit-note-invoice.json,/workspace/Zatca.EInvoice.CLI/TestsData/Samples/karage/sunmi/invoices/simplified-credit-note/simplified-credit-note-invoice.json,/workspace/run-sonar-analysis.sh,/workspace/GitVersion.yml,/workspace/README.md"
+    },
+    {
+      "key": "sonar.tests",
+      "value": ""
+    },
+    {
+      "key": "sonar.modules",
+      "value": "F99A0A16-4D92-722B-4FE3-CD14B817890F,23CB68F9-E442-C3D0-9D67-A28E73D4F19C"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.projectKey",
+      "value": "mabumusa1_zatca:F99A0A16-4D92-722B-4FE3-CD14B817890F"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.projectName",
+      "value": "Zatca.EInvoice.Tests"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.projectBaseDir",
+      "value": "/workspace/Zatca.EInvoice.Tests"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.working.directory",
+      "value": "/workspace/.sonarqube/out/.sonar/mod0"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.sourceEncoding",
+      "value": "utf-8"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.sources",
+      "value": ""
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.tests",
+      "value": "/workspace/Zatca.EInvoice.Tests/Api/InvoiceSubmissionResultTests.cs,/workspace/Zatca.EInvoice.Tests/Api/ValidationMessageTests.cs,/workspace/Zatca.EInvoice.Tests/Api/ZatcaApiClientTests.cs,/workspace/Zatca.EInvoice.Tests/Certificates/CertificateBuilderTests.cs,/workspace/Zatca.EInvoice.Tests/Exceptions/ExceptionTests.cs,/workspace/Zatca.EInvoice.Tests/Helpers/CertificateTests.cs,/workspace/Zatca.EInvoice.Tests/Helpers/DictionaryHelperTests.cs,/workspace/Zatca.EInvoice.Tests/Helpers/InvoiceExtensionTests.cs,/workspace/Zatca.EInvoice.Tests/Helpers/InvoiceSignatureBuilderTests.cs,/workspace/Zatca.EInvoice.Tests/Helpers/QrCodeGeneratorTests.cs,/workspace/Zatca.EInvoice.Tests/Helpers/StorageTests.cs,/workspace/Zatca.EInvoice.Tests/Integration/InvoiceIntegrationTests.cs,/workspace/Zatca.EInvoice.Tests/InvoiceTests.cs,/workspace/Zatca.EInvoice.Tests/Mappers/InvoiceAmountValidatorTests.cs,/workspace/Zatca.EInvoice.Tests/Mappers/InvoiceMapperTests.cs,/workspace/Zatca.EInvoice.Tests/Mappers/InvoiceValidatorTests.cs,/workspace/Zatca.EInvoice.Tests/Models/FinancialModelsTests.cs,/workspace/Zatca.EInvoice.Tests/Models/InvoiceLineAndTypeTests.cs,/workspace/Zatca.EInvoice.Tests/Models/ItemAndPartyModelsTests.cs,/workspace/Zatca.EInvoice.Tests/Models/ReferenceModelsTests.cs,/workspace/Zatca.EInvoice.Tests/Models/SignatureModelsTests.cs,/workspace/Zatca.EInvoice.Tests/Signing/InvoiceSignerTests.cs,/workspace/Zatca.EInvoice.Tests/Tags/TagTests.cs,/workspace/Zatca.EInvoice.Tests/TestFixtures/InvoiceTestData.cs,/workspace/Zatca.EInvoice.Tests/Usings.cs,/workspace/Zatca.EInvoice.Tests/Validation/InvoiceAmountValidatorTests.cs,/workspace/Zatca.EInvoice.Tests/Validation/InvoiceValidatorTests.cs,/workspace/Zatca.EInvoice.Tests/Validation/ValidationResultTests.cs,/workspace/Zatca.EInvoice.Tests/Xml/InvoiceGeneratorTests.cs,/workspace/Zatca.EInvoice.Tests/Xml/XmlSerializationExtensionsTests.cs,/workspace/Zatca.EInvoice.Tests/README.md,/workspace/Zatca.EInvoice.Tests/TEST_SUMMARY.md,/workspace/Zatca.EInvoice.Tests/obj/project.assets.json,/workspace/Zatca.EInvoice.Tests/obj/Zatca.EInvoice.Tests.csproj.nuget.dgspec.json,/workspace/Zatca.EInvoice.Tests/bin/Debug/net9.0/Zatca.EInvoice.Tests.deps.json,/workspace/Zatca.EInvoice.Tests/bin/Debug/net9.0/Zatca.EInvoice.Tests.runtimeconfig.json,/workspace/Zatca.EInvoice.Tests/bin/Debug/net8.0/Zatca.EInvoice.Tests.deps.json,/workspace/Zatca.EInvoice.Tests/bin/Debug/net8.0/Zatca.EInvoice.Tests.runtimeconfig.json,/workspace/Zatca.EInvoice.Tests/bin/Debug/net10.0/Zatca.EInvoice.Tests.deps.json,/workspace/Zatca.EInvoice.Tests/bin/Debug/net10.0/Zatca.EInvoice.Tests.runtimeconfig.json,/workspace/Zatca.EInvoice.Tests/bin/Release/net9.0/Zatca.EInvoice.Tests.deps.json,/workspace/Zatca.EInvoice.Tests/bin/Release/net9.0/Zatca.EInvoice.Tests.runtimeconfig.json,/workspace/Zatca.EInvoice.Tests/bin/Release/net8.0/Zatca.EInvoice.Tests.deps.json,/workspace/Zatca.EInvoice.Tests/bin/Release/net8.0/Zatca.EInvoice.Tests.runtimeconfig.json,/workspace/Zatca.EInvoice.Tests/obj/Debug/net9.0/Zatca.EInvoice.Tests.sourcelink.json,/workspace/Zatca.EInvoice.Tests/obj/Debug/net8.0/Zatca.EInvoice.Tests.sourcelink.json,/workspace/Zatca.EInvoice.Tests/obj/Debug/net10.0/Zatca.EInvoice.Tests.sourcelink.json,/workspace/Zatca.EInvoice.Tests/obj/Release/net9.0/Zatca.EInvoice.Tests.sourcelink.json,/workspace/Zatca.EInvoice.Tests/obj/Release/net8.0/Zatca.EInvoice.Tests.sourcelink.json"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.cs.analyzer.projectOutPaths",
+      "value": "/workspace/.sonarqube/out/2,/workspace/.sonarqube/out/3"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.cs.roslyn.reportFilePaths",
+      "value": "/workspace/.sonarqube/out/2/Issues.json,/workspace/.sonarqube/out/3/Issues.json"
+    },
+    {
+      "key": "F99A0A16-4D92-722B-4FE3-CD14B817890F.sonar.cs.scanner.telemetry",
+      "value": "/workspace/.sonarqube/out/2/Telemetry.json,/workspace/.sonarqube/out/3/Telemetry.json"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.projectKey",
+      "value": "mabumusa1_zatca:23CB68F9-E442-C3D0-9D67-A28E73D4F19C"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.projectName",
+      "value": "Zatca.EInvoice"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.projectBaseDir",
+      "value": "/workspace/Zatca.EInvoice"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.working.directory",
+      "value": "/workspace/.sonarqube/out/.sonar/mod1"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.sourceEncoding",
+      "value": "utf-8"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.tests",
+      "value": ""
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.sources",
+      "value": "/workspace/Zatca.EInvoice/obj/project.assets.json,/workspace/Zatca.EInvoice/obj/Zatca.EInvoice.csproj.nuget.dgspec.json,/workspace/Zatca.EInvoice/bin/Debug/net9.0/Zatca.EInvoice.deps.json,/workspace/Zatca.EInvoice/bin/Debug/net8.0/Zatca.EInvoice.deps.json,/workspace/Zatca.EInvoice/bin/Debug/net10.0/Zatca.EInvoice.deps.json,/workspace/Zatca.EInvoice/obj/Debug/net9.0/Zatca.EInvoice.sourcelink.json,/workspace/Zatca.EInvoice/obj/Debug/net8.0/Zatca.EInvoice.sourcelink.json,/workspace/Zatca.EInvoice/obj/Debug/net10.0/Zatca.EInvoice.sourcelink.json,/workspace/Zatca.EInvoice/Api/ComplianceCertificateResult.cs,/workspace/Zatca.EInvoice/Api/InvoiceSubmissionResult.cs,/workspace/Zatca.EInvoice/Api/IZatcaApiClient.cs,/workspace/Zatca.EInvoice/Api/ProductionCertificateResult.cs,/workspace/Zatca.EInvoice/Api/ZatcaApiClient.cs,/workspace/Zatca.EInvoice/Api/ZatcaApiEndpoints.cs,/workspace/Zatca.EInvoice/Api/ZatcaEnvironment.cs,/workspace/Zatca.EInvoice/Certificates/CertificateBuilder.cs,/workspace/Zatca.EInvoice/Certificates/CertificateInfo.cs,/workspace/Zatca.EInvoice/Exceptions/CertificateBuilderException.cs,/workspace/Zatca.EInvoice/Exceptions/ZatcaApiException.cs,/workspace/Zatca.EInvoice/Exceptions/ZatcaException.cs,/workspace/Zatca.EInvoice/Exceptions/ZatcaStorageException.cs,/workspace/Zatca.EInvoice/Exceptions/ZatcaValidationException.cs,/workspace/Zatca.EInvoice/Helpers/DictionaryHelper.cs,/workspace/Zatca.EInvoice/Helpers/Storage.cs,/workspace/Zatca.EInvoice/Mappers/AdditionalDocumentMapper.cs,/workspace/Zatca.EInvoice/Mappers/CustomerMapper.cs,/workspace/Zatca.EInvoice/Mappers/IInvoiceMapper.cs,/workspace/Zatca.EInvoice/Mappers/InvoiceLineMapper.cs,/workspace/Zatca.EInvoice/Mappers/InvoiceMapper.cs,/workspace/Zatca.EInvoice/Mappers/ItemMapper.cs,/workspace/Zatca.EInvoice/Mappers/PaymentMeansMapper.cs,/workspace/Zatca.EInvoice/Mappers/PriceMapper.cs,/workspace/Zatca.EInvoice/Mappers/SupplierMapper.cs,/workspace/Zatca.EInvoice/Models/Enums/InvoiceCategory.cs,/workspace/Zatca.EInvoice/Models/Enums/InvoiceSubType.cs,/workspace/Zatca.EInvoice/Models/Enums/InvoiceTypeCode.cs,/workspace/Zatca.EInvoice/Models/Enums/UnitCode.cs,/workspace/Zatca.EInvoice/Models/Financial/AllowanceCharge.cs,/workspace/Zatca.EInvoice/Models/Financial/LegalMonetaryTotal.cs,/workspace/Zatca.EInvoice/Models/Financial/TaxCategory.cs,/workspace/Zatca.EInvoice/Models/Financial/TaxScheme.cs,/workspace/Zatca.EInvoice/Models/Financial/TaxSubTotal.cs,/workspace/Zatca.EInvoice/Models/Financial/TaxTotal.cs,/workspace/Zatca.EInvoice/Models/Invoice.cs,/workspace/Zatca.EInvoice/Models/InvoiceLine.cs,/workspace/Zatca.EInvoice/Models/InvoiceType.cs,/workspace/Zatca.EInvoice/Models/Items/ClassifiedTaxCategory.cs,/workspace/Zatca.EInvoice/Models/Items/Item.cs,/workspace/Zatca.EInvoice/Models/Items/Price.cs,/workspace/Zatca.EInvoice/Models/Party/Address.cs,/workspace/Zatca.EInvoice/Models/Party/LegalEntity.cs,/workspace/Zatca.EInvoice/Models/Party/Party.cs,/workspace/Zatca.EInvoice/Models/Party/PartyTaxScheme.cs,/workspace/Zatca.EInvoice/Models/References/AdditionalDocumentReference.cs,/workspace/Zatca.EInvoice/Models/References/Attachment.cs,/workspace/Zatca.EInvoice/Models/References/BillingReference.cs,/workspace/Zatca.EInvoice/Models/References/Contract.cs,/workspace/Zatca.EInvoice/Models/References/Delivery.cs,/workspace/Zatca.EInvoice/Models/References/DocumentReference.cs,/workspace/Zatca.EInvoice/Models/References/InvoicePeriod.cs,/workspace/Zatca.EInvoice/Models/References/OrderReference.cs,/workspace/Zatca.EInvoice/Models/References/PaymentMeans.cs,/workspace/Zatca.EInvoice/Models/Signature/ExtensionContent.cs,/workspace/Zatca.EInvoice/Models/Signature/Signature.cs,/workspace/Zatca.EInvoice/Models/Signature/SignatureInformation.cs,/workspace/Zatca.EInvoice/Models/Signature/UblDocumentSignatures.cs,/workspace/Zatca.EInvoice/Models/Signature/UblExtension.cs,/workspace/Zatca.EInvoice/Models/Signature/UblExtensions.cs,/workspace/Zatca.EInvoice/Pdf/InvoicePdfData.cs,/workspace/Zatca.EInvoice/Pdf/InvoicePdfGenerator.cs,/workspace/Zatca.EInvoice/Pdf/InvoiceXmlToPdfMapper.cs,/workspace/Zatca.EInvoice/Signing/InvoiceExtension.cs,/workspace/Zatca.EInvoice/Signing/InvoiceSigner.cs,/workspace/Zatca.EInvoice/Signing/QrCodeGenerator.cs,/workspace/Zatca.EInvoice/Signing/SignatureBuilder.cs,/workspace/Zatca.EInvoice/Signing/SignedInvoiceResult.cs,/workspace/Zatca.EInvoice/Tags/CertificateSignatureTag.cs,/workspace/Zatca.EInvoice/Tags/DigitalSignatureTag.cs,/workspace/Zatca.EInvoice/Tags/InvoiceDateTag.cs,/workspace/Zatca.EInvoice/Tags/InvoiceHashTag.cs,/workspace/Zatca.EInvoice/Tags/InvoiceTotalTag.cs,/workspace/Zatca.EInvoice/Tags/PublicKeyTag.cs,/workspace/Zatca.EInvoice/Tags/SellerTag.cs,/workspace/Zatca.EInvoice/Tags/Tag.cs,/workspace/Zatca.EInvoice/Tags/TaxAmountTag.cs,/workspace/Zatca.EInvoice/Tags/TaxNumberTag.cs,/workspace/Zatca.EInvoice/Validation/IInvoiceValidator.cs,/workspace/Zatca.EInvoice/Validation/InvoiceAmountValidator.cs,/workspace/Zatca.EInvoice/Validation/InvoiceValidator.cs,/workspace/Zatca.EInvoice/Validation/ValidationResult.cs,/workspace/Zatca.EInvoice/Xml/InvoiceGenerator.cs,/workspace/Zatca.EInvoice/Xml/IXmlSerializable.cs,/workspace/Zatca.EInvoice/Xml/UblNamespaces.cs,/workspace/Zatca.EInvoice/Xml/XmlSerializationExtensions.cs,/workspace/Zatca.EInvoice/Pdf/Fonts/NotoSansArabic-Bold.ttf,/workspace/Zatca.EInvoice/Pdf/Fonts/NotoSansArabic-Regular.ttf"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.cs.analyzer.projectOutPaths",
+      "value": "/workspace/.sonarqube/out/1,/workspace/.sonarqube/out/0"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.cs.roslyn.reportFilePaths",
+      "value": "/workspace/.sonarqube/out/1/Issues.json,/workspace/.sonarqube/out/0/Issues.json"
+    },
+    {
+      "key": "23CB68F9-E442-C3D0-9D67-A28E73D4F19C.sonar.cs.scanner.telemetry",
+      "value": "/workspace/.sonarqube/out/1/Telemetry.json,/workspace/.sonarqube/out/0/Telemetry.json"
+    },
+    {
+      "key": "sonar.token",
+      "value": "***"
+    },
+    {
+      "key": "sonar.host.url",
+      "value": "https://sonarcloud.io"
+    },
+    {
+      "key": "sonar.organization",
+      "value": "mabumusa"
+    },
+    {
+      "key": "sonar.visualstudio.enable",
+      "value": "false"
+    }
+  ]
+}

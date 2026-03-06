@@ -221,7 +221,7 @@ public class InvoiceExtension
     public string GetIssueTime()
     {
         var time = GetElementValue("cbc:IssueTime");
-        if (!string.IsNullOrEmpty(time) && !time.EndsWith("Z"))
+        if (!string.IsNullOrEmpty(time) && !time.EndsWith('Z'))
         {
             time += "Z";
         }

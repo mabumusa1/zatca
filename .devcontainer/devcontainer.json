@@ -16,7 +16,13 @@
         },
         "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers-extra/features/claude-code:1": {},
-        "ghcr.io/devcontainers/features/java:1": {}
+        "ghcr.io/devcontainers/features/java:1": {},
+        "ghcr.io/devcontainers/features/node:1": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "moby": false,
+            "installDockerBuildx": false,
+            "version": "latest"
+        }
     },
 
     // Use existing ubuntu user (UID 1000) from .NET 10 SDK image
@@ -37,7 +43,8 @@
                 "k--kato.docomment",
                 "josefpihrt-vscode.roslynator",
                 "vscode-icons-team.vscode-icons",
-                "streetsidesoftware.code-spell-checker"
+                "streetsidesoftware.code-spell-checker",
+                "sonarsource.sonarlint-vscode"
             ]
         }
     },

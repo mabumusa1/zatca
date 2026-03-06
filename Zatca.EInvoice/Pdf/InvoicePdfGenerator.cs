@@ -17,6 +17,7 @@ public class InvoicePdfGenerator
     private readonly InvoicePdfData _data;
     private readonly byte[]? _qrCodeImage;
     private static readonly string ArabicFontFamily = "Noto Sans Arabic";
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     static InvoicePdfGenerator()
     {
@@ -49,10 +50,8 @@ public class InvoicePdfGenerator
     /// <param name="qrCodeBase64">Base64-encoded QR code TLV data</param>
     public InvoicePdfGenerator(string jsonData, string? qrCodeBase64 = null)
     {
-        _data = JsonSerializer.Deserialize<InvoicePdfData>(jsonData, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        }) ?? throw new ArgumentException("Invalid JSON data", nameof(jsonData));
+        _data = JsonSerializer.Deserialize<InvoicePdfData>(jsonData, JsonOptions)
+            ?? throw new ArgumentException("Invalid JSON data", nameof(jsonData));
 
         if (!string.IsNullOrEmpty(qrCodeBase64))
         {
@@ -210,7 +209,7 @@ public class InvoicePdfGenerator
             });
 
             // Billing reference for credit/debit notes
-            if (_data.BillingReferences?.Any() == true)
+            if (_data.BillingReferences?.Count > 0)
             {
                 column.Item().PaddingTop(5).Background(Colors.Yellow.Lighten4).Padding(5).Column(col =>
                 {
@@ -261,7 +260,7 @@ public class InvoicePdfGenerator
         });
     }
 
-    private void ComposePartyInfo(IContainer container, PartyPdfData? party, string title, bool isSeller)
+    private static void ComposePartyInfo(IContainer container, PartyPdfData? party, string title, bool isSeller)
     {
         var bgColor = isSeller ? Colors.Green.Lighten5 : Colors.Blue.Lighten5;
 
@@ -363,7 +362,7 @@ public class InvoicePdfGenerator
             AddTotalRow(column, "المجموع الفرعي / Subtotal", totals?.LineExtensionAmount);
 
             // Allowances/Discounts
-            if (_data.AllowanceCharges?.Any() == true)
+            if (_data.AllowanceCharges?.Count > 0)
             {
                 foreach (var ac in _data.AllowanceCharges.Where(x => x.ChargeIndicator == "false"))
                 {
@@ -374,7 +373,7 @@ public class InvoicePdfGenerator
             AddTotalRow(column, "المبلغ الخاضع للضريبة / Taxable Amount", totals?.TaxExclusiveAmount);
 
             // Tax subtotals
-            if (taxTotal?.SubTotals?.Any() == true)
+            if (taxTotal?.SubTotals?.Count > 0)
             {
                 foreach (var sub in taxTotal.SubTotals)
                 {
