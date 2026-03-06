@@ -40,6 +40,16 @@ namespace Zatca.EInvoice.Api
         public ZatcaEnvironment Environment { get; }
 
         /// <summary>
+        /// Event fired before each API request is sent.
+        /// </summary>
+        public event EventHandler<ZatcaApiRequestEventArgs>? BeforeRequest;
+
+        /// <summary>
+        /// Event fired after each API response is received (or request fails).
+        /// </summary>
+        public event EventHandler<ZatcaApiResponseEventArgs>? AfterResponse;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ZatcaApiClient"/> class.
         /// </summary>
         /// <param name="environment">The ZATCA environment.</param>
@@ -60,6 +70,64 @@ namespace Zatca.EInvoice.Api
                     BaseAddress = new Uri(ZatcaApiEndpoints.GetBaseUrl(environment)),
                     Timeout = TimeSpan.FromSeconds(30)
                 };
+                _disposeHttpClient = true;
+            }
+
+            // Set default headers
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(ApplicationJson));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ZatcaApiClient"/> class with options.
+        /// </summary>
+        /// <param name="options">Configuration options for the API client.</param>
+        public ZatcaApiClient(ZatcaApiClientOptions options)
+        {
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+
+            Environment = options.Environment;
+            _allowWarnings = options.AllowWarnings;
+
+            if (options.HttpClient != null)
+            {
+                // Use the provided HttpClient directly
+                _httpClient = options.HttpClient;
+                _disposeHttpClient = false;
+            }
+            else
+            {
+                // Create HttpClient with optional handler pipeline
+                if (options.Handlers != null && options.Handlers.Count > 0)
+                {
+                    // Build handler pipeline: innermost handler first
+                    HttpMessageHandler handler = new HttpClientHandler();
+                    
+                    // Chain handlers in reverse order so the first handler in the list is outermost
+                    for (int i = options.Handlers.Count - 1; i >= 0; i--)
+                    {
+                        var delegatingHandler = options.Handlers[i];
+                        delegatingHandler.InnerHandler = handler;
+                        handler = delegatingHandler;
+                    }
+
+                    _httpClient = new HttpClient(handler, disposeHandler: true)
+                    {
+                        BaseAddress = new Uri(ZatcaApiEndpoints.GetBaseUrl(options.Environment)),
+                        Timeout = options.Timeout
+                    };
+                }
+                else
+                {
+                    // No handlers, create simple HttpClient
+                    _httpClient = new HttpClient
+                    {
+                        BaseAddress = new Uri(ZatcaApiEndpoints.GetBaseUrl(options.Environment)),
+                        Timeout = options.Timeout
+                    };
+                }
+
                 _disposeHttpClient = true;
             }
 
@@ -92,6 +160,13 @@ namespace Zatca.EInvoice.Api
             csr = csr.TrimStart('\uFEFF');
             var csrBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(csr));
 
+            var operationType = "OnboardCompliance";
+            var startTime = DateTimeOffset.UtcNow;
+            HttpResponseMessage? response = null;
+            string? requestBody = null;
+            string? responseBody = null;
+            Exception? error = null;
+
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Post, ZatcaApiEndpoints.ComplianceCertificate);
@@ -100,37 +175,110 @@ namespace Zatca.EInvoice.Api
 
                 var json = JsonSerializer.Serialize(new { csr = csrBase64 }, _jsonOptions);
                 request.Content = new StringContent(json, Encoding.UTF8, ApplicationJson);
+                requestBody = json;
 
-                var response = await _httpClient.SendAsync(request, cancellationToken);
-                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                // Fire BeforeRequest event
+                var requestEventArgs = new ZatcaApiRequestEventArgs
+                {
+                    OperationType = operationType,
+                    HttpMethod = HttpMethod.Post.ToString(),
+                    RequestUrl = BuildFullUrl(ZatcaApiEndpoints.ComplianceCertificate),
+                    RequestHeaders = ExtractHeaders(request.Headers, request.Content?.Headers),
+                    RequestBody = requestBody,
+                    RequestTimestamp = startTime,
+                    Environment = Environment
+                };
+                OnBeforeRequest(requestEventArgs);
 
-                if (!IsSuccessStatusCode(response.StatusCode))
+                response = await _httpClient.SendAsync(request, cancellationToken);
+                responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                var endTime = DateTimeOffset.UtcNow;
+                var isSuccess = IsSuccessStatusCode(response.StatusCode);
+
+                // Fire AfterResponse event
+                var responseEventArgs = new ZatcaApiResponseEventArgs
+                {
+                    OperationType = operationType,
+                    HttpMethod = HttpMethod.Post.ToString(),
+                    RequestUrl = BuildFullUrl(ZatcaApiEndpoints.ComplianceCertificate),
+                    RequestHeaders = requestEventArgs.RequestHeaders,
+                    RequestBody = requestBody,
+                    RequestTimestamp = startTime,
+                    StatusCode = (int)response.StatusCode,
+                    ResponseHeaders = ExtractHeaders(response.Headers, response.Content?.Headers),
+                    ResponseBody = responseBody,
+                    ResponseTimestamp = endTime,
+                    Duration = endTime - startTime,
+                    IsSuccess = isSuccess,
+                    Environment = Environment
+                };
+                OnAfterResponse(responseEventArgs);
+
+                if (!isSuccess)
                 {
                     throw new ZatcaApiException(
                         $"API request failed with status code {(int)response.StatusCode}",
                         (int)response.StatusCode,
-                        content);
+                        responseBody);
                 }
 
-                var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(content, _jsonOptions)
-                    ?? throw new ZatcaApiException("Failed to parse API response", 0, content);
+                var responseDict = JsonSerializer.Deserialize<Dictionary<string, object>>(responseBody, _jsonOptions)
+                    ?? throw new ZatcaApiException("Failed to parse API response", 0, responseBody);
                 return ParseComplianceCertificateResult(responseDict);
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
+                error = ex;
+                var endTime = DateTimeOffset.UtcNow;
+
+                // Fire AfterResponse event with error
+                var responseEventArgs = new ZatcaApiResponseEventArgs
                 {
-                    { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
-                    { MessageKey, ex.Message }
-                }, 0, ex);
-            }
-            catch (JsonException ex)
-            {
-                throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
+                    OperationType = operationType,
+                    HttpMethod = HttpMethod.Post.ToString(),
+                    RequestUrl = BuildFullUrl(ZatcaApiEndpoints.ComplianceCertificate),
+                    RequestHeaders = new Dictionary<string, string> 
+                    {
+                        { "OTP", otp },
+                        { AcceptVersionHeader, AcceptVersionValue }
+                    },
+                    RequestBody = requestBody,
+                    RequestTimestamp = startTime,
+                    StatusCode = response != null ? (int)response.StatusCode : null,
+                    ResponseHeaders = response != null ? ExtractHeaders(response.Headers, response.Content?.Headers) : new Dictionary<string, string>(),
+                    ResponseBody = responseBody,
+                    ResponseTimestamp = endTime,
+                    Duration = endTime - startTime,
+                    IsSuccess = false,
+                    Error = error,
+                    Environment = Environment
+                };
+                OnAfterResponse(responseEventArgs);
+
+                // Re-wrap exceptions if needed
+                if (ex is ZatcaApiException)
                 {
-                    { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
-                    { MessageKey, ex.Message }
-                }, 0, ex);
+                    throw;
+                }
+                else if (ex is HttpRequestException httpEx)
+                {
+                    throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
+                    {
+                        { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
+                        { MessageKey, httpEx.Message }
+                    }, 0, httpEx);
+                }
+                else if (ex is JsonException jsonEx)
+                {
+                    throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
+                    {
+                        { "endpoint", ZatcaApiEndpoints.ComplianceCertificate },
+                        { MessageKey, jsonEx.Message }
+                    }, 0, jsonEx);
+                }
+
+                throw;
             }
         }
 
@@ -313,6 +461,13 @@ namespace Zatca.EInvoice.Api
             Dictionary<string, string> headers,
             CancellationToken cancellationToken)
         {
+            var operationType = DetermineOperationType(endpoint);
+            var startTime = DateTimeOffset.UtcNow;
+            HttpResponseMessage? response = null;
+            string? requestBody = null;
+            string? responseBody = null;
+            Exception? error = null;
+
             try
             {
                 var request = new HttpRequestMessage(method, endpoint);
@@ -345,35 +500,119 @@ namespace Zatca.EInvoice.Api
                         ApplicationJson);
                 }
 
-                var response = await _httpClient.SendAsync(request, cancellationToken);
-                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                // Capture request body for audit logging
+                if (request.Content != null)
+                {
+                    requestBody = await request.Content.ReadAsStringAsync(cancellationToken);
+                    // Recreate content since ReadAsStringAsync consumes it
+                    if (headers != null && headers.TryGetValue(ContentTypeHeader, out var contentType))
+                    {
+                        request.Content = new StringContent(requestBody, Encoding.UTF8, contentType);
+                    }
+                    else
+                    {
+                        request.Content = new StringContent(requestBody, Encoding.UTF8, ApplicationJson);
+                    }
+                }
 
-                if (!IsSuccessStatusCode(response.StatusCode))
+                // Fire BeforeRequest event
+                var requestEventArgs = new ZatcaApiRequestEventArgs
+                {
+                    OperationType = operationType,
+                    HttpMethod = method.ToString(),
+                    RequestUrl = BuildFullUrl(endpoint),
+                    RequestHeaders = ExtractHeaders(request.Headers, request.Content?.Headers),
+                    RequestBody = requestBody,
+                    RequestTimestamp = startTime,
+                    Environment = Environment
+                };
+                OnBeforeRequest(requestEventArgs);
+
+                // Send the request
+                response = await _httpClient.SendAsync(request, cancellationToken);
+                responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+                var endTime = DateTimeOffset.UtcNow;
+                var isSuccess = IsSuccessStatusCode(response.StatusCode);
+
+                // Fire AfterResponse event
+                var responseEventArgs = new ZatcaApiResponseEventArgs
+                {
+                    OperationType = operationType,
+                    HttpMethod = method.ToString(),
+                    RequestUrl = BuildFullUrl(endpoint),
+                    RequestHeaders = requestEventArgs.RequestHeaders,
+                    RequestBody = requestBody,
+                    RequestTimestamp = startTime,
+                    StatusCode = (int)response.StatusCode,
+                    ResponseHeaders = ExtractHeaders(response.Headers, response.Content?.Headers),
+                    ResponseBody = responseBody,
+                    ResponseTimestamp = endTime,
+                    Duration = endTime - startTime,
+                    IsSuccess = isSuccess,
+                    Environment = Environment
+                };
+                OnAfterResponse(responseEventArgs);
+
+                if (!isSuccess)
                 {
                     throw new ZatcaApiException(
                         $"API request failed with status code {(int)response.StatusCode}",
                         (int)response.StatusCode,
-                        content);
+                        responseBody);
                 }
 
-                return JsonSerializer.Deserialize<T>(content, _jsonOptions)
-                    ?? throw new ZatcaApiException("Failed to deserialize API response", 0, content);
+                return JsonSerializer.Deserialize<T>(responseBody, _jsonOptions)
+                    ?? throw new ZatcaApiException("Failed to deserialize API response", 0, responseBody);
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
+                error = ex;
+                var endTime = DateTimeOffset.UtcNow;
+
+                // Fire AfterResponse event with error
+                var responseEventArgs = new ZatcaApiResponseEventArgs
                 {
-                    { "endpoint", endpoint },
-                    { MessageKey, ex.Message }
-                }, 0, ex);
-            }
-            catch (JsonException ex)
-            {
-                throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
+                    OperationType = operationType,
+                    HttpMethod = method.ToString(),
+                    RequestUrl = BuildFullUrl(endpoint),
+                    RequestHeaders = headers != null ? new Dictionary<string, string>(headers) : new Dictionary<string, string>(),
+                    RequestBody = requestBody,
+                    RequestTimestamp = startTime,
+                    StatusCode = response != null ? (int)response.StatusCode : null,
+                    ResponseHeaders = response != null ? ExtractHeaders(response.Headers, response.Content?.Headers) : new Dictionary<string, string>(),
+                    ResponseBody = responseBody,
+                    ResponseTimestamp = endTime,
+                    Duration = endTime - startTime,
+                    IsSuccess = false,
+                    Error = error,
+                    Environment = Environment
+                };
+                OnAfterResponse(responseEventArgs);
+
+                // Re-wrap exceptions if needed
+                if (ex is ZatcaApiException)
                 {
-                    { "endpoint", endpoint },
-                    { MessageKey, ex.Message }
-                }, 0, ex);
+                    throw;
+                }
+                else if (ex is HttpRequestException httpEx)
+                {
+                    throw new ZatcaApiException("HTTP request failed", new Dictionary<string, object>
+                    {
+                        { "endpoint", endpoint },
+                        { MessageKey, httpEx.Message }
+                    }, 0, httpEx);
+                }
+                else if (ex is JsonException jsonEx)
+                {
+                    throw new ZatcaApiException("Failed to parse API response", new Dictionary<string, object>
+                    {
+                        { "endpoint", endpoint },
+                        { MessageKey, jsonEx.Message }
+                    }, 0, jsonEx);
+                }
+
+                throw;
             }
         }
 
@@ -619,6 +858,98 @@ namespace Zatca.EInvoice.Api
                 return property.ValueKind == JsonValueKind.String ? property.GetString() : null;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Raises the BeforeRequest event.
+        /// </summary>
+        /// <param name="e">Event arguments.</param>
+        protected virtual void OnBeforeRequest(ZatcaApiRequestEventArgs e)
+        {
+            try
+            {
+                BeforeRequest?.Invoke(this, e);
+            }
+            catch
+            {
+                // Suppress event handler exceptions to prevent breaking API operations
+            }
+        }
+
+        /// <summary>
+        /// Raises the AfterResponse event.
+        /// </summary>
+        /// <param name="e">Event arguments.</param>
+        protected virtual void OnAfterResponse(ZatcaApiResponseEventArgs e)
+        {
+            try
+            {
+                AfterResponse?.Invoke(this, e);
+            }
+            catch
+            {
+                // Suppress event handler exceptions to prevent breaking API operations
+            }
+        }
+
+        /// <summary>
+        /// Determines the operation type from the endpoint.
+        /// </summary>
+        private static string DetermineOperationType(string endpoint)
+        {
+            if (string.IsNullOrEmpty(endpoint))
+                return "Unknown";
+
+            if (endpoint.Contains("compliance"))
+                return "OnboardCompliance";
+            if (endpoint.Contains("production/csids"))
+                return "UpgradeProduction";
+            if (endpoint.Contains("compliance/invoices"))
+                return "ValidateCompliance";
+            if (endpoint.Contains("invoices/clearance"))
+                return "SubmitClearance";
+            if (endpoint.Contains("invoices/reporting"))
+                return "SubmitReporting";
+            
+            return "Unknown";
+        }
+
+        /// <summary>
+        /// Builds the full URL for the endpoint.
+        /// </summary>
+        private string BuildFullUrl(string endpoint)
+        {
+            if (Uri.IsWellFormedUriString(endpoint, UriKind.Absolute))
+                return endpoint;
+
+            var baseUrl = _httpClient.BaseAddress?.ToString().TrimEnd('/') ?? ZatcaApiEndpoints.GetBaseUrl(Environment);
+            return $"{baseUrl}/{endpoint.TrimStart('/')}";
+        }
+
+        /// <summary>
+        /// Extracts headers from HttpHeaders collections.
+        /// </summary>
+        private static Dictionary<string, string> ExtractHeaders(HttpHeaders? requestHeaders, HttpContentHeaders? contentHeaders)
+        {
+            var headers = new Dictionary<string, string>();
+
+            if (requestHeaders != null)
+            {
+                foreach (var header in requestHeaders)
+                {
+                    headers[header.Key] = string.Join(", ", header.Value);
+                }
+            }
+
+            if (contentHeaders != null)
+            {
+                foreach (var header in contentHeaders)
+                {
+                    headers[header.Key] = string.Join(", ", header.Value);
+                }
+            }
+
+            return headers;
         }
 
         /// <summary>
