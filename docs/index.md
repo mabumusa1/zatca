@@ -22,7 +22,7 @@ A .NET library for generating **ZATCA-compliant** e-invoices in Saudi Arabia. Th
 
 ## Requirements
 
-- **.NET 8.0** or higher
+- **.NET 8.0 or .NET 10.0** or higher
 - **BouncyCastle.Cryptography** for cryptographic operations
 
 ## Installation
