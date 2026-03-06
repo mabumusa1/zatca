@@ -1,1035 +1,0 @@
-≠
-*Zatca.EInvoice.Api.InvoiceSubmissionResultobjecta
-InvoiceSubmissionResult()DZatca.EInvoice.Api.InvoiceSubmissionResult.InvoiceSubmissionResult()’
-íInvoiceSubmissionResult(string, string?, string?, string?, System.Collections.Generic.List<Zatca.EInvoice.Api.ValidationMessage>?, System.Collections.Generic.List<Zatca.EInvoice.Api.ValidationMessage>?, System.Collections.Generic.List<Zatca.EInvoice.Api.ValidationMessage>?)ΩZatca.EInvoice.Api.InvoiceSubmissionResult.InvoiceSubmissionResult(string, string?, string?, string?, System.Collections.Generic.List<Zatca.EInvoice.Api.ValidationMessage>?, System.Collections.Generic.List<Zatca.EInvoice.Api.ValidationMessage>?, System.Collections.Generic.List<Zatca.EInvoice.Api.ValidationMessage>?)C
-
-Status.get5Zatca.EInvoice.Api.InvoiceSubmissionResult.Status.getC
-
-Status.set5Zatca.EInvoice.Api.InvoiceSubmissionResult.Status.setU
-ClearanceStatus.get>Zatca.EInvoice.Api.InvoiceSubmissionResult.ClearanceStatus.getU
-ClearanceStatus.set>Zatca.EInvoice.Api.InvoiceSubmissionResult.ClearanceStatus.setU
-ReportingStatus.get>Zatca.EInvoice.Api.InvoiceSubmissionResult.ReportingStatus.getU
-ReportingStatus.set>Zatca.EInvoice.Api.InvoiceSubmissionResult.ReportingStatus.setS
-ClearedInvoice.get=Zatca.EInvoice.Api.InvoiceSubmissionResult.ClearedInvoice.getS
-ClearedInvoice.set=Zatca.EInvoice.Api.InvoiceSubmissionResult.ClearedInvoice.setC
-
-Errors.get5Zatca.EInvoice.Api.InvoiceSubmissionResult.Errors.getC
-
-Errors.set5Zatca.EInvoice.Api.InvoiceSubmissionResult.Errors.setG
-Warnings.get7Zatca.EInvoice.Api.InvoiceSubmissionResult.Warnings.getG
-Warnings.set7Zatca.EInvoice.Api.InvoiceSubmissionResult.Warnings.setO
-InfoMessages.get;Zatca.EInvoice.Api.InvoiceSubmissionResult.InfoMessages.getO
-InfoMessages.set;Zatca.EInvoice.Api.InvoiceSubmissionResult.InfoMessages.setI
-IsSuccess.get8Zatca.EInvoice.Api.InvoiceSubmissionResult.IsSuccess.getI
-IsSuccess.set8Zatca.EInvoice.Api.InvoiceSubmissionResult.IsSuccess.setM
-HasWarnings.get:Zatca.EInvoice.Api.InvoiceSubmissionResult.HasWarnings.getM
-HasWarnings.set:Zatca.EInvoice.Api.InvoiceSubmissionResult.HasWarnings.setM
-IsClearance.get:Zatca.EInvoice.Api.InvoiceSubmissionResult.IsClearance.getM
-IsClearance.set:Zatca.EInvoice.Api.InvoiceSubmissionResult.IsClearance.setM
-IsReporting.get:Zatca.EInvoice.Api.InvoiceSubmissionResult.IsReporting.getM
-IsReporting.set:Zatca.EInvoice.Api.InvoiceSubmissionResult.IsReporting.setÆ
-6Zatca.EInvoice.Certificates.Utf8X509NameEntryConverter1Org.BouncyCastle.Asn1.X509.X509NameEntryConverterobject√
-DGetConvertedValue(Org.BouncyCastle.Asn1.DerObjectIdentifier, string){Zatca.EInvoice.Certificates.Utf8X509NameEntryConverter.GetConvertedValue(Org.BouncyCastle.Asn1.DerObjectIdentifier, string)s
-Utf8X509NameEntryConverter()SZatca.EInvoice.Certificates.Utf8X509NameEntryConverter.Utf8X509NameEntryConverter()‘
-.Zatca.EInvoice.Api.ComplianceCertificateResultobjectô
-3ComplianceCertificateResult(string, string, string)bZatca.EInvoice.Api.ComplianceCertificateResult.ComplianceCertificateResult(string, string, string)’
-êComplianceCertificateResult(string, string, string, string?, System.Collections.Generic.List<string>?, System.Collections.Generic.List<string>?)øZatca.EInvoice.Api.ComplianceCertificateResult.ComplianceCertificateResult(string, string, string, string?, System.Collections.Generic.List<string>?, System.Collections.Generic.List<string>?)M
-RequestId.get<Zatca.EInvoice.Api.ComplianceCertificateResult.RequestId.getM
-RequestId.set<Zatca.EInvoice.Api.ComplianceCertificateResult.RequestId.set_
-DispositionMessage.getEZatca.EInvoice.Api.ComplianceCertificateResult.DispositionMessage.get_
-DispositionMessage.setEZatca.EInvoice.Api.ComplianceCertificateResult.DispositionMessage.seta
-BinarySecurityToken.getFZatca.EInvoice.Api.ComplianceCertificateResult.BinarySecurityToken.geta
-BinarySecurityToken.setFZatca.EInvoice.Api.ComplianceCertificateResult.BinarySecurityToken.setG
-
-Secret.get9Zatca.EInvoice.Api.ComplianceCertificateResult.Secret.getG
-
-Secret.set9Zatca.EInvoice.Api.ComplianceCertificateResult.Secret.setG
-
-Errors.get9Zatca.EInvoice.Api.ComplianceCertificateResult.Errors.getG
-
-Errors.set9Zatca.EInvoice.Api.ComplianceCertificateResult.Errors.setK
-Warnings.get;Zatca.EInvoice.Api.ComplianceCertificateResult.Warnings.getK
-Warnings.set;Zatca.EInvoice.Api.ComplianceCertificateResult.Warnings.setM
-IsSuccess.get<Zatca.EInvoice.Api.ComplianceCertificateResult.IsSuccess.getM
-IsSuccess.set<Zatca.EInvoice.Api.ComplianceCertificateResult.IsSuccess.setQ
-HasWarnings.get>Zatca.EInvoice.Api.ComplianceCertificateResult.HasWarnings.getQ
-HasWarnings.set>Zatca.EInvoice.Api.ComplianceCertificateResult.HasWarnings.set·
->System.Text.RegularExpressions.Generated.OrganizationIdRegex_0$System.Text.RegularExpressions.Regexobjectq
-OrganizationIdRegex_0()VSystem.Text.RegularExpressions.Generated.OrganizationIdRegex_0.OrganizationIdRegex_0()£
-5Zatca.EInvoice.Exceptions.CertificateBuilderException(Zatca.EInvoice.Exceptions.ZatcaExceptionSystem.Exceptionobjectt
-CertificateBuilderException()SZatca.EInvoice.Exceptions.CertificateBuilderException.CertificateBuilderException()Ä
-#CertificateBuilderException(string)YZatca.EInvoice.Exceptions.CertificateBuilderException.CertificateBuilderException(string)Ô
-ZCertificateBuilderException(string, System.Collections.Generic.Dictionary<string, object>)êZatca.EInvoice.Exceptions.CertificateBuilderException.CertificateBuilderException(string, System.Collections.Generic.Dictionary<string, object>)§
-5CertificateBuilderException(string, System.Exception)kZatca.EInvoice.Exceptions.CertificateBuilderException.CertificateBuilderException(string, System.Exception)ì
-lCertificateBuilderException(string, System.Collections.Generic.Dictionary<string, object>, System.Exception)¢Zatca.EInvoice.Exceptions.CertificateBuilderException.CertificateBuilderException(string, System.Collections.Generic.Dictionary<string, object>, System.Exception)—
-:System.Text.RegularExpressions.Generated.BlankLinesRegex_1$System.Text.RegularExpressions.Regexobjecte
-BlankLinesRegex_1()NSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.BlankLinesRegex_1()‘
-.Zatca.EInvoice.Api.ProductionCertificateResultobjectô
-3ProductionCertificateResult(string, string, string)bZatca.EInvoice.Api.ProductionCertificateResult.ProductionCertificateResult(string, string, string)’
-êProductionCertificateResult(string, string, string, string?, System.Collections.Generic.List<string>?, System.Collections.Generic.List<string>?)øZatca.EInvoice.Api.ProductionCertificateResult.ProductionCertificateResult(string, string, string, string?, System.Collections.Generic.List<string>?, System.Collections.Generic.List<string>?)M
-RequestId.get<Zatca.EInvoice.Api.ProductionCertificateResult.RequestId.getM
-RequestId.set<Zatca.EInvoice.Api.ProductionCertificateResult.RequestId.set_
-DispositionMessage.getEZatca.EInvoice.Api.ProductionCertificateResult.DispositionMessage.get_
-DispositionMessage.setEZatca.EInvoice.Api.ProductionCertificateResult.DispositionMessage.seta
-BinarySecurityToken.getFZatca.EInvoice.Api.ProductionCertificateResult.BinarySecurityToken.geta
-BinarySecurityToken.setFZatca.EInvoice.Api.ProductionCertificateResult.BinarySecurityToken.setG
-
-Secret.get9Zatca.EInvoice.Api.ProductionCertificateResult.Secret.getG
-
-Secret.set9Zatca.EInvoice.Api.ProductionCertificateResult.Secret.setG
-
-Errors.get9Zatca.EInvoice.Api.ProductionCertificateResult.Errors.getG
-
-Errors.set9Zatca.EInvoice.Api.ProductionCertificateResult.Errors.setK
-Warnings.get;Zatca.EInvoice.Api.ProductionCertificateResult.Warnings.getK
-Warnings.set;Zatca.EInvoice.Api.ProductionCertificateResult.Warnings.setM
-IsSuccess.get<Zatca.EInvoice.Api.ProductionCertificateResult.IsSuccess.getM
-IsSuccess.set<Zatca.EInvoice.Api.ProductionCertificateResult.IsSuccess.setQ
-HasWarnings.get>Zatca.EInvoice.Api.ProductionCertificateResult.HasWarnings.getQ
-HasWarnings.set>Zatca.EInvoice.Api.ProductionCertificateResult.HasWarnings.setﬂ
-.Zatca.EInvoice.Certificates.CertificateBuilderobjectu
-!SetOrganizationIdentifier(string)PZatca.EInvoice.Certificates.CertificateBuilder.SetOrganizationIdentifier(string)Å
-'SetSerialNumber(string, string, string)VZatca.EInvoice.Certificates.CertificateBuilder.SetSerialNumber(string, string, string)]
-SetCommonName(string)DZatca.EInvoice.Certificates.CertificateBuilder.SetCommonName(string)_
-SetCountryName(string)EZatca.EInvoice.Certificates.CertificateBuilder.SetCountryName(string)i
-SetOrganizationName(string)JZatca.EInvoice.Certificates.CertificateBuilder.SetOrganizationName(string)u
-!SetOrganizationalUnitName(string)PZatca.EInvoice.Certificates.CertificateBuilder.SetOrganizationalUnitName(string)W
-SetAddress(string)AZatca.EInvoice.Certificates.CertificateBuilder.SetAddress(string)Y
-SetInvoiceType(int)BZatca.EInvoice.Certificates.CertificateBuilder.SetInvoiceType(int)Y
-SetProduction(bool)BZatca.EInvoice.Certificates.CertificateBuilder.SetProduction(bool)i
-SetBusinessCategory(string)JZatca.EInvoice.Certificates.CertificateBuilder.SetBusinessCategory(string)G
-
-Generate()9Zatca.EInvoice.Certificates.CertificateBuilder.Generate()q
-GenerateAndSave(string, string)NZatca.EInvoice.Certificates.CertificateBuilder.GenerateAndSave(string, string)C
-GetCsr()7Zatca.EInvoice.Certificates.CertificateBuilder.GetCsr()_
-SavePrivateKey(string)EZatca.EInvoice.Certificates.CertificateBuilder.SavePrivateKey(string)Q
-GetPrivateKey()>Zatca.EInvoice.Certificates.CertificateBuilder.GetPrivateKey()[
-ValidateParameters()CZatca.EInvoice.Certificates.CertificateBuilder.ValidateParameters()O
-GenerateKeys()=Zatca.EInvoice.Certificates.CertificateBuilder.GenerateKeys()]
-CreateCsrAttributes()DZatca.EInvoice.Certificates.CertificateBuilder.CreateCsrAttributes()o
-CreateSubjectAlternativeName()MZatca.EInvoice.Certificates.CertificateBuilder.CreateSubjectAlternativeName()[
-CertificateBuilder()CZatca.EInvoice.Certificates.CertificateBuilder.CertificateBuilder()$
-"Zatca.EInvoice.Api.IZatcaApiClient’
-
-+Zatca.EInvoice.Exceptions.ZatcaApiException(Zatca.EInvoice.Exceptions.ZatcaExceptionSystem.ExceptionobjectV
-ZatcaApiException()?Zatca.EInvoice.Exceptions.ZatcaApiException.ZatcaApiException()b
-ZatcaApiException(string)EZatca.EInvoice.Exceptions.ZatcaApiException.ZatcaApiException(string)–
-PZatcaApiException(string, System.Collections.Generic.Dictionary<string, object>)|Zatca.EInvoice.Exceptions.ZatcaApiException.ZatcaApiException(string, System.Collections.Generic.Dictionary<string, object>)Å
-hZatcaApiException(string, System.Collections.Generic.Dictionary<string, object>, int, System.Exception?)îZatca.EInvoice.Exceptions.ZatcaApiException.ZatcaApiException(string, System.Collections.Generic.Dictionary<string, object>, int, System.Exception?)|
-&ZatcaApiException(string, int, string)RZatca.EInvoice.Exceptions.ZatcaApiException.ZatcaApiException(string, int, string)†
-8ZatcaApiException(string, int, string, System.Exception)dZatca.EInvoice.Exceptions.ZatcaApiException.ZatcaApiException(string, int, string, System.Exception)L
-StatusCode.get:Zatca.EInvoice.Exceptions.ZatcaApiException.StatusCode.getL
-StatusCode.set:Zatca.EInvoice.Exceptions.ZatcaApiException.StatusCode.setH
-Response.get8Zatca.EInvoice.Exceptions.ZatcaApiException.Response.getH
-Response.set8Zatca.EInvoice.Exceptions.ZatcaApiException.Response.setŒ
-$Zatca.EInvoice.Api.ValidationMessageobjectO
-ValidationMessage()8Zatca.EInvoice.Api.ValidationMessage.ValidationMessage()õ
-9ValidationMessage(string, string, string, string, string)^Zatca.EInvoice.Api.ValidationMessage.ValidationMessage(string, string, string, string, string)=
-
-ToString()/Zatca.EInvoice.Api.ValidationMessage.ToString()9
-Type.get-Zatca.EInvoice.Api.ValidationMessage.Type.get9
-Type.set-Zatca.EInvoice.Api.ValidationMessage.Type.set9
-Code.get-Zatca.EInvoice.Api.ValidationMessage.Code.get9
-Code.set-Zatca.EInvoice.Api.ValidationMessage.Code.setA
-Category.get1Zatca.EInvoice.Api.ValidationMessage.Category.getA
-Category.set1Zatca.EInvoice.Api.ValidationMessage.Category.set?
-Message.get0Zatca.EInvoice.Api.ValidationMessage.Message.get?
-Message.set0Zatca.EInvoice.Api.ValidationMessage.Message.set=
-
-Status.get/Zatca.EInvoice.Api.ValidationMessage.Status.get=
-
-Status.set/Zatca.EInvoice.Api.ValidationMessage.Status.set'
-%Zatca.EInvoice.Mappers.IInvoiceMapperÊ
-(Zatca.EInvoice.Exceptions.ZatcaExceptionSystem.ExceptionobjectM
-ZatcaException()9Zatca.EInvoice.Exceptions.ZatcaException.ZatcaException()Y
-ZatcaException(string)?Zatca.EInvoice.Exceptions.ZatcaException.ZatcaException(string)«
-MZatcaException(string, System.Collections.Generic.Dictionary<string, object>)vZatca.EInvoice.Exceptions.ZatcaException.ZatcaException(string, System.Collections.Generic.Dictionary<string, object>)}
-(ZatcaException(string, System.Exception)QZatca.EInvoice.Exceptions.ZatcaException.ZatcaException(string, System.Exception)Ó
-`ZatcaException(string, System.Collections.Generic.Dictionary<string, object>, System.Exception?)âZatca.EInvoice.Exceptions.ZatcaException.ZatcaException(string, System.Collections.Generic.Dictionary<string, object>, System.Exception?)±
-BWithContext(System.Collections.Generic.Dictionary<string, object>)kZatca.EInvoice.Exceptions.ZatcaException.WithContext(System.Collections.Generic.Dictionary<string, object>)C
-Context.get4Zatca.EInvoice.Exceptions.ZatcaException.Context.getC
-Context.set4Zatca.EInvoice.Exceptions.ZatcaException.Context.set¬
-/Zatca.EInvoice.Exceptions.ZatcaStorageException(Zatca.EInvoice.Exceptions.ZatcaExceptionSystem.Exceptionobjectb
-ZatcaStorageException()GZatca.EInvoice.Exceptions.ZatcaStorageException.ZatcaStorageException()n
-ZatcaStorageException(string)MZatca.EInvoice.Exceptions.ZatcaStorageException.ZatcaStorageException(string)›
-TZatcaStorageException(string, System.Collections.Generic.Dictionary<string, object>)ÑZatca.EInvoice.Exceptions.ZatcaStorageException.ZatcaStorageException(string, System.Collections.Generic.Dictionary<string, object>)í
-/ZatcaStorageException(string, System.Exception)_Zatca.EInvoice.Exceptions.ZatcaStorageException.ZatcaStorageException(string, System.Exception)Å
-fZatcaStorageException(string, System.Collections.Generic.Dictionary<string, object>, System.Exception)ñZatca.EInvoice.Exceptions.ZatcaStorageException.ZatcaStorageException(string, System.Collections.Generic.Dictionary<string, object>, System.Exception)—
-:System.Text.RegularExpressions.Generated.InvoiceTagRegex_2$System.Text.RegularExpressions.Regexobjecte
-InvoiceTagRegex_2()NSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.InvoiceTagRegex_2()·
-HSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory1System.Text.RegularExpressions.RegexRunnerFactoryobjectm
-CreateInstance()YSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.CreateInstance()k
-RunnerFactory()XSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.RunnerFactory()Ì
-LSystem.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory1System.Text.RegularExpressions.RegexRunnerFactoryobjectq
-CreateInstance()]System.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.CreateInstance()o
-RunnerFactory()\System.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.RunnerFactory()®
-SSystem.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.Runner*System.Text.RegularExpressions.RegexRunnerobjectñ
-Scan(System.ReadOnlySpan<char>)sSystem.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan<char>)’
->TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)íSystem.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)¡
-4TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)àSystem.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)h
-Runner()\System.Text.RegularExpressions.Generated.OrganizationIdRegex_0.RunnerFactory.Runner.Runner()î
-OSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.Runner*System.Text.RegularExpressions.RegexRunnerobjectí
-Scan(System.ReadOnlySpan<char>)oSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.Runner.Scan(System.ReadOnlySpan<char>)—
->TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)éSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)Ω
-4TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)ÑSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)d
-Runner()XSystem.Text.RegularExpressions.Generated.InvoiceTagRegex_2.RunnerFactory.Runner.Runner()„
-2Zatca.EInvoice.Exceptions.ZatcaValidationException(Zatca.EInvoice.Exceptions.ZatcaExceptionSystem.Exceptionobjectk
-ZatcaValidationException()MZatca.EInvoice.Exceptions.ZatcaValidationException.ZatcaValidationException()w
- ZatcaValidationException(string)SZatca.EInvoice.Exceptions.ZatcaValidationException.ZatcaValidationException(string)…
-IZatcaValidationException(string, System.Collections.Generic.List<string>)|Zatca.EInvoice.Exceptions.ZatcaValidationException.ZatcaValidationException(string, System.Collections.Generic.List<string>)π
-AZatcaValidationException(System.Collections.Generic.List<string>)tZatca.EInvoice.Exceptions.ZatcaValidationException.ZatcaValidationException(System.Collections.Generic.List<string>)á
-(ZatcaValidationException(string, string)[Zatca.EInvoice.Exceptions.ZatcaValidationException.ZatcaValidationException(string, string)W
-AddError(string)CZatca.EInvoice.Exceptions.ZatcaValidationException.AddError(string)K
-
-Errors.get=Zatca.EInvoice.Exceptions.ZatcaValidationException.Errors.getK
-
-Errors.set=Zatca.EInvoice.Exceptions.ZatcaValidationException.Errors.setÕ
-9System.Text.RegularExpressions.Generated.ProfileIdRegex_3$System.Text.RegularExpressions.Regexobjectb
-ProfileIdRegex_3()LSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.ProfileIdRegex_3()ﬁ
-GSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory1System.Text.RegularExpressions.RegexRunnerFactoryobjectl
-CreateInstance()XSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.CreateInstance()j
-RunnerFactory()WSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.RunnerFactory()’
-/Zatca.EInvoice.Models.Financial.AllowanceChargeobjectV
-AllowanceCharge()AZatca.EInvoice.Models.Financial.AllowanceCharge.AllowanceCharge()Z
-ChargeIndicator.getCZatca.EInvoice.Models.Financial.AllowanceCharge.ChargeIndicator.getZ
-ChargeIndicator.setCZatca.EInvoice.Models.Financial.AllowanceCharge.ChargeIndicator.setn
-AllowanceChargeReasonCode.getMZatca.EInvoice.Models.Financial.AllowanceCharge.AllowanceChargeReasonCode.getn
-AllowanceChargeReasonCode.setMZatca.EInvoice.Models.Financial.AllowanceCharge.AllowanceChargeReasonCode.setf
-AllowanceChargeReason.getIZatca.EInvoice.Models.Financial.AllowanceCharge.AllowanceChargeReason.getf
-AllowanceChargeReason.setIZatca.EInvoice.Models.Financial.AllowanceCharge.AllowanceChargeReason.setj
-MultiplierFactorNumeric.getKZatca.EInvoice.Models.Financial.AllowanceCharge.MultiplierFactorNumeric.getj
-MultiplierFactorNumeric.setKZatca.EInvoice.Models.Financial.AllowanceCharge.MultiplierFactorNumeric.setP
-BaseAmount.get>Zatca.EInvoice.Models.Financial.AllowanceCharge.BaseAmount.getP
-BaseAmount.set>Zatca.EInvoice.Models.Financial.AllowanceCharge.BaseAmount.setH
-
-Amount.get:Zatca.EInvoice.Models.Financial.AllowanceCharge.Amount.getH
-
-Amount.set:Zatca.EInvoice.Models.Financial.AllowanceCharge.Amount.setL
-TaxTotal.get<Zatca.EInvoice.Models.Financial.AllowanceCharge.TaxTotal.getL
-TaxTotal.set<Zatca.EInvoice.Models.Financial.AllowanceCharge.TaxTotal.setV
-TaxCategories.getAZatca.EInvoice.Models.Financial.AllowanceCharge.TaxCategories.getV
-TaxCategories.setAZatca.EInvoice.Models.Financial.AllowanceCharge.TaxCategories.setè
-NSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.Runner*System.Text.RegularExpressions.RegexRunnerobjectë
-Scan(System.ReadOnlySpan<char>)nSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.Runner.Scan(System.ReadOnlySpan<char>)–
->TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)çSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)º
-4TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)ÉSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)c
-Runner()WSystem.Text.RegularExpressions.Generated.ProfileIdRegex_3.RunnerFactory.Runner.Runner()í
-+Zatca.EInvoice.Certificates.CertificateInfoobject~
-'CertificateInfo(string, string, string)SZatca.EInvoice.Certificates.CertificateInfo.CertificateInfo(string, string, string)¿
-áCertificateInfo(System.Security.Cryptography.X509Certificates.X509Certificate2, Org.BouncyCastle.Crypto.AsymmetricKeyParameter, string)≥Zatca.EInvoice.Certificates.CertificateInfo.CertificateInfo(System.Security.Cryptography.X509Certificates.X509Certificate2, Org.BouncyCastle.Crypto.AsymmetricKeyParameter, string)N
-GetPrivateKey();Zatca.EInvoice.Certificates.CertificateInfo.GetPrivateKey()V
-GetPublicKeyBytes()?Zatca.EInvoice.Certificates.CertificateInfo.GetPublicKeyBytes()X
-GetCertificateHash()@Zatca.EInvoice.Certificates.CertificateInfo.GetCertificateHash()`
-GetAuthorizationHeader()DZatca.EInvoice.Certificates.CertificateInfo.GetAuthorizationHeader()X
-GetFormattedIssuer()@Zatca.EInvoice.Certificates.CertificateInfo.GetFormattedIssuer()^
-GetRawPublicKeyBase64()CZatca.EInvoice.Certificates.CertificateInfo.GetRawPublicKeyBase64()b
-GetCertificateSignature()EZatca.EInvoice.Certificates.CertificateInfo.GetCertificateSignature()T
-RawCertificate.get>Zatca.EInvoice.Certificates.CertificateInfo.RawCertificate.getT
-RawCertificate.set>Zatca.EInvoice.Certificates.CertificateInfo.RawCertificate.setN
-Certificate.get;Zatca.EInvoice.Certificates.CertificateInfo.Certificate.getN
-Certificate.set;Zatca.EInvoice.Certificates.CertificateInfo.Certificate.setD
-
-Issuer.get6Zatca.EInvoice.Certificates.CertificateInfo.Issuer.getD
-
-Issuer.set6Zatca.EInvoice.Certificates.CertificateInfo.Issuer.setF
-Subject.get7Zatca.EInvoice.Certificates.CertificateInfo.Subject.getF
-Subject.set7Zatca.EInvoice.Certificates.CertificateInfo.Subject.setP
-SerialNumber.get<Zatca.EInvoice.Certificates.CertificateInfo.SerialNumber.getP
-SerialNumber.set<Zatca.EInvoice.Certificates.CertificateInfo.SerialNumber.setD
-
-Secret.get6Zatca.EInvoice.Certificates.CertificateInfo.Secret.getD
-
-Secret.set6Zatca.EInvoice.Certificates.CertificateInfo.Secret.set·
-HSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory1System.Text.RegularExpressions.RegexRunnerFactoryobjectm
-CreateInstance()YSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.CreateInstance()k
-RunnerFactory()XSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.RunnerFactory()Ÿ
-<System.Text.RegularExpressions.Generated.SignatureTagRegex_4$System.Text.RegularExpressions.Regexobjectk
-SignatureTagRegex_4()RSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.SignatureTagRegex_4()§
-*Zatca.EInvoice.Models.Enums.InvoiceSubTypeSystem.EnumSystem.ValueTypeobjectO
-InvoiceSubType();Zatca.EInvoice.Models.Enums.InvoiceSubType.InvoiceSubType()î
-OSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.Runner*System.Text.RegularExpressions.RegexRunnerobjectí
-Scan(System.ReadOnlySpan<char>)oSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.Runner.Scan(System.ReadOnlySpan<char>)—
->TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)éSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)Ω
-4TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)ÑSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)d
-Runner()XSystem.Text.RegularExpressions.Generated.BlankLinesRegex_1.RunnerFactory.Runner.Runner()Á
-JSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory1System.Text.RegularExpressions.RegexRunnerFactoryobjecto
-CreateInstance()[System.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.CreateInstance()m
-RunnerFactory()ZSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.RunnerFactory()®
-+Zatca.EInvoice.Models.Enums.InvoiceCategorySystem.EnumSystem.ValueTypeobjectR
-InvoiceCategory()=Zatca.EInvoice.Models.Enums.InvoiceCategory.InvoiceCategory()û
-QSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.Runner*System.Text.RegularExpressions.RegexRunnerobjectî
-Scan(System.ReadOnlySpan<char>)qSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.Runner.Scan(System.ReadOnlySpan<char>)”
->TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)êSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)ø
-4TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)ÜSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)f
-Runner()ZSystem.Text.RegularExpressions.Generated.SignatureTagRegex_4.RunnerFactory.Runner.Runner()’
-;System.Text.RegularExpressions.Generated.IndentationRegex_5$System.Text.RegularExpressions.Regexobjecth
-IndentationRegex_5()PSystem.Text.RegularExpressions.Generated.IndentationRegex_5.IndentationRegex_5()‰
-ISystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory1System.Text.RegularExpressions.RegexRunnerFactoryobjectn
-CreateInstance()ZSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.CreateInstance()l
-RunnerFactory()YSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.RunnerFactory()æ
-+Zatca.EInvoice.Tags.CertificateSignatureTagZatca.EInvoice.Tags.Tagobjectn
-CertificateSignatureTag(byte[])KZatca.EInvoice.Tags.CertificateSignatureTag.CertificateSignatureTag(byte[])ö
-"Zatca.EInvoice.Tags.InvoiceHashTagZatca.EInvoice.Tags.TagobjectS
-InvoiceHashTag(string)9Zatca.EInvoice.Tags.InvoiceHashTag.InvoiceHashTag(string)ô
-PSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.Runner*System.Text.RegularExpressions.RegexRunnerobjectì
-Scan(System.ReadOnlySpan<char>)pSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.Runner.Scan(System.ReadOnlySpan<char>)“
->TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)èSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan<char>)æ
-4TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)ÖSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan<char>)e
-Runner()YSystem.Text.RegularExpressions.Generated.IndentationRegex_5.RunnerFactory.Runner.Runner()ö
-"Zatca.EInvoice.Tags.InvoiceDateTagZatca.EInvoice.Tags.TagobjectS
-InvoiceDateTag(string)9Zatca.EInvoice.Tags.InvoiceDateTag.InvoiceDateTag(string)Æ
-'Zatca.EInvoice.Tags.DigitalSignatureTagZatca.EInvoice.Tags.Tagobjectb
-DigitalSignatureTag(string)CZatca.EInvoice.Tags.DigitalSignatureTag.DigitalSignatureTag(string)É
-2Zatca.EInvoice.Models.Financial.LegalMonetaryTotalobject_
-LegalMonetaryTotal()GZatca.EInvoice.Models.Financial.LegalMonetaryTotal.LegalMonetaryTotal()e
-LineExtensionAmount.getJZatca.EInvoice.Models.Financial.LegalMonetaryTotal.LineExtensionAmount.gete
-LineExtensionAmount.setJZatca.EInvoice.Models.Financial.LegalMonetaryTotal.LineExtensionAmount.setc
-TaxExclusiveAmount.getIZatca.EInvoice.Models.Financial.LegalMonetaryTotal.TaxExclusiveAmount.getc
-TaxExclusiveAmount.setIZatca.EInvoice.Models.Financial.LegalMonetaryTotal.TaxExclusiveAmount.setc
-TaxInclusiveAmount.getIZatca.EInvoice.Models.Financial.LegalMonetaryTotal.TaxInclusiveAmount.getc
-TaxInclusiveAmount.setIZatca.EInvoice.Models.Financial.LegalMonetaryTotal.TaxInclusiveAmount.setg
-AllowanceTotalAmount.getKZatca.EInvoice.Models.Financial.LegalMonetaryTotal.AllowanceTotalAmount.getg
-AllowanceTotalAmount.setKZatca.EInvoice.Models.Financial.LegalMonetaryTotal.AllowanceTotalAmount.seta
-ChargeTotalAmount.getHZatca.EInvoice.Models.Financial.LegalMonetaryTotal.ChargeTotalAmount.geta
-ChargeTotalAmount.setHZatca.EInvoice.Models.Financial.LegalMonetaryTotal.ChargeTotalAmount.setY
-PrepaidAmount.getDZatca.EInvoice.Models.Financial.LegalMonetaryTotal.PrepaidAmount.getY
-PrepaidAmount.setDZatca.EInvoice.Models.Financial.LegalMonetaryTotal.PrepaidAmount.setY
-PayableAmount.getDZatca.EInvoice.Models.Financial.LegalMonetaryTotal.PayableAmount.getY
-PayableAmount.setDZatca.EInvoice.Models.Financial.LegalMonetaryTotal.PayableAmount.setö
-#Zatca.EInvoice.Api.ZatcaEnvironmentSystem.EnumSystem.ValueTypeobjectL
-ZatcaEnvironment()6Zatca.EInvoice.Api.ZatcaEnvironment.ZatcaEnvironment()û
-#Zatca.EInvoice.Tags.InvoiceTotalTagZatca.EInvoice.Tags.TagobjectV
-InvoiceTotalTag(string);Zatca.EInvoice.Tags.InvoiceTotalTag.InvoiceTotalTag(string)í
- Zatca.EInvoice.Tags.PublicKeyTagZatca.EInvoice.Tags.TagobjectM
-PublicKeyTag(byte[])5Zatca.EInvoice.Tags.PublicKeyTag.PublicKeyTag(byte[])Ü
-Zatca.EInvoice.Tags.SellerTagZatca.EInvoice.Tags.TagobjectD
-SellerTag(string)/Zatca.EInvoice.Tags.SellerTag.SellerTag(string)œ
-Zatca.EInvoice.Tags.Tagobject>
-Tag(byte, object))Zatca.EInvoice.Tags.Tag.Tag(byte, object):
-GetValueBytes()'Zatca.EInvoice.Tags.Tag.GetValueBytes().
-	ToBytes()!Zatca.EInvoice.Tags.Tag.ToBytes()0
-
-ToString()"Zatca.EInvoice.Tags.Tag.ToString()6
-TagNumber.get%Zatca.EInvoice.Tags.Tag.TagNumber.get6
-TagNumber.set%Zatca.EInvoice.Tags.Tag.TagNumber.set.
-	Value.get!Zatca.EInvoice.Tags.Tag.Value.get.
-	Value.set!Zatca.EInvoice.Tags.Tag.Value.setê
-'Zatca.EInvoice.Signing.InvoiceExtensionobjectÇ
-+InvoiceExtension(System.Xml.Linq.XDocument)SZatca.EInvoice.Signing.InvoiceExtension.InvoiceExtension(System.Xml.Linq.XDocument)V
-RemoveUblExtensions()=Zatca.EInvoice.Signing.InvoiceExtension.RemoveUblExtensions()N
-RemoveSignature()9Zatca.EInvoice.Signing.InvoiceExtension.RemoveSignature()Z
-RemoveQrCodeReference()?Zatca.EInvoice.Signing.InvoiceExtension.RemoveQrCodeReference()t
-$RemoveElementsByName(string, string)LZatca.EInvoice.Signing.InvoiceExtension.RemoveElementsByName(string, string)F
-ComputeHash()5Zatca.EInvoice.Signing.InvoiceExtension.ComputeHash()N
-GetCanonicalXml()9Zatca.EInvoice.Signing.InvoiceExtension.GetCanonicalXml()N
-ToXmlString(bool)9Zatca.EInvoice.Signing.InvoiceExtension.ToXmlString(bool)Z
-GetElementValue(string)?Zatca.EInvoice.Signing.InvoiceExtension.GetElementValue(string)J
-GetSellerName()7Zatca.EInvoice.Signing.InvoiceExtension.GetSellerName()H
-GetTaxNumber()6Zatca.EInvoice.Signing.InvoiceExtension.GetTaxNumber()>
-	GetUuid()1Zatca.EInvoice.Signing.InvoiceExtension.GetUuid()H
-GetIssueDate()6Zatca.EInvoice.Signing.InvoiceExtension.GetIssueDate()H
-GetIssueTime()6Zatca.EInvoice.Signing.InvoiceExtension.GetIssueTime()Z
-GetTaxInclusiveAmount()?Zatca.EInvoice.Signing.InvoiceExtension.GetTaxInclusiveAmount()H
-GetTaxAmount()6Zatca.EInvoice.Signing.InvoiceExtension.GetTaxAmount()\
-GetInvoiceTypeCodeName()@Zatca.EInvoice.Signing.InvoiceExtension.GetInvoiceTypeCodeName()V
-IsSimplifiedInvoice()=Zatca.EInvoice.Signing.InvoiceExtension.IsSimplifiedInvoice()ã
-oGenerateQrTags(System.Security.Cryptography.X509Certificates.X509Certificate2, string, string, byte[], byte[]?)óZatca.EInvoice.Signing.InvoiceExtension.GenerateQrTags(System.Security.Cryptography.X509Certificates.X509Certificate2, string, string, byte[], byte[]?)F
-GetDocument()5Zatca.EInvoice.Signing.InvoiceExtension.GetDocument()-
-+Zatca.EInvoice.Validation.IInvoiceValidatorí
- Zatca.EInvoice.Tags.TaxNumberTagZatca.EInvoice.Tags.TagobjectM
-TaxNumberTag(string)5Zatca.EInvoice.Tags.TaxNumberTag.TaxNumberTag(string)í
- Zatca.EInvoice.Tags.TaxAmountTagZatca.EInvoice.Tags.TagobjectM
-TaxAmountTag(string)5Zatca.EInvoice.Tags.TaxAmountTag.TaxAmountTag(string)è
-!Zatca.EInvoice.Pdf.InvoicePdfDataobjectF
-InvoicePdfData()2Zatca.EInvoice.Pdf.InvoicePdfData.InvoicePdfData()2
-Id.get(Zatca.EInvoice.Pdf.InvoicePdfData.Id.get2
-Id.set(Zatca.EInvoice.Pdf.InvoicePdfData.Id.set6
-Uuid.get*Zatca.EInvoice.Pdf.InvoicePdfData.Uuid.get6
-Uuid.set*Zatca.EInvoice.Pdf.InvoicePdfData.Uuid.set@
-IssueDate.get/Zatca.EInvoice.Pdf.InvoicePdfData.IssueDate.get@
-IssueDate.set/Zatca.EInvoice.Pdf.InvoicePdfData.IssueDate.set@
-IssueTime.get/Zatca.EInvoice.Pdf.InvoicePdfData.IssueTime.get@
-IssueTime.set/Zatca.EInvoice.Pdf.InvoicePdfData.IssueTime.setF
-CurrencyCode.get2Zatca.EInvoice.Pdf.InvoicePdfData.CurrencyCode.getF
-CurrencyCode.set2Zatca.EInvoice.Pdf.InvoicePdfData.CurrencyCode.setL
-TaxCurrencyCode.get5Zatca.EInvoice.Pdf.InvoicePdfData.TaxCurrencyCode.getL
-TaxCurrencyCode.set5Zatca.EInvoice.Pdf.InvoicePdfData.TaxCurrencyCode.setD
-InvoiceType.get1Zatca.EInvoice.Pdf.InvoicePdfData.InvoiceType.getD
-InvoiceType.set1Zatca.EInvoice.Pdf.InvoicePdfData.InvoiceType.set>
-Supplier.get.Zatca.EInvoice.Pdf.InvoicePdfData.Supplier.get>
-Supplier.set.Zatca.EInvoice.Pdf.InvoicePdfData.Supplier.set>
-Customer.get.Zatca.EInvoice.Pdf.InvoicePdfData.Customer.get>
-Customer.set.Zatca.EInvoice.Pdf.InvoicePdfData.Customer.setF
-InvoiceLines.get2Zatca.EInvoice.Pdf.InvoicePdfData.InvoiceLines.getF
-InvoiceLines.set2Zatca.EInvoice.Pdf.InvoicePdfData.InvoiceLines.set>
-TaxTotal.get.Zatca.EInvoice.Pdf.InvoicePdfData.TaxTotal.get>
-TaxTotal.set.Zatca.EInvoice.Pdf.InvoicePdfData.TaxTotal.setR
-LegalMonetaryTotal.get8Zatca.EInvoice.Pdf.InvoicePdfData.LegalMonetaryTotal.getR
-LegalMonetaryTotal.set8Zatca.EInvoice.Pdf.InvoicePdfData.LegalMonetaryTotal.setN
-AllowanceCharges.get6Zatca.EInvoice.Pdf.InvoicePdfData.AllowanceCharges.getN
-AllowanceCharges.set6Zatca.EInvoice.Pdf.InvoicePdfData.AllowanceCharges.setP
-BillingReferences.get7Zatca.EInvoice.Pdf.InvoicePdfData.BillingReferences.getP
-BillingReferences.set7Zatca.EInvoice.Pdf.InvoicePdfData.BillingReferences.set6
-Note.get*Zatca.EInvoice.Pdf.InvoicePdfData.Note.get6
-Note.set*Zatca.EInvoice.Pdf.InvoicePdfData.Note.setB
-LanguageId.get0Zatca.EInvoice.Pdf.InvoicePdfData.LanguageId.getB
-LanguageId.set0Zatca.EInvoice.Pdf.InvoicePdfData.LanguageId.set>
-Delivery.get.Zatca.EInvoice.Pdf.InvoicePdfData.Delivery.get>
-Delivery.set.Zatca.EInvoice.Pdf.InvoicePdfData.Delivery.setF
-PaymentMeans.get2Zatca.EInvoice.Pdf.InvoicePdfData.PaymentMeans.getF
-PaymentMeans.set2Zatca.EInvoice.Pdf.InvoicePdfData.PaymentMeans.set€
-+Zatca.EInvoice.Models.Financial.TaxCategoryobjectD
-
-Validate()6Zatca.EInvoice.Models.Financial.TaxCategory.Validate()J
-TaxCategory()9Zatca.EInvoice.Models.Financial.TaxCategory.TaxCategory()<
-Id.get2Zatca.EInvoice.Models.Financial.TaxCategory.Id.get<
-Id.set2Zatca.EInvoice.Models.Financial.TaxCategory.Id.setP
-IdAttributes.get<Zatca.EInvoice.Models.Financial.TaxCategory.IdAttributes.getP
-IdAttributes.set<Zatca.EInvoice.Models.Financial.TaxCategory.IdAttributes.set@
-Name.get4Zatca.EInvoice.Models.Financial.TaxCategory.Name.get@
-Name.set4Zatca.EInvoice.Models.Financial.TaxCategory.Name.setF
-Percent.get7Zatca.EInvoice.Models.Financial.TaxCategory.Percent.getF
-Percent.set7Zatca.EInvoice.Models.Financial.TaxCategory.Percent.setJ
-TaxScheme.get9Zatca.EInvoice.Models.Financial.TaxCategory.TaxScheme.getJ
-TaxScheme.set9Zatca.EInvoice.Models.Financial.TaxCategory.TaxScheme.set^
-TaxSchemeAttributes.getCZatca.EInvoice.Models.Financial.TaxCategory.TaxSchemeAttributes.get^
-TaxSchemeAttributes.setCZatca.EInvoice.Models.Financial.TaxCategory.TaxSchemeAttributes.set\
-TaxExemptionReason.getBZatca.EInvoice.Models.Financial.TaxCategory.TaxExemptionReason.get\
-TaxExemptionReason.setBZatca.EInvoice.Models.Financial.TaxCategory.TaxExemptionReason.setd
-TaxExemptionReasonCode.getFZatca.EInvoice.Models.Financial.TaxCategory.TaxExemptionReasonCode.getd
-TaxExemptionReasonCode.setFZatca.EInvoice.Models.Financial.TaxCategory.TaxExemptionReasonCode.set±
-Zatca.EInvoice.Models.Invoiceobject6
-
-Validate()(Zatca.EInvoice.Models.Invoice.Validate()4
-	Invoice()'Zatca.EInvoice.Models.Invoice.Invoice()D
-UblExtensions.get/Zatca.EInvoice.Models.Invoice.UblExtensions.getD
-UblExtensions.set/Zatca.EInvoice.Models.Invoice.UblExtensions.set<
-ProfileID.get+Zatca.EInvoice.Models.Invoice.ProfileID.get<
-ProfileID.set+Zatca.EInvoice.Models.Invoice.ProfileID.set.
-Id.get$Zatca.EInvoice.Models.Invoice.Id.get.
-Id.set$Zatca.EInvoice.Models.Invoice.Id.set2
-UUID.get&Zatca.EInvoice.Models.Invoice.UUID.get2
-UUID.set&Zatca.EInvoice.Models.Invoice.UUID.set<
-IssueDate.get+Zatca.EInvoice.Models.Invoice.IssueDate.get<
-IssueDate.set+Zatca.EInvoice.Models.Invoice.IssueDate.set<
-IssueTime.get+Zatca.EInvoice.Models.Invoice.IssueTime.get<
-IssueTime.set+Zatca.EInvoice.Models.Invoice.IssueTime.set@
-InvoiceType.get-Zatca.EInvoice.Models.Invoice.InvoiceType.get@
-InvoiceType.set-Zatca.EInvoice.Models.Invoice.InvoiceType.set2
-Note.get&Zatca.EInvoice.Models.Invoice.Note.get2
-Note.set&Zatca.EInvoice.Models.Invoice.Note.set>
-LanguageID.get,Zatca.EInvoice.Models.Invoice.LanguageID.get>
-LanguageID.set,Zatca.EInvoice.Models.Invoice.LanguageID.setP
-InvoiceCurrencyCode.get5Zatca.EInvoice.Models.Invoice.InvoiceCurrencyCode.getP
-InvoiceCurrencyCode.set5Zatca.EInvoice.Models.Invoice.InvoiceCurrencyCode.setH
-TaxCurrencyCode.get1Zatca.EInvoice.Models.Invoice.TaxCurrencyCode.getH
-TaxCurrencyCode.set1Zatca.EInvoice.Models.Invoice.TaxCurrencyCode.setR
-DocumentCurrencyCode.get6Zatca.EInvoice.Models.Invoice.DocumentCurrencyCode.getR
-DocumentCurrencyCode.set6Zatca.EInvoice.Models.Invoice.DocumentCurrencyCode.setF
-OrderReference.get0Zatca.EInvoice.Models.Invoice.OrderReference.getF
-OrderReference.set0Zatca.EInvoice.Models.Invoice.OrderReference.setL
-BillingReferences.get3Zatca.EInvoice.Models.Invoice.BillingReferences.getL
-BillingReferences.set3Zatca.EInvoice.Models.Invoice.BillingReferences.set:
-Contract.get*Zatca.EInvoice.Models.Invoice.Contract.get:
-Contract.set*Zatca.EInvoice.Models.Invoice.Contract.setb
- AdditionalDocumentReferences.get>Zatca.EInvoice.Models.Invoice.AdditionalDocumentReferences.getb
- AdditionalDocumentReferences.set>Zatca.EInvoice.Models.Invoice.AdditionalDocumentReferences.setX
-AccountingSupplierParty.get9Zatca.EInvoice.Models.Invoice.AccountingSupplierParty.getX
-AccountingSupplierParty.set9Zatca.EInvoice.Models.Invoice.AccountingSupplierParty.setX
-AccountingCustomerParty.get9Zatca.EInvoice.Models.Invoice.AccountingCustomerParty.getX
-AccountingCustomerParty.set9Zatca.EInvoice.Models.Invoice.AccountingCustomerParty.set:
-Delivery.get*Zatca.EInvoice.Models.Invoice.Delivery.get:
-Delivery.set*Zatca.EInvoice.Models.Invoice.Delivery.setB
-PaymentMeans.get.Zatca.EInvoice.Models.Invoice.PaymentMeans.getB
-PaymentMeans.set.Zatca.EInvoice.Models.Invoice.PaymentMeans.setJ
-AllowanceCharges.get2Zatca.EInvoice.Models.Invoice.AllowanceCharges.getJ
-AllowanceCharges.set2Zatca.EInvoice.Models.Invoice.AllowanceCharges.set:
-TaxTotal.get*Zatca.EInvoice.Models.Invoice.TaxTotal.get:
-TaxTotal.set*Zatca.EInvoice.Models.Invoice.TaxTotal.setN
-LegalMonetaryTotal.get4Zatca.EInvoice.Models.Invoice.LegalMonetaryTotal.getN
-LegalMonetaryTotal.set4Zatca.EInvoice.Models.Invoice.LegalMonetaryTotal.setB
-InvoiceLines.get.Zatca.EInvoice.Models.Invoice.InvoiceLines.getB
-InvoiceLines.set.Zatca.EInvoice.Models.Invoice.InvoiceLines.set<
-Signature.get+Zatca.EInvoice.Models.Invoice.Signature.get<
-Signature.set+Zatca.EInvoice.Models.Invoice.Signature.set¢
-$Zatca.EInvoice.Mappers.InvoiceMapperobject%Zatca.EInvoice.Mappers.IInvoiceMapperØ
-CMapToInvoice(System.Collections.Generic.Dictionary<string, object>)hZatca.EInvoice.Mappers.InvoiceMapper.MapToInvoice(System.Collections.Generic.Dictionary<string, object>)Q
-MapToInvoice(string)9Zatca.EInvoice.Mappers.InvoiceMapper.MapToInvoice(string)}
-*MapToInvoice(System.Text.Json.JsonElement)OZatca.EInvoice.Mappers.InvoiceMapper.MapToInvoice(System.Text.Json.JsonElement)G
-InvoiceMapper()4Zatca.EInvoice.Mappers.InvoiceMapper.InvoiceMapper()ç
-!Zatca.EInvoice.Models.InvoiceLineobject@
-InvoiceLine()/Zatca.EInvoice.Models.InvoiceLine.InvoiceLine()2
-Id.get(Zatca.EInvoice.Models.InvoiceLine.Id.get2
-Id.set(Zatca.EInvoice.Models.InvoiceLine.Id.setN
-InvoicedQuantity.get6Zatca.EInvoice.Models.InvoiceLine.InvoicedQuantity.getN
-InvoicedQuantity.set6Zatca.EInvoice.Models.InvoiceLine.InvoicedQuantity.setT
-LineExtensionAmount.get9Zatca.EInvoice.Models.InvoiceLine.LineExtensionAmount.getT
-LineExtensionAmount.set9Zatca.EInvoice.Models.InvoiceLine.LineExtensionAmount.setN
-AllowanceCharges.get6Zatca.EInvoice.Models.InvoiceLine.AllowanceCharges.getN
-AllowanceCharges.set6Zatca.EInvoice.Models.InvoiceLine.AllowanceCharges.setP
-DocumentReference.get7Zatca.EInvoice.Models.InvoiceLine.DocumentReference.getP
-DocumentReference.set7Zatca.EInvoice.Models.InvoiceLine.DocumentReference.set>
-UnitCode.get.Zatca.EInvoice.Models.InvoiceLine.UnitCode.get>
-UnitCode.set.Zatca.EInvoice.Models.InvoiceLine.UnitCode.set>
-TaxTotal.get.Zatca.EInvoice.Models.InvoiceLine.TaxTotal.get>
-TaxTotal.set.Zatca.EInvoice.Models.InvoiceLine.TaxTotal.setH
-InvoicePeriod.get3Zatca.EInvoice.Models.InvoiceLine.InvoicePeriod.getH
-InvoicePeriod.set3Zatca.EInvoice.Models.InvoiceLine.InvoicePeriod.set6
-Note.get*Zatca.EInvoice.Models.InvoiceLine.Note.get6
-Note.set*Zatca.EInvoice.Models.InvoiceLine.Note.set6
-Item.get*Zatca.EInvoice.Models.InvoiceLine.Item.get6
-Item.set*Zatca.EInvoice.Models.InvoiceLine.Item.set8
-	Price.get+Zatca.EInvoice.Models.InvoiceLine.Price.get8
-	Price.set+Zatca.EInvoice.Models.InvoiceLine.Price.setR
-AccountingCostCode.get8Zatca.EInvoice.Models.InvoiceLine.AccountingCostCode.getR
-AccountingCostCode.set8Zatca.EInvoice.Models.InvoiceLine.AccountingCostCode.setJ
-AccountingCost.get4Zatca.EInvoice.Models.InvoiceLine.AccountingCost.getJ
-AccountingCost.set4Zatca.EInvoice.Models.InvoiceLine.AccountingCost.set◊
-!Zatca.EInvoice.Models.InvoiceTypeobjectN
-GetInvoiceTypeCode()6Zatca.EInvoice.Models.InvoiceType.GetInvoiceTypeCode()P
-GetInvoiceTypeValue()7Zatca.EInvoice.Models.InvoiceType.GetInvoiceTypeValue()X
-GetBaseInvoiceTypeValue();Zatca.EInvoice.Models.InvoiceType.GetBaseInvoiceTypeValue()X
-ApplyInvoiceFlags(string);Zatca.EInvoice.Models.InvoiceType.ApplyInvoiceFlags(string):
-
-Validate(),Zatca.EInvoice.Models.InvoiceType.Validate()@
-InvoiceType()/Zatca.EInvoice.Models.InvoiceType.InvoiceType()<
-Invoice.get-Zatca.EInvoice.Models.InvoiceType.Invoice.get<
-Invoice.set-Zatca.EInvoice.Models.InvoiceType.Invoice.setJ
-InvoiceSubType.get4Zatca.EInvoice.Models.InvoiceType.InvoiceSubType.getJ
-InvoiceSubType.set4Zatca.EInvoice.Models.InvoiceType.InvoiceSubType.setL
-IsExportInvoice.get5Zatca.EInvoice.Models.InvoiceType.IsExportInvoice.getL
-IsExportInvoice.set5Zatca.EInvoice.Models.InvoiceType.IsExportInvoice.setF
-IsThirdParty.get2Zatca.EInvoice.Models.InvoiceType.IsThirdParty.getF
-IsThirdParty.set2Zatca.EInvoice.Models.InvoiceType.IsThirdParty.set@
-IsNominal.get/Zatca.EInvoice.Models.InvoiceType.IsNominal.get@
-IsNominal.set/Zatca.EInvoice.Models.InvoiceType.IsNominal.set@
-IsSummary.get/Zatca.EInvoice.Models.InvoiceType.IsSummary.get@
-IsSummary.set/Zatca.EInvoice.Models.InvoiceType.IsSummary.setF
-IsSelfBilled.get2Zatca.EInvoice.Models.InvoiceType.IsSelfBilled.getF
-IsSelfBilled.set2Zatca.EInvoice.Models.InvoiceType.IsSelfBilled.setä
-&Zatca.EInvoice.Signing.QrCodeGeneratorobjectÀ
-PQrCodeGenerator(System.Collections.Generic.IEnumerable<Zatca.EInvoice.Tags.Tag>)wZatca.EInvoice.Signing.QrCodeGenerator.QrCodeGenerator(System.Collections.Generic.IEnumerable<Zatca.EInvoice.Tags.Tag>)A
-EncodeTlv()2Zatca.EInvoice.Signing.QrCodeGenerator.EncodeTlv()G
-EncodeBase64()5Zatca.EInvoice.Signing.QrCodeGenerator.EncodeBase64()ç
-)Zatca.EInvoice.Models.Financial.TaxSchemeobjectD
-TaxScheme()5Zatca.EInvoice.Models.Financial.TaxScheme.TaxScheme():
-Id.get0Zatca.EInvoice.Models.Financial.TaxScheme.Id.get:
-Id.set0Zatca.EInvoice.Models.Financial.TaxScheme.Id.setL
-TaxTypeCode.get9Zatca.EInvoice.Models.Financial.TaxScheme.TaxTypeCode.getL
-TaxTypeCode.set9Zatca.EInvoice.Models.Financial.TaxScheme.TaxTypeCode.set>
-Name.get2Zatca.EInvoice.Models.Financial.TaxScheme.Name.get>
-Name.set2Zatca.EInvoice.Models.Financial.TaxScheme.Name.set£]
-#Zatca.EInvoice.Xml.InvoiceGeneratorobjectX
-InvoiceGenerator(string)<Zatca.EInvoice.Xml.InvoiceGenerator.InvoiceGenerator(string)¶
-?Generate(System.Collections.Generic.Dictionary<string, object>)cZatca.EInvoice.Xml.InvoiceGenerator.Generate(System.Collections.Generic.Dictionary<string, object>)¬
-MGenerateInvoiceElement(System.Collections.Generic.Dictionary<string, object>)qZatca.EInvoice.Xml.InvoiceGenerator.GenerateInvoiceElement(System.Collections.Generic.Dictionary<string, object>)Î
-aAddUblExtensions(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ÖZatca.EInvoice.Xml.InvoiceGenerator.AddUblExtensions(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Î
-aAddBasicElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ÖZatca.EInvoice.Xml.InvoiceGenerator.AddBasicElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Ô
-cAddInvoiceTypeCode(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)áZatca.EInvoice.Xml.InvoiceGenerator.AddInvoiceTypeCode(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Á
-_AddNoteElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ÉZatca.EInvoice.Xml.InvoiceGenerator.AddNoteElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Ò
-dAddCurrencyElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)àZatca.EInvoice.Xml.InvoiceGenerator.AddCurrencyElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Û
-eAddReferenceElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)âZatca.EInvoice.Xml.InvoiceGenerator.AddReferenceElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Î
-aAddPartyElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ÖZatca.EInvoice.Xml.InvoiceGenerator.AddPartyElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ı
-fAddDeliveryAndPayment(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)äZatca.EInvoice.Xml.InvoiceGenerator.AddDeliveryAndPayment(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Ò
-dAddAllowanceCharges(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)àZatca.EInvoice.Xml.InvoiceGenerator.AddAllowanceCharges(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)˘
-hAddTaxAndMonetaryTotals(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)åZatca.EInvoice.Xml.InvoiceGenerator.AddTaxAndMonetaryTotals(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Ò
-dAddTaxAmountElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)àZatca.EInvoice.Xml.InvoiceGenerator.AddTaxAmountElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)È
-`AddInvoiceLines(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ÑZatca.EInvoice.Xml.InvoiceGenerator.AddInvoiceLines(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)º
-…AddOptionalElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>, string, System.Func<System.Collections.Generic.Dictionary<string, object>, System.Xml.Linq.XElement>)ÌZatca.EInvoice.Xml.InvoiceGenerator.AddOptionalElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>, string, System.Func<System.Collections.Generic.Dictionary<string, object>, System.Xml.Linq.XElement>)∂
-∆AddListElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>, string, System.Func<System.Collections.Generic.Dictionary<string, object>, System.Xml.Linq.XElement>)ÍZatca.EInvoice.Xml.InvoiceGenerator.AddListElements(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>, string, System.Func<System.Collections.Generic.Dictionary<string, object>, System.Xml.Linq.XElement>)V
-GenerateUBLExtensions();Zatca.EInvoice.Xml.InvoiceGenerator.GenerateUBLExtensions()¬
-MGenerateOrderReference(System.Collections.Generic.Dictionary<string, object>)qZatca.EInvoice.Xml.InvoiceGenerator.GenerateOrderReference(System.Collections.Generic.Dictionary<string, object>)∆
-OGenerateBillingReference(System.Collections.Generic.Dictionary<string, object>)sZatca.EInvoice.Xml.InvoiceGenerator.GenerateBillingReference(System.Collections.Generic.Dictionary<string, object>)»
-PGenerateContractReference(System.Collections.Generic.Dictionary<string, object>)tZatca.EInvoice.Xml.InvoiceGenerator.GenerateContractReference(System.Collections.Generic.Dictionary<string, object>)‹
-ZGenerateAdditionalDocumentReference(System.Collections.Generic.Dictionary<string, object>)~Zatca.EInvoice.Xml.InvoiceGenerator.GenerateAdditionalDocumentReference(System.Collections.Generic.Dictionary<string, object>)∏
-HGenerateSignature(System.Collections.Generic.Dictionary<string, object>)lZatca.EInvoice.Xml.InvoiceGenerator.GenerateSignature(System.Collections.Generic.Dictionary<string, object>)‘
-VGenerateAccountingSupplierParty(System.Collections.Generic.Dictionary<string, object>)zZatca.EInvoice.Xml.InvoiceGenerator.GenerateAccountingSupplierParty(System.Collections.Generic.Dictionary<string, object>)‘
-VGenerateAccountingCustomerParty(System.Collections.Generic.Dictionary<string, object>)zZatca.EInvoice.Xml.InvoiceGenerator.GenerateAccountingCustomerParty(System.Collections.Generic.Dictionary<string, object>)∞
-DGenerateParty(System.Collections.Generic.Dictionary<string, object>)hZatca.EInvoice.Xml.InvoiceGenerator.GenerateParty(System.Collections.Generic.Dictionary<string, object>)∫
-àAddPartyIdentification(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)¨Zatca.EInvoice.Xml.InvoiceGenerator.AddPartyIdentification(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)¨
-ÅAddPartyAddress(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)•Zatca.EInvoice.Xml.InvoiceGenerator.AddPartyAddress(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)∞
-ÉAddPartyTaxScheme(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)ßZatca.EInvoice.Xml.InvoiceGenerator.AddPartyTaxScheme(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)º
-JGetPartyTaxSchemeId(System.Collections.Generic.Dictionary<string, object>)nZatca.EInvoice.Xml.InvoiceGenerator.GetPartyTaxSchemeId(System.Collections.Generic.Dictionary<string, object>)¥
-ÖAddPartyLegalEntity(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)©Zatca.EInvoice.Xml.InvoiceGenerator.AddPartyLegalEntity(System.Collections.Generic.List<System.Xml.Linq.XElement>, System.Collections.Generic.Dictionary<string, object>)¥
-FGenerateAddress(System.Collections.Generic.Dictionary<string, object>)jZatca.EInvoice.Xml.InvoiceGenerator.GenerateAddress(System.Collections.Generic.Dictionary<string, object>)∂
-GGenerateDelivery(System.Collections.Generic.Dictionary<string, object>)kZatca.EInvoice.Xml.InvoiceGenerator.GenerateDelivery(System.Collections.Generic.Dictionary<string, object>)æ
-KGeneratePaymentMeans(System.Collections.Generic.Dictionary<string, object>)oZatca.EInvoice.Xml.InvoiceGenerator.GeneratePaymentMeans(System.Collections.Generic.Dictionary<string, object>)ƒ
-NGenerateAllowanceCharge(System.Collections.Generic.Dictionary<string, object>)rZatca.EInvoice.Xml.InvoiceGenerator.GenerateAllowanceCharge(System.Collections.Generic.Dictionary<string, object>)â
-pAddAllowanceChargeTaxCategories(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)îZatca.EInvoice.Xml.InvoiceGenerator.AddAllowanceChargeTaxCategories(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)⁄
-YGenerateAllowanceChargeTaxCategory(System.Collections.Generic.Dictionary<string, object>)}Zatca.EInvoice.Xml.InvoiceGenerator.GenerateAllowanceChargeTaxCategory(System.Collections.Generic.Dictionary<string, object>)Å
-lAddTaxSchemeElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>, string)êZatca.EInvoice.Xml.InvoiceGenerator.AddTaxSchemeElement(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>, string)∂
-GGenerateTaxTotal(System.Collections.Generic.Dictionary<string, object>)kZatca.EInvoice.Xml.InvoiceGenerator.GenerateTaxTotal(System.Collections.Generic.Dictionary<string, object>)º
-JGenerateTaxSubTotal(System.Collections.Generic.Dictionary<string, object>)nZatca.EInvoice.Xml.InvoiceGenerator.GenerateTaxSubTotal(System.Collections.Generic.Dictionary<string, object>)˜
-gAddSubTotalTaxCategory(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ãZatca.EInvoice.Xml.InvoiceGenerator.AddSubTotalTaxCategory(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)⁄
-YGenerateSubTotalTaxCategoryElement(System.Collections.Generic.Dictionary<string, object>)}Zatca.EInvoice.Xml.InvoiceGenerator.GenerateSubTotalTaxCategoryElement(System.Collections.Generic.Dictionary<string, object>) 
-QGenerateLegalMonetaryTotal(System.Collections.Generic.Dictionary<string, object>)uZatca.EInvoice.Xml.InvoiceGenerator.GenerateLegalMonetaryTotal(System.Collections.Generic.Dictionary<string, object>)º
-JGenerateInvoiceLine(System.Collections.Generic.Dictionary<string, object>)nZatca.EInvoice.Xml.InvoiceGenerator.GenerateInvoiceLine(System.Collections.Generic.Dictionary<string, object>)È
-`AddLineTaxTotal(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)ÑZatca.EInvoice.Xml.InvoiceGenerator.AddLineTaxTotal(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)Æ
-CGenerateItem(System.Collections.Generic.Dictionary<string, object>)gZatca.EInvoice.Xml.InvoiceGenerator.GenerateItem(System.Collections.Generic.Dictionary<string, object>)ˇ
-kAddClassifiedTaxCategories(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)èZatca.EInvoice.Xml.InvoiceGenerator.AddClassifiedTaxCategories(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)–
-TGenerateClassifiedTaxCategory(System.Collections.Generic.Dictionary<string, object>)xZatca.EInvoice.Xml.InvoiceGenerator.GenerateClassifiedTaxCategory(System.Collections.Generic.Dictionary<string, object>)Ô
-cAddSimpleTaxScheme(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)áZatca.EInvoice.Xml.InvoiceGenerator.AddSimpleTaxScheme(System.Xml.Linq.XElement, System.Collections.Generic.Dictionary<string, object>)∞
-DGeneratePrice(System.Collections.Generic.Dictionary<string, object>)hZatca.EInvoice.Xml.InvoiceGenerator.GeneratePrice(System.Collections.Generic.Dictionary<string, object>)X
-TryGetDictionary(object)<Zatca.EInvoice.Xml.InvoiceGenerator.TryGetDictionary(object)L
-TryGetList(object)6Zatca.EInvoice.Xml.InvoiceGenerator.TryGetList(object)í
-5JsonElementToDictionary(System.Text.Json.JsonElement)YZatca.EInvoice.Xml.InvoiceGenerator.JsonElementToDictionary(System.Text.Json.JsonElement)Ü
-/JsonElementToList(System.Text.Json.JsonElement)SZatca.EInvoice.Xml.InvoiceGenerator.JsonElementToList(System.Text.Json.JsonElement)¶
-*Zatca.EInvoice.Validation.InvoiceValidatorobject+Zatca.EInvoice.Validation.IInvoiceValidator≠
-?Validate(System.Collections.Generic.Dictionary<string, object>)jZatca.EInvoice.Validation.InvoiceValidator.Validate(System.Collections.Generic.Dictionary<string, object>)Ω
-GValidateAndThrow(System.Collections.Generic.Dictionary<string, object>)rZatca.EInvoice.Validation.InvoiceValidator.ValidateAndThrow(System.Collections.Generic.Dictionary<string, object>)S
-InvoiceValidator()=Zatca.EInvoice.Validation.InvoiceValidator.InvoiceValidator()≠
-1Zatca.EInvoice.Models.Items.ClassifiedTaxCategoryobjectJ
-
-Validate()<Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Validate()d
-ClassifiedTaxCategory()IZatca.EInvoice.Models.Items.ClassifiedTaxCategory.ClassifiedTaxCategory()B
-Id.get8Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Id.getB
-Id.set8Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Id.setF
-Name.get:Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Name.getF
-Name.set:Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Name.setL
-Percent.get=Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Percent.getL
-Percent.set=Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.Percent.setP
-TaxScheme.get?Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.TaxScheme.getP
-TaxScheme.set?Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.TaxScheme.setN
-SchemeID.get>Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.SchemeID.getN
-SchemeID.set>Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.SchemeID.setR
-SchemeName.get@Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.SchemeName.getR
-SchemeName.set@Zatca.EInvoice.Models.Items.ClassifiedTaxCategory.SchemeName.setb
-TaxExemptionReason.getHZatca.EInvoice.Models.Items.ClassifiedTaxCategory.TaxExemptionReason.getb
-TaxExemptionReason.setHZatca.EInvoice.Models.Items.ClassifiedTaxCategory.TaxExemptionReason.setj
-TaxExemptionReasonCode.getLZatca.EInvoice.Models.Items.ClassifiedTaxCategory.TaxExemptionReasonCode.getj
-TaxExemptionReasonCode.setLZatca.EInvoice.Models.Items.ClassifiedTaxCategory.TaxExemptionReasonCode.set∑
-+Zatca.EInvoice.Models.Financial.TaxSubTotalobjectD
-
-Validate()6Zatca.EInvoice.Models.Financial.TaxSubTotal.Validate()J
-TaxSubTotal()9Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxSubTotal()R
-TaxableAmount.get=Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxableAmount.getR
-TaxableAmount.set=Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxableAmount.setJ
-TaxAmount.get9Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxAmount.getJ
-TaxAmount.set9Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxAmount.setN
-TaxCategory.get;Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxCategory.getN
-TaxCategory.set;Zatca.EInvoice.Models.Financial.TaxSubTotal.TaxCategory.setF
-Percent.get7Zatca.EInvoice.Models.Financial.TaxSubTotal.Percent.getF
-Percent.set7Zatca.EInvoice.Models.Financial.TaxSubTotal.Percent.set%
-#Zatca.EInvoice.Xml.IXmlSerializable’
- Zatca.EInvoice.Models.Items.Itemobject1
-Item()'Zatca.EInvoice.Models.Items.Item.Item()C
-Description.get0Zatca.EInvoice.Models.Items.Item.Description.getC
-Description.set0Zatca.EInvoice.Models.Items.Item.Description.set5
-Name.get)Zatca.EInvoice.Models.Items.Item.Name.get5
-Name.set)Zatca.EInvoice.Models.Items.Item.Name.seta
-StandardItemIdentification.get?Zatca.EInvoice.Models.Items.Item.StandardItemIdentification.geta
-StandardItemIdentification.set?Zatca.EInvoice.Models.Items.Item.StandardItemIdentification.set]
-BuyersItemIdentification.get=Zatca.EInvoice.Models.Items.Item.BuyersItemIdentification.get]
-BuyersItemIdentification.set=Zatca.EInvoice.Models.Items.Item.BuyersItemIdentification.set_
-SellersItemIdentification.get>Zatca.EInvoice.Models.Items.Item.SellersItemIdentification.get_
-SellersItemIdentification.set>Zatca.EInvoice.Models.Items.Item.SellersItemIdentification.set[
-ClassifiedTaxCategories.get<Zatca.EInvoice.Models.Items.Item.ClassifiedTaxCategories.get[
-ClassifiedTaxCategories.set<Zatca.EInvoice.Models.Items.Item.ClassifiedTaxCategories.setÚ
-*Zatca.EInvoice.Validation.ValidationResultobjectS
-ValidationResult()=Zatca.EInvoice.Validation.ValidationResult.ValidationResult()O
-AddError(string);Zatca.EInvoice.Validation.ValidationResult.AddError(string)E
-IsValid.get6Zatca.EInvoice.Validation.ValidationResult.IsValid.getE
-IsValid.set6Zatca.EInvoice.Validation.ValidationResult.IsValid.setC
-
-Errors.get5Zatca.EInvoice.Validation.ValidationResult.Errors.getC
-
-Errors.set5Zatca.EInvoice.Validation.ValidationResult.Errors.set¥
-(Zatca.EInvoice.Models.Financial.TaxTotalobject£
-;AddTaxSubTotal(Zatca.EInvoice.Models.Financial.TaxSubTotal)dZatca.EInvoice.Models.Financial.TaxTotal.AddTaxSubTotal(Zatca.EInvoice.Models.Financial.TaxSubTotal)A
-
-Validate()3Zatca.EInvoice.Models.Financial.TaxTotal.Validate()A
-
-TaxTotal()3Zatca.EInvoice.Models.Financial.TaxTotal.TaxTotal()G
-TaxAmount.get6Zatca.EInvoice.Models.Financial.TaxTotal.TaxAmount.getG
-TaxAmount.set6Zatca.EInvoice.Models.Financial.TaxTotal.TaxAmount.setQ
-RoundingAmount.get;Zatca.EInvoice.Models.Financial.TaxTotal.RoundingAmount.getQ
-RoundingAmount.set;Zatca.EInvoice.Models.Financial.TaxTotal.RoundingAmount.setM
-TaxSubTotals.get9Zatca.EInvoice.Models.Financial.TaxTotal.TaxSubTotals.getM
-TaxSubTotals.set9Zatca.EInvoice.Models.Financial.TaxTotal.TaxSubTotals.setÇ
-'Zatca.EInvoice.Signing.SignatureBuilderobject»
-NSetCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)vZatca.EInvoice.Signing.SignatureBuilder.SetCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)\
-SetInvoiceDigest(string)@Zatca.EInvoice.Signing.SignatureBuilder.SetInvoiceDigest(string)^
-SetSignatureValue(string)AZatca.EInvoice.Signing.SignatureBuilder.SetSignatureValue(string)R
-BuildSignatureXml();Zatca.EInvoice.Signing.SignatureBuilder.BuildSignatureXml()∫
-GCreateUblDocumentSignatures(string, string, System.Xml.Linq.XNamespace)oZatca.EInvoice.Signing.SignatureBuilder.CreateUblDocumentSignatures(string, string, System.Xml.Linq.XNamespace)n
-!CreateDsSignature(string, string)IZatca.EInvoice.Signing.SignatureBuilder.CreateDsSignature(string, string)\
-CreateSignedInfo(string)@Zatca.EInvoice.Signing.SignatureBuilder.CreateSignedInfo(string)\
-CreateInvoiceReference()@Zatca.EInvoice.Signing.SignatureBuilder.CreateInvoiceReference()J
-CreateKeyInfo()7Zatca.EInvoice.Signing.SignatureBuilder.CreateKeyInfo()X
-CreateDsObject(string)>Zatca.EInvoice.Signing.SignatureBuilder.CreateDsObject(string)†
-:CreateSignedProperties(string, System.Xml.Linq.XNamespace)bZatca.EInvoice.Signing.SignatureBuilder.CreateSignedProperties(string, System.Xml.Linq.XNamespace)n
-!CreateSignedPropertiesXml(string)IZatca.EInvoice.Signing.SignatureBuilder.CreateSignedPropertiesXml(string)P
-SignatureBuilder():Zatca.EInvoice.Signing.SignatureBuilder.SignatureBuilder()Ÿ
-!Zatca.EInvoice.Models.Items.Priceobject4
-Price())Zatca.EInvoice.Models.Items.Price.Price():
-
-Validate(),Zatca.EInvoice.Models.Items.Price.Validate()D
-PriceAmount.get1Zatca.EInvoice.Models.Items.Price.PriceAmount.getD
-PriceAmount.set1Zatca.EInvoice.Models.Items.Price.PriceAmount.setF
-BaseQuantity.get2Zatca.EInvoice.Models.Items.Price.BaseQuantity.getF
-BaseQuantity.set2Zatca.EInvoice.Models.Items.Price.BaseQuantity.set>
-UnitCode.get.Zatca.EInvoice.Models.Items.Price.UnitCode.get>
-UnitCode.set.Zatca.EInvoice.Models.Items.Price.UnitCode.setN
-AllowanceCharges.get6Zatca.EInvoice.Models.Items.Price.AllowanceCharges.getN
-AllowanceCharges.set6Zatca.EInvoice.Models.Items.Price.AllowanceCharges.set√
-
-<Zatca.EInvoice.Models.References.AdditionalDocumentReferenceobject{
-AdditionalDocumentReference()ZZatca.EInvoice.Models.References.AdditionalDocumentReference.AdditionalDocumentReference()M
-Id.getCZatca.EInvoice.Models.References.AdditionalDocumentReference.Id.getM
-Id.setCZatca.EInvoice.Models.References.AdditionalDocumentReference.Id.setQ
-UUID.getEZatca.EInvoice.Models.References.AdditionalDocumentReference.UUID.getQ
-UUID.setEZatca.EInvoice.Models.References.AdditionalDocumentReference.UUID.seta
-DocumentType.getMZatca.EInvoice.Models.References.AdditionalDocumentReference.DocumentType.geta
-DocumentType.setMZatca.EInvoice.Models.References.AdditionalDocumentReference.DocumentType.seti
-DocumentTypeCode.getQZatca.EInvoice.Models.References.AdditionalDocumentReference.DocumentTypeCode.geti
-DocumentTypeCode.setQZatca.EInvoice.Models.References.AdditionalDocumentReference.DocumentTypeCode.seto
-DocumentDescription.getTZatca.EInvoice.Models.References.AdditionalDocumentReference.DocumentDescription.geto
-DocumentDescription.setTZatca.EInvoice.Models.References.AdditionalDocumentReference.DocumentDescription.set]
-Attachment.getKZatca.EInvoice.Models.References.AdditionalDocumentReference.Attachment.get]
-Attachment.setKZatca.EInvoice.Models.References.AdditionalDocumentReference.Attachment.set’
-#Zatca.EInvoice.Models.Party.Addressobject:
-	Address()-Zatca.EInvoice.Models.Party.Address.Address()D
-StreetName.get2Zatca.EInvoice.Models.Party.Address.StreetName.getD
-StreetName.set2Zatca.EInvoice.Models.Party.Address.StreetName.setX
-AdditionalStreetName.get<Zatca.EInvoice.Models.Party.Address.AdditionalStreetName.getX
-AdditionalStreetName.set<Zatca.EInvoice.Models.Party.Address.AdditionalStreetName.setL
-BuildingNumber.get6Zatca.EInvoice.Models.Party.Address.BuildingNumber.getL
-BuildingNumber.set6Zatca.EInvoice.Models.Party.Address.BuildingNumber.setT
-PlotIdentification.get:Zatca.EInvoice.Models.Party.Address.PlotIdentification.getT
-PlotIdentification.set:Zatca.EInvoice.Models.Party.Address.PlotIdentification.set@
-CityName.get0Zatca.EInvoice.Models.Party.Address.CityName.get@
-CityName.set0Zatca.EInvoice.Models.Party.Address.CityName.setD
-PostalZone.get2Zatca.EInvoice.Models.Party.Address.PostalZone.getD
-PostalZone.set2Zatca.EInvoice.Models.Party.Address.PostalZone.set>
-Country.get/Zatca.EInvoice.Models.Party.Address.Country.get>
-Country.set/Zatca.EInvoice.Models.Party.Address.Country.setP
-CountrySubentity.get8Zatca.EInvoice.Models.Party.Address.CountrySubentity.getP
-CountrySubentity.set8Zatca.EInvoice.Models.Party.Address.CountrySubentity.setV
-CitySubdivisionName.get;Zatca.EInvoice.Models.Party.Address.CitySubdivisionName.getV
-CitySubdivisionName.set;Zatca.EInvoice.Models.Party.Address.CitySubdivisionName.set«
-Zatca.EInvoice.Pdf.PartyPdfDataobject@
-PartyPdfData().Zatca.EInvoice.Pdf.PartyPdfData.PartyPdfData()L
-RegistrationName.get4Zatca.EInvoice.Pdf.PartyPdfData.RegistrationName.getL
-RegistrationName.set4Zatca.EInvoice.Pdf.PartyPdfData.RegistrationName.set6
-	TaxId.get)Zatca.EInvoice.Pdf.PartyPdfData.TaxId.get6
-	TaxId.set)Zatca.EInvoice.Pdf.PartyPdfData.TaxId.setR
-PartyIdentification.get7Zatca.EInvoice.Pdf.PartyPdfData.PartyIdentification.getR
-PartyIdentification.set7Zatca.EInvoice.Pdf.PartyPdfData.PartyIdentification.setV
-PartyIdentificationId.get9Zatca.EInvoice.Pdf.PartyPdfData.PartyIdentificationId.getV
-PartyIdentificationId.set9Zatca.EInvoice.Pdf.PartyPdfData.PartyIdentificationId.set:
-Address.get+Zatca.EInvoice.Pdf.PartyPdfData.Address.get:
-Address.set+Zatca.EInvoice.Pdf.PartyPdfData.Address.set>
-TaxScheme.get-Zatca.EInvoice.Pdf.PartyPdfData.TaxScheme.get>
-TaxScheme.set-Zatca.EInvoice.Pdf.PartyPdfData.TaxScheme.set•
-'Zatca.EInvoice.Models.Party.LegalEntityobjectF
-LegalEntity()5Zatca.EInvoice.Models.Party.LegalEntity.LegalEntity()T
-RegistrationName.get<Zatca.EInvoice.Models.Party.LegalEntity.RegistrationName.getT
-RegistrationName.set<Zatca.EInvoice.Models.Party.LegalEntity.RegistrationName.setﬁ
-+Zatca.EInvoice.Models.References.AttachmentobjectÇ
-)SetBase64Content(string, string, string?)UZatca.EInvoice.Models.References.Attachment.SetBase64Content(string, string, string?)D
-
-Validate()6Zatca.EInvoice.Models.References.Attachment.Validate()H
-Attachment()8Zatca.EInvoice.Models.References.Attachment.Attachment()H
-FilePath.get8Zatca.EInvoice.Models.References.Attachment.FilePath.getH
-FilePath.set8Zatca.EInvoice.Models.References.Attachment.FilePath.setZ
-ExternalReference.getAZatca.EInvoice.Models.References.Attachment.ExternalReference.getZ
-ExternalReference.setAZatca.EInvoice.Models.References.Attachment.ExternalReference.setR
-Base64Content.get=Zatca.EInvoice.Models.References.Attachment.Base64Content.getR
-Base64Content.set=Zatca.EInvoice.Models.References.Attachment.Base64Content.setp
- EmbeddedDocumentBinaryObject.getLZatca.EInvoice.Models.References.Attachment.EmbeddedDocumentBinaryObject.getp
- EmbeddedDocumentBinaryObject.setLZatca.EInvoice.Models.References.Attachment.EmbeddedDocumentBinaryObject.setH
-FileName.get8Zatca.EInvoice.Models.References.Attachment.FileName.getH
-FileName.set8Zatca.EInvoice.Models.References.Attachment.FileName.setH
-MimeType.get8Zatca.EInvoice.Models.References.Attachment.MimeType.getH
-MimeType.set8Zatca.EInvoice.Models.References.Attachment.MimeType.setH
-MimeCode.get8Zatca.EInvoice.Models.References.Attachment.MimeCode.getH
-MimeCode.set8Zatca.EInvoice.Models.References.Attachment.MimeCode.setü
-1Zatca.EInvoice.Models.References.BillingReferenceobjectZ
-BillingReference()DZatca.EInvoice.Models.References.BillingReference.BillingReference()B
-Id.get8Zatca.EInvoice.Models.References.BillingReference.Id.getB
-Id.set8Zatca.EInvoice.Models.References.BillingReference.Id.set£
-!Zatca.EInvoice.Pdf.AddressPdfDataobjectF
-AddressPdfData()2Zatca.EInvoice.Pdf.AddressPdfData.AddressPdfData():
-
-Street.get,Zatca.EInvoice.Pdf.AddressPdfData.Street.get:
-
-Street.set,Zatca.EInvoice.Pdf.AddressPdfData.Street.setJ
-BuildingNumber.get4Zatca.EInvoice.Pdf.AddressPdfData.BuildingNumber.getJ
-BuildingNumber.set4Zatca.EInvoice.Pdf.AddressPdfData.BuildingNumber.setT
-CitySubdivisionName.get9Zatca.EInvoice.Pdf.AddressPdfData.CitySubdivisionName.getT
-CitySubdivisionName.set9Zatca.EInvoice.Pdf.AddressPdfData.CitySubdivisionName.set6
-City.get*Zatca.EInvoice.Pdf.AddressPdfData.City.get6
-City.set*Zatca.EInvoice.Pdf.AddressPdfData.City.setB
-PostalZone.get0Zatca.EInvoice.Pdf.AddressPdfData.PostalZone.getB
-PostalZone.set0Zatca.EInvoice.Pdf.AddressPdfData.PostalZone.set<
-Country.get-Zatca.EInvoice.Pdf.AddressPdfData.Country.get<
-Country.set-Zatca.EInvoice.Pdf.AddressPdfData.Country.setÂ
-*Zatca.EInvoice.Signing.SignedInvoiceResultobjectY
-SignedInvoiceResult()@Zatca.EInvoice.Signing.SignedInvoiceResult.SignedInvoiceResult()I
-SignedXml.get8Zatca.EInvoice.Signing.SignedInvoiceResult.SignedXml.getI
-SignedXml.set8Zatca.EInvoice.Signing.SignedInvoiceResult.SignedXml.set?
-Hash.get3Zatca.EInvoice.Signing.SignedInvoiceResult.Hash.get?
-Hash.set3Zatca.EInvoice.Signing.SignedInvoiceResult.Hash.setC
-
-QrCode.get5Zatca.EInvoice.Signing.SignedInvoiceResult.QrCode.getC
-
-QrCode.set5Zatca.EInvoice.Signing.SignedInvoiceResult.QrCode.setW
-DigitalSignature.get?Zatca.EInvoice.Signing.SignedInvoiceResult.DigitalSignature.getW
-DigitalSignature.set?Zatca.EInvoice.Signing.SignedInvoiceResult.DigitalSignature.set?
-Uuid.get3Zatca.EInvoice.Signing.SignedInvoiceResult.Uuid.get?
-Uuid.set3Zatca.EInvoice.Signing.SignedInvoiceResult.Uuid.setÔ
-)Zatca.EInvoice.Models.References.ContractobjectB
-
-Contract()4Zatca.EInvoice.Models.References.Contract.Contract():
-Id.get0Zatca.EInvoice.Models.References.Contract.Id.get:
-Id.set0Zatca.EInvoice.Models.References.Contract.Id.setÑ
-!Zatca.EInvoice.Api.ZatcaApiClientobject"Zatca.EInvoice.Api.IZatcaApiClientSystem.IDisposable∆
-PZatcaApiClient(Zatca.EInvoice.Api.ZatcaEnvironment, System.Net.Http.HttpClient?)rZatca.EInvoice.Api.ZatcaApiClient.ZatcaApiClient(Zatca.EInvoice.Api.ZatcaEnvironment, System.Net.Http.HttpClient?)V
-SetWarningHandling(bool):Zatca.EInvoice.Api.ZatcaApiClient.SetWarningHandling(bool)–
-URequestComplianceCertificateAsync(string, string, System.Threading.CancellationToken)wZatca.EInvoice.Api.ZatcaApiClient.RequestComplianceCertificateAsync(string, string, System.Threading.CancellationToken)˚
-jValidateInvoiceComplianceAsync(string, string, string, string, string, System.Threading.CancellationToken)åZatca.EInvoice.Api.ZatcaApiClient.ValidateInvoiceComplianceAsync(string, string, string, string, string, System.Threading.CancellationToken)‡
-]RequestProductionCertificateAsync(string, string, string, System.Threading.CancellationToken)Zatca.EInvoice.Api.ZatcaApiClient.RequestProductionCertificateAsync(string, string, string, System.Threading.CancellationToken)ı
-gSubmitClearanceInvoiceAsync(string, string, string, string, string, System.Threading.CancellationToken)âZatca.EInvoice.Api.ZatcaApiClient.SubmitClearanceInvoiceAsync(string, string, string, string, string, System.Threading.CancellationToken)ı
-gSubmitReportingInvoiceAsync(string, string, string, string, string, System.Threading.CancellationToken)âZatca.EInvoice.Api.ZatcaApiClient.SubmitReportingInvoiceAsync(string, string, string, string, string, System.Threading.CancellationToken)Ì
-cRenewProductionCertificateAsync(string, string, string, string, System.Threading.CancellationToken)ÖZatca.EInvoice.Api.ZatcaApiClient.RenewProductionCertificateAsync(string, string, string, string, System.Threading.CancellationToken)‹
-öSendRequestAsync<T>(System.Net.Http.HttpMethod, string, object, System.Collections.Generic.Dictionary<string, string>, System.Threading.CancellationToken)ºZatca.EInvoice.Api.ZatcaApiClient.SendRequestAsync<T>(System.Net.Http.HttpMethod, string, object, System.Collections.Generic.Dictionary<string, string>, System.Threading.CancellationToken)Ç
-.IsSuccessStatusCode(System.Net.HttpStatusCode)PZatca.EInvoice.Api.ZatcaApiClient.IsSuccessStatusCode(System.Net.HttpStatusCode)8
-	Dispose()+Zatca.EInvoice.Api.ZatcaApiClient.Dispose()@
-Dispose(bool)/Zatca.EInvoice.Api.ZatcaApiClient.Dispose(bool)D
-Environment.get1Zatca.EInvoice.Api.ZatcaApiClient.Environment.getD
-Environment.set1Zatca.EInvoice.Api.ZatcaApiClient.Environment.setÉ
-%Zatca.EInvoice.Pdf.InvoiceTypePdfDataobjectR
-InvoiceTypePdfData():Zatca.EInvoice.Pdf.InvoiceTypePdfData.InvoiceTypePdfData()B
-TypeCode.get2Zatca.EInvoice.Pdf.InvoiceTypePdfData.TypeCode.getB
-TypeCode.set2Zatca.EInvoice.Pdf.InvoiceTypePdfData.TypeCode.set:
-Name.get.Zatca.EInvoice.Pdf.InvoiceTypePdfData.Name.get:
-Name.set.Zatca.EInvoice.Pdf.InvoiceTypePdfData.Name.set€	
-%Zatca.EInvoice.Pdf.InvoiceLinePdfDataobjectR
-InvoiceLinePdfData():Zatca.EInvoice.Pdf.InvoiceLinePdfData.InvoiceLinePdfData()6
-Id.get,Zatca.EInvoice.Pdf.InvoiceLinePdfData.Id.get6
-Id.set,Zatca.EInvoice.Pdf.InvoiceLinePdfData.Id.setB
-Quantity.get2Zatca.EInvoice.Pdf.InvoiceLinePdfData.Quantity.getB
-Quantity.set2Zatca.EInvoice.Pdf.InvoiceLinePdfData.Quantity.setB
-UnitCode.get2Zatca.EInvoice.Pdf.InvoiceLinePdfData.UnitCode.getB
-UnitCode.set2Zatca.EInvoice.Pdf.InvoiceLinePdfData.UnitCode.setX
-LineExtensionAmount.get=Zatca.EInvoice.Pdf.InvoiceLinePdfData.LineExtensionAmount.getX
-LineExtensionAmount.set=Zatca.EInvoice.Pdf.InvoiceLinePdfData.LineExtensionAmount.set:
-Item.get.Zatca.EInvoice.Pdf.InvoiceLinePdfData.Item.get:
-Item.set.Zatca.EInvoice.Pdf.InvoiceLinePdfData.Item.set<
-	Price.get/Zatca.EInvoice.Pdf.InvoiceLinePdfData.Price.get<
-	Price.set/Zatca.EInvoice.Pdf.InvoiceLinePdfData.Price.setB
-TaxTotal.get2Zatca.EInvoice.Pdf.InvoiceLinePdfData.TaxTotal.getB
-TaxTotal.set2Zatca.EInvoice.Pdf.InvoiceLinePdfData.TaxTotal.setR
-AllowanceCharges.get:Zatca.EInvoice.Pdf.InvoiceLinePdfData.AllowanceCharges.getR
-AllowanceCharges.set:Zatca.EInvoice.Pdf.InvoiceLinePdfData.AllowanceCharges.setÎ
-Zatca.EInvoice.Pdf.PricePdfDataobject@
-PricePdfData().Zatca.EInvoice.Pdf.PricePdfData.PricePdfData()8
-
-Amount.get*Zatca.EInvoice.Pdf.PricePdfData.Amount.get8
-
-Amount.set*Zatca.EInvoice.Pdf.PricePdfData.Amount.setD
-BaseQuantity.get0Zatca.EInvoice.Pdf.PricePdfData.BaseQuantity.getD
-BaseQuantity.set0Zatca.EInvoice.Pdf.PricePdfData.BaseQuantity.setó
-)Zatca.EInvoice.Models.References.DeliveryobjectB
-
-Delivery()4Zatca.EInvoice.Models.References.Delivery.Delivery()Z
-ActualDeliveryDate.get@Zatca.EInvoice.Models.References.Delivery.ActualDeliveryDate.getZ
-ActualDeliveryDate.set@Zatca.EInvoice.Models.References.Delivery.ActualDeliveryDate.setZ
-LatestDeliveryDate.get@Zatca.EInvoice.Models.References.Delivery.LatestDeliveryDate.getZ
-LatestDeliveryDate.set@Zatca.EInvoice.Models.References.Delivery.LatestDeliveryDate.setV
-DeliveryLocation.get>Zatca.EInvoice.Models.References.Delivery.DeliveryLocation.getV
-DeliveryLocation.set>Zatca.EInvoice.Models.References.Delivery.DeliveryLocation.setÂ
-.Zatca.EInvoice.Models.References.InvoicePeriodobjectQ
-InvoicePeriod()>Zatca.EInvoice.Models.References.InvoicePeriod.InvoicePeriod()M
-StartDate.get<Zatca.EInvoice.Models.References.InvoicePeriod.StartDate.getM
-StartDate.set<Zatca.EInvoice.Models.References.InvoicePeriod.StartDate.setI
-EndDate.get:Zatca.EInvoice.Models.References.InvoicePeriod.EndDate.getI
-EndDate.set:Zatca.EInvoice.Models.References.InvoicePeriod.EndDate.setQ
-Description.get>Zatca.EInvoice.Models.References.InvoicePeriod.Description.getQ
-Description.set>Zatca.EInvoice.Models.References.InvoicePeriod.Description.setÖ
-Zatca.EInvoice.Pdf.ItemPdfDataobject=
-ItemPdfData(),Zatca.EInvoice.Pdf.ItemPdfData.ItemPdfData()3
-Name.get'Zatca.EInvoice.Pdf.ItemPdfData.Name.get3
-Name.set'Zatca.EInvoice.Pdf.ItemPdfData.Name.setA
-Description.get.Zatca.EInvoice.Pdf.ItemPdfData.Description.getA
-Description.set.Zatca.EInvoice.Pdf.ItemPdfData.Description.setU
-ClassifiedTaxCategory.get8Zatca.EInvoice.Pdf.ItemPdfData.ClassifiedTaxCategory.getU
-ClassifiedTaxCategory.set8Zatca.EInvoice.Pdf.ItemPdfData.ClassifiedTaxCategory.setÌ
-2Zatca.EInvoice.Models.References.DocumentReferenceobject]
-DocumentReference()FZatca.EInvoice.Models.References.DocumentReference.DocumentReference()C
-Id.get9Zatca.EInvoice.Models.References.DocumentReference.Id.getC
-Id.set9Zatca.EInvoice.Models.References.DocumentReference.Id.setG
-UUID.get;Zatca.EInvoice.Models.References.DocumentReference.UUID.getG
-UUID.set;Zatca.EInvoice.Models.References.DocumentReference.UUID.setQ
-IssueDate.get@Zatca.EInvoice.Models.References.DocumentReference.IssueDate.getQ
-IssueDate.set@Zatca.EInvoice.Models.References.DocumentReference.IssueDate.set_
-DocumentTypeCode.getGZatca.EInvoice.Models.References.DocumentReference.DocumentTypeCode.get_
-DocumentTypeCode.setGZatca.EInvoice.Models.References.DocumentReference.DocumentTypeCode.sete
-DocumentDescription.getJZatca.EInvoice.Models.References.DocumentReference.DocumentDescription.gete
-DocumentDescription.setJZatca.EInvoice.Models.References.DocumentReference.DocumentDescription.setø
-/Zatca.EInvoice.Models.References.OrderReferenceobjectT
-OrderReference()@Zatca.EInvoice.Models.References.OrderReference.OrderReference()@
-Id.get6Zatca.EInvoice.Models.References.OrderReference.Id.get@
-Id.set6Zatca.EInvoice.Models.References.OrderReference.Id.setT
-SalesOrderId.get@Zatca.EInvoice.Models.References.OrderReference.SalesOrderId.getT
-SalesOrderId.set@Zatca.EInvoice.Models.References.OrderReference.SalesOrderId.set≤
-0Zatca.EInvoice.Models.Signature.ExtensionContentobjectI
-
-Validate();Zatca.EInvoice.Models.Signature.ExtensionContent.Validate()Y
-ExtensionContent()CZatca.EInvoice.Models.Signature.ExtensionContent.ExtensionContent()g
-UblDocumentSignatures.getJZatca.EInvoice.Models.Signature.ExtensionContent.UblDocumentSignatures.getg
-UblDocumentSignatures.setJZatca.EInvoice.Models.Signature.ExtensionContent.UblDocumentSignatures.set€
--Zatca.EInvoice.Models.References.PaymentMeansobjectN
-PaymentMeans()<Zatca.EInvoice.Models.References.PaymentMeans.PaymentMeans()Z
-PaymentMeansCode.getBZatca.EInvoice.Models.References.PaymentMeans.PaymentMeansCode.getZ
-PaymentMeansCode.setBZatca.EInvoice.Models.References.PaymentMeans.PaymentMeansCode.setX
-InstructionNote.getAZatca.EInvoice.Models.References.PaymentMeans.InstructionNote.getX
-InstructionNote.setAZatca.EInvoice.Models.References.PaymentMeans.InstructionNote.setL
-PaymentId.get;Zatca.EInvoice.Models.References.PaymentMeans.PaymentId.getL
-PaymentId.set;Zatca.EInvoice.Models.References.PaymentMeans.PaymentId.setd
-PayeeFinancialAccount.getGZatca.EInvoice.Models.References.PaymentMeans.PayeeFinancialAccount.getd
-PayeeFinancialAccount.setGZatca.EInvoice.Models.References.PaymentMeans.PayeeFinancialAccount.setù
-"Zatca.EInvoice.Pdf.TaxTotalPdfDataobjectI
-TaxTotalPdfData()4Zatca.EInvoice.Pdf.TaxTotalPdfData.TaxTotalPdfData()A
-TaxAmount.get0Zatca.EInvoice.Pdf.TaxTotalPdfData.TaxAmount.getA
-TaxAmount.set0Zatca.EInvoice.Pdf.TaxTotalPdfData.TaxAmount.setK
-RoundingAmount.get5Zatca.EInvoice.Pdf.TaxTotalPdfData.RoundingAmount.getK
-RoundingAmount.set5Zatca.EInvoice.Pdf.TaxTotalPdfData.RoundingAmount.setA
-SubTotals.get0Zatca.EInvoice.Pdf.TaxTotalPdfData.SubTotals.getA
-SubTotals.set0Zatca.EInvoice.Pdf.TaxTotalPdfData.SubTotals.setù
-)Zatca.EInvoice.Models.Signature.SignatureobjectD
-Signature()5Zatca.EInvoice.Models.Signature.Signature.Signature():
-Id.get0Zatca.EInvoice.Models.Signature.Signature.Id.get:
-Id.set0Zatca.EInvoice.Models.Signature.Signature.Id.setT
-SignatureMethod.get=Zatca.EInvoice.Models.Signature.Signature.SignatureMethod.getT
-SignatureMethod.set=Zatca.EInvoice.Models.Signature.Signature.SignatureMethod.setø
-%Zatca.EInvoice.Pdf.TaxSubTotalPdfDataobjectR
-TaxSubTotalPdfData():Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxSubTotalPdfData()L
-TaxableAmount.get7Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxableAmount.getL
-TaxableAmount.set7Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxableAmount.setD
-TaxAmount.get3Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxAmount.getD
-TaxAmount.set3Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxAmount.setH
-TaxCategory.get5Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxCategory.getH
-TaxCategory.set5Zatca.EInvoice.Pdf.TaxSubTotalPdfData.TaxCategory.setÉ
-%Zatca.EInvoice.Pdf.TaxCategoryPdfDataobjectR
-TaxCategoryPdfData():Zatca.EInvoice.Pdf.TaxCategoryPdfData.TaxCategoryPdfData()6
-Id.get,Zatca.EInvoice.Pdf.TaxCategoryPdfData.Id.get6
-Id.set,Zatca.EInvoice.Pdf.TaxCategoryPdfData.Id.set@
-Percent.get1Zatca.EInvoice.Pdf.TaxCategoryPdfData.Percent.get@
-Percent.set1Zatca.EInvoice.Pdf.TaxCategoryPdfData.Percent.setD
-TaxScheme.get3Zatca.EInvoice.Pdf.TaxCategoryPdfData.TaxScheme.getD
-TaxScheme.set3Zatca.EInvoice.Pdf.TaxCategoryPdfData.TaxScheme.setç
-4Zatca.EInvoice.Models.Signature.SignatureInformationobjecte
-SignatureInformation()KZatca.EInvoice.Models.Signature.SignatureInformation.SignatureInformation()E
-Id.get;Zatca.EInvoice.Models.Signature.SignatureInformation.Id.getE
-Id.set;Zatca.EInvoice.Models.Signature.SignatureInformation.Id.setk
-ReferencedSignatureID.getNZatca.EInvoice.Models.Signature.SignatureInformation.ReferencedSignatureID.getk
-ReferencedSignatureID.setNZatca.EInvoice.Models.Signature.SignatureInformation.ReferencedSignatureID.setÁ
-#Zatca.EInvoice.Pdf.TaxSchemePdfDataobjectL
-TaxSchemePdfData()6Zatca.EInvoice.Pdf.TaxSchemePdfData.TaxSchemePdfData()4
-Id.get*Zatca.EInvoice.Pdf.TaxSchemePdfData.Id.get4
-Id.set*Zatca.EInvoice.Pdf.TaxSchemePdfData.Id.setã
-)Zatca.EInvoice.Pdf.AllowanceChargePdfDataobject^
-AllowanceChargePdfData()BZatca.EInvoice.Pdf.AllowanceChargePdfData.AllowanceChargePdfData()T
-ChargeIndicator.get=Zatca.EInvoice.Pdf.AllowanceChargePdfData.ChargeIndicator.getT
-ChargeIndicator.set=Zatca.EInvoice.Pdf.AllowanceChargePdfData.ChargeIndicator.set`
-AllowanceChargeReason.getCZatca.EInvoice.Pdf.AllowanceChargePdfData.AllowanceChargeReason.get`
-AllowanceChargeReason.setCZatca.EInvoice.Pdf.AllowanceChargePdfData.AllowanceChargeReason.setB
-
-Amount.get4Zatca.EInvoice.Pdf.AllowanceChargePdfData.Amount.getB
-
-Amount.set4Zatca.EInvoice.Pdf.AllowanceChargePdfData.Amount.set—
-5Zatca.EInvoice.Models.Signature.UblDocumentSignaturesobjectN
-
-Validate()@Zatca.EInvoice.Models.Signature.UblDocumentSignatures.Validate()h
-UblDocumentSignatures()MZatca.EInvoice.Models.Signature.UblDocumentSignatures.UblDocumentSignatures()j
-SignatureInformation.getNZatca.EInvoice.Models.Signature.UblDocumentSignatures.SignatureInformation.getj
-SignatureInformation.setNZatca.EInvoice.Models.Signature.UblDocumentSignatures.SignatureInformation.set®
-,Zatca.EInvoice.Models.Signature.UblExtensionobjectE
-
-Validate()7Zatca.EInvoice.Models.Signature.UblExtension.Validate()M
-UblExtension();Zatca.EInvoice.Models.Signature.UblExtension.UblExtension()Q
-ExtensionURI.get=Zatca.EInvoice.Models.Signature.UblExtension.ExtensionURI.getQ
-ExtensionURI.set=Zatca.EInvoice.Models.Signature.UblExtension.ExtensionURI.setY
-ExtensionContent.getAZatca.EInvoice.Models.Signature.UblExtension.ExtensionContent.getY
-ExtensionContent.setAZatca.EInvoice.Models.Signature.UblExtension.ExtensionContent.setÈ
-*Zatca.EInvoice.Pdf.BillingReferencePdfDataobjecta
-BillingReferencePdfData()DZatca.EInvoice.Pdf.BillingReferencePdfData.BillingReferencePdfData()g
-InvoiceDocumentReference.getGZatca.EInvoice.Pdf.BillingReferencePdfData.InvoiceDocumentReference.getg
-InvoiceDocumentReference.setGZatca.EInvoice.Pdf.BillingReferencePdfData.InvoiceDocumentReference.setÒ
--Zatca.EInvoice.Models.Signature.UblExtensionsobjectF
-
-Validate()8Zatca.EInvoice.Models.Signature.UblExtensions.Validate()P
-UblExtensions()=Zatca.EInvoice.Models.Signature.UblExtensions.UblExtensions()N
-Extensions.get<Zatca.EInvoice.Models.Signature.UblExtensions.Extensions.getN
-Extensions.set<Zatca.EInvoice.Models.Signature.UblExtensions.Extensions.setÅ
-&Zatca.EInvoice.Pdf.PaymentMeansPdfDataobjectU
-PaymentMeansPdfData()<Zatca.EInvoice.Pdf.PaymentMeansPdfData.PaymentMeansPdfData();
-Code.get/Zatca.EInvoice.Pdf.PaymentMeansPdfData.Code.get;
-Code.set/Zatca.EInvoice.Pdf.PaymentMeansPdfData.Code.setõ
-+Zatca.EInvoice.Pdf.DocumentReferencePdfDataobjectd
-DocumentReferencePdfData()FZatca.EInvoice.Pdf.DocumentReferencePdfData.DocumentReferencePdfData()<
-Id.get2Zatca.EInvoice.Pdf.DocumentReferencePdfData.Id.get<
-Id.set2Zatca.EInvoice.Pdf.DocumentReferencePdfData.Id.set@
-Uuid.get4Zatca.EInvoice.Pdf.DocumentReferencePdfData.Uuid.get@
-Uuid.set4Zatca.EInvoice.Pdf.DocumentReferencePdfData.Uuid.set˜	
-,Zatca.EInvoice.Pdf.LegalMonetaryTotalPdfDataobjectg
-LegalMonetaryTotalPdfData()HZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.LegalMonetaryTotalPdfData()_
-LineExtensionAmount.getDZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.LineExtensionAmount.get_
-LineExtensionAmount.setDZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.LineExtensionAmount.set]
-TaxExclusiveAmount.getCZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.TaxExclusiveAmount.get]
-TaxExclusiveAmount.setCZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.TaxExclusiveAmount.set]
-TaxInclusiveAmount.getCZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.TaxInclusiveAmount.get]
-TaxInclusiveAmount.setCZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.TaxInclusiveAmount.seta
-AllowanceTotalAmount.getEZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.AllowanceTotalAmount.geta
-AllowanceTotalAmount.setEZatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.AllowanceTotalAmount.setS
-PrepaidAmount.get>Zatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.PrepaidAmount.getS
-PrepaidAmount.set>Zatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.PrepaidAmount.setS
-PayableAmount.get>Zatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.PayableAmount.getS
-PayableAmount.set>Zatca.EInvoice.Pdf.LegalMonetaryTotalPdfData.PayableAmount.setˆ
-*Zatca.EInvoice.Models.Party.PartyTaxSchemeobjectC
-
-Validate()5Zatca.EInvoice.Models.Party.PartyTaxScheme.Validate()O
-PartyTaxScheme();Zatca.EInvoice.Models.Party.PartyTaxScheme.PartyTaxScheme()I
-CompanyId.get8Zatca.EInvoice.Models.Party.PartyTaxScheme.CompanyId.getI
-CompanyId.set8Zatca.EInvoice.Models.Party.PartyTaxScheme.CompanyId.setI
-TaxScheme.get8Zatca.EInvoice.Models.Party.PartyTaxScheme.TaxScheme.getI
-TaxScheme.set8Zatca.EInvoice.Models.Party.PartyTaxScheme.TaxScheme.set˘
-!Zatca.EInvoice.Models.Party.Partyobject4
-Party())Zatca.EInvoice.Models.Party.Party.Party()T
-PartyIdentification.get9Zatca.EInvoice.Models.Party.Party.PartyIdentification.getT
-PartyIdentification.set9Zatca.EInvoice.Models.Party.Party.PartyIdentification.setX
-PartyIdentificationId.get;Zatca.EInvoice.Models.Party.Party.PartyIdentificationId.getX
-PartyIdentificationId.set;Zatca.EInvoice.Models.Party.Party.PartyIdentificationId.setH
-PostalAddress.get3Zatca.EInvoice.Models.Party.Party.PostalAddress.getH
-PostalAddress.set3Zatca.EInvoice.Models.Party.Party.PostalAddress.setJ
-PartyTaxScheme.get4Zatca.EInvoice.Models.Party.Party.PartyTaxScheme.getJ
-PartyTaxScheme.set4Zatca.EInvoice.Models.Party.Party.PartyTaxScheme.setD
-LegalEntity.get1Zatca.EInvoice.Models.Party.Party.LegalEntity.getD
-LegalEntity.set1Zatca.EInvoice.Models.Party.Party.LegalEntity.set°
-"Zatca.EInvoice.Pdf.DeliveryPdfDataobjectI
-DeliveryPdfData()4Zatca.EInvoice.Pdf.DeliveryPdfData.DeliveryPdfData()S
-ActualDeliveryDate.get9Zatca.EInvoice.Pdf.DeliveryPdfData.ActualDeliveryDate.getS
-ActualDeliveryDate.set9Zatca.EInvoice.Pdf.DeliveryPdfData.ActualDeliveryDate.set˛
-&Zatca.EInvoice.Pdf.InvoicePdfGeneratorobjects
-$InvoicePdfGenerator(string, string?)KZatca.EInvoice.Pdf.InvoicePdfGenerator.InvoicePdfGenerator(string, string?)©
-?InvoicePdfGenerator(Zatca.EInvoice.Pdf.InvoicePdfData, string?)fZatca.EInvoice.Pdf.InvoicePdfGenerator.InvoicePdfGenerator(Zatca.EInvoice.Pdf.InvoicePdfData, string?)c
-GeneratePdf(string, string?)CZatca.EInvoice.Pdf.InvoicePdfGenerator.GeneratePdf(string, string?)]
-GeneratePdfBytes(string?)@Zatca.EInvoice.Pdf.InvoicePdfGenerator.GeneratePdfBytes(string?)Y
-CreateDocument(string?)>Zatca.EInvoice.Pdf.InvoicePdfGenerator.CreateDocument(string?)g
-CreateReceiptDocument(string?)EZatca.EInvoice.Pdf.InvoicePdfGenerator.CreateReceiptDocument(string?)ç
-1ComposeHeader(QuestPDF.Infrastructure.IContainer)XZatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeHeader(QuestPDF.Infrastructure.IContainer)è
-2ComposeContent(QuestPDF.Infrastructure.IContainer)YZatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeContent(QuestPDF.Infrastructure.IContainer)ã
-0ComposeTable(QuestPDF.Infrastructure.IContainer)WZatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeTable(QuestPDF.Infrastructure.IContainer)ç
-1ComposeTotals(QuestPDF.Infrastructure.IContainer)XZatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeTotals(QuestPDF.Infrastructure.IContainer)ç
-1ComposeFooter(QuestPDF.Infrastructure.IContainer)XZatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeFooter(QuestPDF.Infrastructure.IContainer)M
-GetInvoiceTitle()8Zatca.EInvoice.Pdf.InvoicePdfGenerator.GetInvoiceTitle()U
-IsSimplifiedInvoice()<Zatca.EInvoice.Pdf.InvoicePdfGenerator.IsSimplifiedInvoice()Q
-GetInvoiceIdLabel():Zatca.EInvoice.Pdf.InvoicePdfGenerator.GetInvoiceIdLabel()ù
-9ComposeReceiptContent(QuestPDF.Infrastructure.IContainer)`Zatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptContent(QuestPDF.Infrastructure.IContainer)õ
-8ComposeReceiptHeader(QuestPDF.Infrastructure.IContainer)_Zatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptHeader(QuestPDF.Infrastructure.IContainer)•
-=ComposeReceiptInvoiceInfo(QuestPDF.Infrastructure.IContainer)dZatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptInvoiceInfo(QuestPDF.Infrastructure.IContainer)ô
-7ComposeReceiptItems(QuestPDF.Infrastructure.IContainer)^Zatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptItems(QuestPDF.Infrastructure.IContainer)õ
-8ComposeReceiptTotals(QuestPDF.Infrastructure.IContainer)_Zatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptTotals(QuestPDF.Infrastructure.IContainer)õ
-8ComposeReceiptQrCode(QuestPDF.Infrastructure.IContainer)_Zatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptQrCode(QuestPDF.Infrastructure.IContainer)õ
-8ComposeReceiptFooter(QuestPDF.Infrastructure.IContainer)_Zatca.EInvoice.Pdf.InvoicePdfGenerator.ComposeReceiptFooter(QuestPDF.Infrastructure.IContainer)

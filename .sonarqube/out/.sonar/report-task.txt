@@ -1,7 +1,0 @@
-organization=mabumusa
-projectKey=mabumusa1_zatca
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.82486
-dashboardUrl=https://sonarcloud.io/dashboard?id=mabumusa1_zatca
-ceTaskId=AZzCp7gZJXnUiNpKhSqm
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZzCp7gZJXnUiNpKhSqm

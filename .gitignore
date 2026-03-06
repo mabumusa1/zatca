@@ -484,6 +484,9 @@ $RECYCLE.BIN/
 *.swp
 .claude
 
+# SonarQube analysis output
+.sonarqube/
+
 # ZATCA TestsData Output folder (contains generated certificates and API responses)
 Zatca.EInvoice.CLI/TestsData/Output/
 
