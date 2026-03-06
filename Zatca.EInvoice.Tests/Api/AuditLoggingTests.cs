@@ -245,7 +245,7 @@ namespace Zatca.EInvoice.Tests.Api
             // Arrange
             var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, _httpClient);
             var eventLogger = new ZatcaEventBasedAuditLogger(_auditService);
-            
+
             eventLogger.AttachToClient(client);
             eventLogger.DetachFromClient(client);
 

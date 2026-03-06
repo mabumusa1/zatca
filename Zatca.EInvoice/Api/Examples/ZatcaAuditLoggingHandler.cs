@@ -45,7 +45,7 @@ namespace Zatca.EInvoice.Api.Examples
         {
             var startTime = DateTimeOffset.UtcNow;
             var requestBody = string.Empty;
-            
+
             // Capture request body
             if (request.Content != null)
             {

@@ -103,7 +103,7 @@ namespace Zatca.EInvoice.Api
                 {
                     // Build handler pipeline: innermost handler first
                     HttpMessageHandler handler = new HttpClientHandler();
-                    
+
                     // Chain handlers in reverse order so the first handler in the list is outermost
                     for (int i = options.Handlers.Count - 1; i >= 0; i--)
                     {
@@ -238,7 +238,7 @@ namespace Zatca.EInvoice.Api
                     OperationType = operationType,
                     HttpMethod = HttpMethod.Post.ToString(),
                     RequestUrl = BuildFullUrl(ZatcaApiEndpoints.ComplianceCertificate),
-                    RequestHeaders = new Dictionary<string, string> 
+                    RequestHeaders = new Dictionary<string, string>
                     {
                         { "OTP", otp },
                         { AcceptVersionHeader, AcceptVersionValue }
@@ -914,7 +914,7 @@ namespace Zatca.EInvoice.Api
                 return "SubmitClearance";
             if (endpoint.Contains("invoices/reporting"))
                 return "SubmitReporting";
-            
+
             return "Unknown";
         }
 
