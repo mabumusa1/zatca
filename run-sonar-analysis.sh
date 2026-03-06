@@ -14,10 +14,17 @@ dotnet-sonarscanner begin \
   /k:"mabumusa1_zatca" \
   /o:"mabumusa" \
   /d:sonar.host.url="https://sonarcloud.io" \
-  /d:sonar.token="$SONARQUBE_TOKEN"
+  /d:sonar.token="$SONARQUBE_TOKEN" \
+  /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
 
 echo "Building project..."
-dotnet build --no-incremental
+dotnet build Zatca.EInvoice.slnx --no-incremental
+
+echo "Running tests with coverage..."
+dotnet test Zatca.EInvoice.slnx --no-build \
+  --collect:"XPlat Code Coverage" \
+  --results-directory ./coverage \
+  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
 echo "Completing analysis..."
 dotnet-sonarscanner end /d:sonar.token="$SONARQUBE_TOKEN"

@@ -1023,6 +1023,309 @@ namespace Zatca.EInvoice.Tests.Api
         }
 
         /// <summary>
+        /// Test that CSR with BOM character is handled correctly.
+        /// </summary>
+        [Fact]
+        public async Task TestRequestComplianceCertificateWithBOM()
+        {
+            // Arrange
+            var responseContent = JsonSerializer.Serialize(new
+            {
+                binarySecurityToken = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("TEST_CERT")),
+                secret = "secret123",
+                requestID = "req_001"
+            });
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act - CSR with BOM character at start
+            var csrWithBOM = "\uFEFF" + "CSR_CONTENT";
+            var result = await client.RequestComplianceCertificateAsync(csrWithBOM, "123456");
+
+            // Assert - Should succeed (BOM is trimmed)
+            Assert.NotNull(result);
+            Assert.Equal("TEST_CERT", result.BinarySecurityToken);
+        }
+
+        /// <summary>
+        /// Test that empty string parameters throw ArgumentNullException.
+        /// </summary>
+        [Fact]
+        public async Task TestValidateInvoiceComplianceEmptyStringsThrow()
+        {
+            // Arrange
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, "{}");
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act & Assert - Empty signedXml
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.ValidateInvoiceComplianceAsync("", "hash", "uuid", "cert", "secret"));
+
+            // Empty invoiceHash
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.ValidateInvoiceComplianceAsync("xml", "", "uuid", "cert", "secret"));
+
+            // Empty uuid
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.ValidateInvoiceComplianceAsync("xml", "hash", "", "cert", "secret"));
+
+            // Empty certificate
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.ValidateInvoiceComplianceAsync("xml", "hash", "uuid", "", "secret"));
+
+            // Empty secret
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.ValidateInvoiceComplianceAsync("xml", "hash", "uuid", "cert", ""));
+        }
+
+        /// <summary>
+        /// Test that SubmitClearanceInvoice with empty strings throws.
+        /// </summary>
+        [Fact]
+        public async Task TestSubmitClearanceInvoiceEmptyStringsThrow()
+        {
+            // Arrange
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, "{}");
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitClearanceInvoiceAsync("", "hash", "uuid", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitClearanceInvoiceAsync("xml", "", "uuid", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitClearanceInvoiceAsync("xml", "hash", "", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitClearanceInvoiceAsync("xml", "hash", "uuid", "", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitClearanceInvoiceAsync("xml", "hash", "uuid", "cert", ""));
+        }
+
+        /// <summary>
+        /// Test that SubmitReportingInvoice with empty strings throws.
+        /// </summary>
+        [Fact]
+        public async Task TestSubmitReportingInvoiceEmptyStringsThrow()
+        {
+            // Arrange
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, "{}");
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitReportingInvoiceAsync("", "hash", "uuid", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitReportingInvoiceAsync("xml", "", "uuid", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitReportingInvoiceAsync("xml", "hash", "", "cert", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitReportingInvoiceAsync("xml", "hash", "uuid", "", "secret"));
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await client.SubmitReportingInvoiceAsync("xml", "hash", "uuid", "cert", ""));
+        }
+
+        /// <summary>
+        /// Test that invalid base64 in clearedInvoice is handled.
+        /// </summary>
+        [Fact]
+        public async Task TestInvalidBase64ClearedInvoiceHandling()
+        {
+            // Arrange
+            var responseContent = JsonSerializer.Serialize(new
+            {
+                status = "CLEARED",
+                clearanceStatus = "CLEARED",
+                clearedInvoice = "!!!INVALID BASE64!!!", // Invalid base64
+                validationResults = new
+                {
+                    errorMessages = Array.Empty<object>(),
+                    warningMessages = Array.Empty<object>(),
+                    infoMessages = Array.Empty<object>()
+                }
+            });
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act
+            var result = await client.SubmitClearanceInvoiceAsync("xml", "hash", "uuid", "cert", "secret");
+
+            // Assert - Should preserve original value when base64 decode fails
+            Assert.Equal("!!!INVALID BASE64!!!", result.ClearedInvoice);
+        }
+
+        /// <summary>
+        /// Test that response with various JSON value types is handled.
+        /// </summary>
+        [Fact]
+        public async Task TestResponseWithVariousJsonValueTypes()
+        {
+            // Arrange - Response with different JsonValueKind types
+            var responseContent = @"{
+                ""status"": ""SUCCESS"",
+                ""numericValue"": 12345,
+                ""boolTrue"": true,
+                ""boolFalse"": false,
+                ""nullValue"": null,
+                ""validationResults"": {
+                    ""errorMessages"": [],
+                    ""warningMessages"": [],
+                    ""infoMessages"": []
+                }
+            }";
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act
+            var result = await client.SubmitReportingInvoiceAsync("xml", "hash", "uuid", "cert", "secret");
+
+            // Assert - Should handle non-string JSON values
+            Assert.Equal("SUCCESS", result.Status);
+        }
+
+        /// <summary>
+        /// Test that dispose can be called multiple times without error.
+        /// </summary>
+        [Fact]
+        public void TestDisposeIdempotence()
+        {
+            // Arrange
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, "{}");
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+
+            // Act - Call Dispose multiple times
+            client.Dispose();
+            client.Dispose();
+            client.Dispose();
+
+            // Assert - Should not throw
+            Assert.True(true);
+        }
+
+        /// <summary>
+        /// Test response with missing validation results key.
+        /// </summary>
+        [Fact]
+        public async Task TestResponseWithMissingValidationResults()
+        {
+            // Arrange - No validationResults key
+            var responseContent = JsonSerializer.Serialize(new
+            {
+                status = "SUCCESS"
+            });
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act
+            var result = await client.SubmitReportingInvoiceAsync("xml", "hash", "uuid", "cert", "secret");
+
+            // Assert - Should have empty error/warning/info lists
+            Assert.Empty(result.Errors);
+            Assert.Empty(result.Warnings);
+            Assert.Empty(result.InfoMessages);
+        }
+
+        /// <summary>
+        /// Test response with malformed validation messages.
+        /// </summary>
+        [Fact]
+        public async Task TestResponseWithMalformedValidationMessages()
+        {
+            // Arrange - Invalid validation message structure
+            var responseContent = @"{
+                ""status"": ""SUCCESS"",
+                ""validationResults"": {
+                    ""errorMessages"": [
+                        {""type"": ""ERROR"", ""code"": ""E001""},
+                        {""message"": ""Missing fields""},
+                        ""not_an_object""
+                    ],
+                    ""warningMessages"": ""not_an_array""
+                }
+            }";
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act
+            var result = await client.SubmitReportingInvoiceAsync("xml", "hash", "uuid", "cert", "secret");
+
+            // Assert - Should handle malformed messages gracefully
+            Assert.NotNull(result);
+            Assert.Equal("SUCCESS", result.Status);
+        }
+
+        /// <summary>
+        /// Test that RequestComplianceCertificate handles null response dictionary.
+        /// </summary>
+        [Fact]
+        public async Task TestRequestComplianceCertificateNullResponseDictionary()
+        {
+            // Arrange - Response that deserializes to null
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, "null");
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ZatcaApiException>(async () =>
+                await client.RequestComplianceCertificateAsync("csr", "otp"));
+        }
+
+        /// <summary>
+        /// Test that certificate with PEM headers is handled correctly.
+        /// </summary>
+        [Fact]
+        public async Task TestCertificateWithPEMHeaders()
+        {
+            // Arrange
+            var pemCertificate = @"-----BEGIN CERTIFICATE-----
+MIICertificateDataHere==
+-----END CERTIFICATE-----";
+
+            var responseContent = JsonSerializer.Serialize(new
+            {
+                status = "VALID",
+                clearedInvoice = "",
+                validationResults = new
+                {
+                    errorMessages = Array.Empty<object>(),
+                    warningMessages = Array.Empty<object>(),
+                    infoMessages = Array.Empty<object>()
+                }
+            });
+
+            var httpClient = CreateMockHttpClient(HttpStatusCode.OK, responseContent);
+            var client = new ZatcaApiClient(ZatcaEnvironment.Sandbox, httpClient);
+            _clients.Add(client);
+
+            // Act - Should extract base64 from PEM format
+            var result = await client.ValidateInvoiceComplianceAsync("xml", "hash", "uuid", pemCertificate, "secret");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("VALID", result.Status);
+        }
+
+        /// <summary>
         /// Cleanup test clients.
         /// </summary>
         public void Dispose()

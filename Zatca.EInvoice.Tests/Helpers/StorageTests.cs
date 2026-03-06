@@ -342,6 +342,58 @@ public class StorageTests : IDisposable
         Assert.Equal("Line 1\nLine 2\nLine 3\nLine 4\n", content);
     }
 
+    [Fact]
+    public void TestExistsWithEmptyPath_ThrowsException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Exists(string.Empty));
+    }
+
+    [Fact]
+    public void TestDeleteWithEmptyPath_ThrowsException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            Storage.Delete(string.Empty));
+    }
+
+    [Fact]
+    public void TestWriteWithLargeContent()
+    {
+        // Arrange
+        var fileName = "large-content.txt";
+        var largeContent = new string('X', 1024 * 1024); // 1MB of data
+        _filesToCleanup.Add(fileName);
+
+        // Act
+        Storage.Write(fileName, largeContent);
+
+        // Assert
+        var content = Storage.Read(fileName);
+        Assert.Equal(largeContent.Length, content.Length);
+    }
+
+    [Fact]
+    public void TestAppendWithNestedDirectories()
+    {
+        // Arrange
+        var fileName = "nested/append/test.txt";
+        var content1 = "First\n";
+        var content2 = "Second\n";
+        _filesToCleanup.Add(fileName);
+
+        // Act
+        Storage.Append(fileName, content1);
+        Storage.Append(fileName, content2);
+
+        // Assert
+        var fullPath = Path.Combine(_tempDirectory, fileName);
+        Assert.True(File.Exists(fullPath));
+        var actualContent = Storage.Read(fileName);
+        Assert.Equal(content1 + content2, actualContent);
+    }
+
     public void Dispose()
     {
         GC.SuppressFinalize(this);
