@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '8.0.x'
   NUGET_SOURCE: 'https://api.nuget.org/v3/index.json'
 
 jobs:
@@ -27,10 +26,15 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.ref }}
 
-      - name: Setup .NET
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: '8.0.x'
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
