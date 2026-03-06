@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Microsoft (R) Visual C# Compiler",
+        "version": "5.0.0.0",
+        "fileVersion": "5.0.0-2.26075.103 (c2435c3e)",
+        "semanticVersion": "5.0.0",
+        "language": "en-US"
+      },
+      "results": [
+        {
+          "ruleId": "CS8034",
+          "level": "warning",
+          "message": "Unable to load Analyzer assembly /tmp/.sonarqube/resources/2/SonarAnalyzer.CSharp.dll : System.BadImageFormatException: PE image doesn't contain managed metadata.\u000a   at Microsoft.CodeAnalysis.PEModule.InitializeMetadataReader()\u000a   at Microsoft.CodeAnalysis.PEModule.get_MetadataReader()\u000a   at Microsoft.CodeAnalysis.PEModule.GetMetadataModuleNamesOrThrow()\u000a   at Microsoft.CodeAnalysis.AssemblyMetadata.GetOrCreateData()\u000a   at Microsoft.CodeAnalysis.AssemblyMetadata.GetModules()\u000a   at Microsoft.CodeAnalysis.Diagnostics.AnalyzerFileReference.GetAnalyzerTypeNameMap(String fullPath, Type attributeType, AttributeLanguagesFunc languagesFunc)\u000a   at Microsoft.CodeAnalysis.Diagnostics.AnalyzerFileReference.Extensions`1.GetExtensionTypeNameMap()\u000a   at Microsoft.CodeAnalysis.Diagnostics.AnalyzerFileReference.Extensions`1.AddExtensions(Builder builder, String language, Func`2 shouldInclude)",
+          "properties": {
+            "warningLevel": 1
+          }
+        }
+      ],
+      "rules": {
+        "CS8034": {
+          "id": "CS8034",
+          "shortDescription": "Unable to load Analyzer assembly",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8034)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
