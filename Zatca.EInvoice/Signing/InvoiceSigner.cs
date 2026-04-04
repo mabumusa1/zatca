@@ -81,10 +81,15 @@ public static partial class InvoiceSigner
         var qrCodeGenerator = QrCodeGenerator.CreateFromTags(qrTags);
         var qrCode = qrCodeGenerator.EncodeBase64();
 
-        // Step 8: Insert UBL Extension and QR Code into the ORIGINAL XML
-        // Important: We use the original xmlInvoice, not invoiceExtension which was modified for hashing
+        // Step 8: Insert UBL Extension and QR Code into the serialized stripped XML
+        // We use the XDocument-serialized XML (after stripping UBLExtensions/Signature/QR)
+        // so that the signed XML is derived from the same DOM used for hashing.
+        // Using the original raw string would cause a hash mismatch because
+        // InsertSignatureAndQrCode adds xmlns:ext to the root element, which C14N
+        // preserves even after ZATCA strips the ext: elements back out.
+        var strippedXml = invoiceExtension.ToXmlString();
         var signedXml = InsertSignatureAndQrCode(
-            xmlInvoice,
+            strippedXml,
             ublExtensionXml,
             qrCode
         );
