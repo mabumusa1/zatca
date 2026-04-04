@@ -168,7 +168,7 @@ EOF
     cd "$CLI_DIR"
     
     # Capture full output
-    if dotnet run --framework net9.0 -- cert generate \
+    if dotnet run --framework net10.0 -- cert generate \
         --org-id "$org_identifier" \
         --solution "$solution_name" \
         --model "$model" \

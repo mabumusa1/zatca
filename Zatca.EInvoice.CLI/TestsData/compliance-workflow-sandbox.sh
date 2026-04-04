@@ -84,7 +84,7 @@ request_compliance_cert() {
     
     cd "$CLI_DIR"
     
-    if dotnet run --framework net9.0 -- api compliance-cert \
+    if dotnet run --framework net10.0 -- api compliance-cert \
         --csr "$csr_file" \
         --otp "$otp" \
         --env "$env" \

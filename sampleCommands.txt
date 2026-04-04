@@ -1,5 +1,5 @@
 #Generate Certificate
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --project Zatca.EInvoice.CLI.csproj --framework net9.0 -- cert generate \
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --project Zatca.EInvoice.CLI.csproj --framework net10.0 -- cert generate \
   --org-id "312998361200003" \
   --solution "SUNMI" \
   --model "SUNMI" \
@@ -17,7 +17,7 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --project Zatca.EInvoice.CLI.cspr
   --key-file "private.pem"
 
 
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --project Zatca.EInvoice.CLI.csproj --framework net9.0 -- cert generate \
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --project Zatca.EInvoice.CLI.csproj --framework net10.0 -- cert generate \
   --org-id "312998361200003" \
   --solution "SUNMI" \
   --model "SUNMI" \
@@ -35,7 +35,7 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --project Zatca.EInvoice.CLI.cspr
   --key-file "private.pem"
 
 # Register the certificate
-dotnet run --project Zatca.EInvoice.CLI.csproj --framework net9.0 -- api compliance-cert \
+dotnet run --project Zatca.EInvoice.CLI.csproj --framework net10.0 -- api compliance-cert \
   --csr "./Output/karage/sunmi/certificate.csr" \
   --otp "155645" \
   --env "simulation" \
@@ -54,13 +54,13 @@ cd /workspace/Zatca.EInvoice.CLI/Output/karage/sunmi && openssl pkcs12 -export -
 # -------------------------------------
 
 # Generate full standard invoice JSON
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- sample invoice --type standard --full -o ./Output/karage/sunmi/standard-invoice.json
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- sample invoice --type standard --full -o ./Output/karage/sunmi/standard-invoice.json
 
 # Convert JSON to XML
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice xml -i ./Output/karage/sunmi/standard-invoice.json -o ./Output/karage/sunmi/standard-invoice.xml
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice xml -i ./Output/karage/sunmi/standard-invoice.json -o ./Output/karage/sunmi/standard-invoice.xml
 
 # Sign the invoice
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sign -i ./Output/karage/sunmi/standard-invoice.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/standard-invoice-signed.xml --output-qr ./Output/karage/sunmi/standard-invoice-qr.txt --output-hash ./Output/karage/sunmi/standard-invoice-hash.txt
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice sign -i ./Output/karage/sunmi/standard-invoice.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/standard-invoice-signed.xml --output-qr ./Output/karage/sunmi/standard-invoice-qr.txt --output-hash ./Output/karage/sunmi/standard-invoice-hash.txt
 
 # Result: UUID: e23b3b77-078e-419d-9e82-bacf1e79bb9b
 # Result: Hash: NKGHg6owoZiUIHZoxxZOnIJkZoQCWB6OxpQcnVtJd0c=
@@ -70,13 +70,13 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sig
 # -------------------------------------
 
 # Generate full simplified invoice JSON
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- sample invoice --type simplified --full -o ./Output/karage/sunmi/simplified-invoice.json
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- sample invoice --type simplified --full -o ./Output/karage/sunmi/simplified-invoice.json
 
 # Convert JSON to XML
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice xml -i ./Output/karage/sunmi/simplified-invoice.json -o ./Output/karage/sunmi/simplified-invoice.xml
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice xml -i ./Output/karage/sunmi/simplified-invoice.json -o ./Output/karage/sunmi/simplified-invoice.xml
 
 # Sign the invoice
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sign -i ./Output/karage/sunmi/simplified-invoice.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/simplified-invoice-signed.xml --output-qr ./Output/karage/sunmi/simplified-invoice-qr.txt --output-hash ./Output/karage/sunmi/simplified-invoice-hash.txt
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice sign -i ./Output/karage/sunmi/simplified-invoice.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/simplified-invoice-signed.xml --output-qr ./Output/karage/sunmi/simplified-invoice-qr.txt --output-hash ./Output/karage/sunmi/simplified-invoice-hash.txt
 
 # Result: UUID: 36a73f77-33cd-4365-8aad-f19635627d43
 # Result: Hash: Hogffqaq9us8hRx0mkIOnu3zrKQP5J6EBcNLyZ70Yt0=
@@ -86,16 +86,16 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sig
 # -------------------------------------
 
 # Generate full debit note JSON
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- sample invoice --type debit --full -o ./Output/karage/sunmi/debit-note.json
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- sample invoice --type debit --full -o ./Output/karage/sunmi/debit-note.json
 
 # Update billing reference to standard invoice UUID (manual edit or using sed)
 # Changed billingReferences[0].id from "INV-REF-001" to "e23b3b77-078e-419d-9e82-bacf1e79bb9b"
 
 # Convert JSON to XML
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice xml -i ./Output/karage/sunmi/debit-note.json -o ./Output/karage/sunmi/debit-note.xml
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice xml -i ./Output/karage/sunmi/debit-note.json -o ./Output/karage/sunmi/debit-note.xml
 
 # Sign the debit note
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sign -i ./Output/karage/sunmi/debit-note.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/debit-note-signed.xml --output-qr ./Output/karage/sunmi/debit-note-qr.txt --output-hash ./Output/karage/sunmi/debit-note-hash.txt
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice sign -i ./Output/karage/sunmi/debit-note.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/debit-note-signed.xml --output-qr ./Output/karage/sunmi/debit-note-qr.txt --output-hash ./Output/karage/sunmi/debit-note-hash.txt
 
 # Result: UUID: 209f4be2-af1b-42e9-bbb9-21aa367e257d
 # Result: Hash: PKni3CXsQdOoOU8mUcLrL/q1yCfDITYXVJ+wDwkE3qo=
@@ -105,16 +105,16 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sig
 # -------------------------------------
 
 # Generate full credit note JSON
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- sample invoice --type credit --full -o ./Output/karage/sunmi/credit-note.json
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- sample invoice --type credit --full -o ./Output/karage/sunmi/credit-note.json
 
 # Update billing reference to standard invoice UUID (manual edit or using sed)
 # Changed billingReferences[0].id from "INV-REF-001" to "e23b3b77-078e-419d-9e82-bacf1e79bb9b"
 
 # Convert JSON to XML
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice xml -i ./Output/karage/sunmi/credit-note.json -o ./Output/karage/sunmi/credit-note.xml
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice xml -i ./Output/karage/sunmi/credit-note.json -o ./Output/karage/sunmi/credit-note.xml
 
 # Sign the credit note
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sign -i ./Output/karage/sunmi/credit-note.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/credit-note-signed.xml --output-qr ./Output/karage/sunmi/credit-note-qr.txt --output-hash ./Output/karage/sunmi/credit-note-hash.txt
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- invoice sign -i ./Output/karage/sunmi/credit-note.xml -c ./Output/karage/sunmi/compliance.pfx --output-xml ./Output/karage/sunmi/credit-note-signed.xml --output-qr ./Output/karage/sunmi/credit-note-qr.txt --output-hash ./Output/karage/sunmi/credit-note-hash.txt
 
 # Result: UUID: eca35527-134d-4264-860e-80f362637833
 # Result: Hash: wwZgefkgaVQ8bCWcxAFj1MEiRxfYAoykfyy2vlzLR3s=
@@ -169,7 +169,7 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- invoice sig
 # -------------------------------------
 # Standard Invoice - ZATCA Compliance Check
 # -------------------------------------
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api compliance-check \
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- api compliance-check \
   -i ./Output/karage/sunmi/standard-invoice-signed.xml \
   --hash $(cat ./Output/karage/sunmi/standard-invoice-hash.txt) \
   --uuid e23b3b77-078e-419d-9e82-bacf1e79bb9b \
@@ -183,7 +183,7 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api complia
 # -------------------------------------
 # Simplified Invoice - ZATCA Compliance Check
 # -------------------------------------
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api compliance-check \
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- api compliance-check \
   -i ./Output/karage/sunmi/simplified-invoice-signed.xml \
   --hash $(cat ./Output/karage/sunmi/simplified-invoice-hash.txt) \
   --uuid e2df9bda-35b7-4021-a6e4-0191afed1c4c \
@@ -198,7 +198,7 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api complia
 # -------------------------------------
 # Debit Note - ZATCA Compliance Check
 # -------------------------------------
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api compliance-check \
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- api compliance-check \
   -i ./Output/karage/sunmi/debit-note-signed.xml \
   --hash $(cat ./Output/karage/sunmi/debit-note-hash.txt) \
   --uuid 209f4be2-af1b-42e9-bbb9-21aa367e257d \
@@ -213,7 +213,7 @@ cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api complia
 # -------------------------------------
 # Credit Note - ZATCA Compliance Check
 # -------------------------------------
-cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net9.0 -- api compliance-check \
+cd /workspace/Zatca.EInvoice.CLI && dotnet run --framework net10.0 -- api compliance-check \
   -i ./Output/karage/sunmi/credit-note-signed.xml \
   --hash $(cat ./Output/karage/sunmi/credit-note-hash.txt) \
   --uuid eca35527-134d-4264-860e-80f362637833 \
