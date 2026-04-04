@@ -67,7 +67,13 @@ jobs:
     name: SonarQube Analysis
     runs-on: windows-latest
     needs: build
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    # Only run on push events or PRs from the same repo (not from forks/dependabot)
+    # This prevents failures when SONAR_TOKEN is not available
+    if: |
+      (github.event_name == 'push' && secrets.SONAR_TOKEN != '') ||
+      (github.event_name == 'pull_request' && 
+       github.event.pull_request.head.repo.full_name == github.repository && 
+       secrets.SONAR_TOKEN != '')
 
     steps:
       - name: Set up JDK 17
