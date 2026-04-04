@@ -39,11 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.*" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.*" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.*" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.*" />
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.*" />
-    <PackageReference Include="System.Text.Json" Version="9.0.*" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.*" />
+    <PackageReference Include="System.Text.Json" Version="8.0.*" />
     <!-- PDF Generation -->
     <PackageReference Include="QuestPDF" Version="2024.12.3" />
     <PackageReference Include="QRCoder" Version="1.7.0" />

@@ -98,7 +98,7 @@ request_compliance_cert() {
     
     cd "$CLI_DIR"
     
-    if dotnet run --framework net9.0 -- api compliance-cert \
+    if dotnet run --framework net10.0 -- api compliance-cert \
         --csr "$csr_file" \
         --otp "$otp" \
         --env "$env" \
@@ -169,7 +169,7 @@ generate_test_invoice() {
     cd "$CLI_DIR"
     
     # Generate sample invoice JSON
-    dotnet run --framework net9.0 -- sample invoice \
+    dotnet run --framework net10.0 -- sample invoice \
         --type "$invoice_type" \
         --full \
         --output "$invoice_file" 2>&1 | tee "$invoice_dir/${invoice_type}_json_generation.log"
@@ -180,7 +180,7 @@ generate_test_invoice() {
     fi
     
     # Generate XML from JSON
-    dotnet run --framework net9.0 -- invoice xml \
+    dotnet run --framework net10.0 -- invoice xml \
         --input "$invoice_file" \
         --output "$xml_file" 2>&1 | tee "$invoice_dir/${invoice_type}_xml_generation.log"
     
@@ -200,7 +200,7 @@ generate_test_invoice() {
         return 1
     fi
     
-    if dotnet run --framework net9.0 -- invoice sign \
+    if dotnet run --framework net10.0 -- invoice sign \
         --input "$xml_file" \
         --cert "$pfx_file" \
         --output-xml "$signed_file" \
@@ -301,7 +301,7 @@ validate_compliance() {
         
         cd "$CLI_DIR"
         
-        if dotnet run --framework net9.0 -- api compliance-check \
+        if dotnet run --framework net10.0 -- api compliance-check \
             --input "$signed_file" \
             --hash "$hash" \
             --uuid "$uuid" \
@@ -442,7 +442,7 @@ request_production_cert() {
     
     cd "$CLI_DIR"
     
-    if dotnet run --framework net9.0 -- api production-cert \
+    if dotnet run --framework net10.0 -- api production-cert \
         --request-id "$request_id" \
         --cert "$cert_file" \
         --secret "$secret" \
@@ -554,7 +554,7 @@ submit_invoices() {
     cd "$CLI_DIR"
 
     # Generate simplified invoice
-    dotnet run --framework net9.0 -- sample invoice \
+    dotnet run --framework net10.0 -- sample invoice \
         --type simplified \
         --full \
         --output "$simplified_json" > "$submission_dir/simplified_gen.log" 2>&1
@@ -564,12 +564,12 @@ submit_invoices() {
         failed=$((failed + 1))
     else
         # Generate XML
-        dotnet run --framework net9.0 -- invoice xml \
+        dotnet run --framework net10.0 -- invoice xml \
             --input "$simplified_json" \
             --output "$simplified_xml" > "$submission_dir/simplified_xml.log" 2>&1
 
         # Sign invoice
-        if dotnet run --framework net9.0 -- invoice sign \
+        if dotnet run --framework net10.0 -- invoice sign \
             --input "$simplified_xml" \
             --cert "$pfx_to_use" \
             --output-xml "$simplified_signed" \
@@ -588,7 +588,7 @@ submit_invoices() {
                 # Submit for reporting
                 echo -e "${YELLOW}Submitting simplified invoice for reporting...${NC}"
 
-                if dotnet run --framework net9.0 -- api reporting \
+                if dotnet run --framework net10.0 -- api reporting \
                     --input "$simplified_signed" \
                     --hash "$hash" \
                     --uuid "$uuid" \
@@ -639,7 +639,7 @@ submit_invoices() {
     local standard_signed="$submission_dir/standard_invoice_signed.xml"
 
     # Generate standard invoice
-    dotnet run --framework net9.0 -- sample invoice \
+    dotnet run --framework net10.0 -- sample invoice \
         --type standard \
         --full \
         --output "$standard_json" > "$submission_dir/standard_gen.log" 2>&1
@@ -649,12 +649,12 @@ submit_invoices() {
         failed=$((failed + 1))
     else
         # Generate XML
-        dotnet run --framework net9.0 -- invoice xml \
+        dotnet run --framework net10.0 -- invoice xml \
             --input "$standard_json" \
             --output "$standard_xml" > "$submission_dir/standard_xml.log" 2>&1
 
         # Sign invoice
-        if dotnet run --framework net9.0 -- invoice sign \
+        if dotnet run --framework net10.0 -- invoice sign \
             --input "$standard_xml" \
             --cert "$pfx_to_use" \
             --output-xml "$standard_signed" \
@@ -673,7 +673,7 @@ submit_invoices() {
                 # Submit for clearance
                 echo -e "${YELLOW}Submitting standard invoice for clearance...${NC}"
 
-                if dotnet run --framework net9.0 -- api clearance \
+                if dotnet run --framework net10.0 -- api clearance \
                     --input "$standard_signed" \
                     --hash "$hash" \
                     --uuid "$uuid" \
@@ -782,7 +782,7 @@ renew_certificate() {
 
     cd "$CLI_DIR"
 
-    if dotnet run --framework net9.0 -- api renew-cert \
+    if dotnet run --framework net10.0 -- api renew-cert \
         --csr "$csr_file" \
         --otp "$otp" \
         --cert "$prod_cert_file" \
