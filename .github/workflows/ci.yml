@@ -70,10 +70,9 @@ jobs:
     # Only run on push events or PRs from the same repo (not from forks/dependabot)
     # This prevents failures when SONAR_TOKEN is not available
     if: |
-      (github.event_name == 'push' && secrets.SONAR_TOKEN != '') ||
+      github.event_name == 'push' ||
       (github.event_name == 'pull_request' && 
-       github.event.pull_request.head.repo.full_name == github.repository && 
-       secrets.SONAR_TOKEN != '')
+       github.event.pull_request.head.repo.full_name == github.repository)
 
     steps:
       - name: Set up JDK 17
@@ -120,7 +119,21 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Check SONAR_TOKEN availability
+        id: check-token
+        shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if ([string]::IsNullOrEmpty($env:SONAR_TOKEN)) {
+            Write-Host "SONAR_TOKEN is not available. Skipping SonarQube analysis."
+            echo "token-available=false" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "token-available=true" >> $env:GITHUB_OUTPUT
+          }
+
       - name: Build and analyze with coverage
+        if: steps.check-token.outputs.token-available == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
