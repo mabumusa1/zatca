@@ -9,7 +9,7 @@ branches:
   develop:
     regex: ^develop$
     mode: ContinuousDelivery
-    label: ''
+    label: dev
     increment: Patch
   release:
     regex: ^release[/-]
