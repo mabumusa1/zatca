@@ -1,6 +1,5 @@
 mode: ContinuousDelivery
 tag-prefix: v
-next-version: 1.0.3
 branches:
   stable:
     regex: ^stable$
