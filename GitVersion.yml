@@ -1,5 +1,6 @@
 mode: ContinuousDelivery
 tag-prefix: v
+next-version: 1.0.3
 branches:
   stable:
     regex: ^stable$
@@ -9,8 +10,8 @@ branches:
   develop:
     regex: ^develop$
     mode: ContinuousDelivery
-    label: alpha
-    increment: Minor
+    label: ''
+    increment: Patch
   release:
     regex: ^release[/-]
     mode: ContinuousDelivery
