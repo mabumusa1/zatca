@@ -149,8 +149,11 @@ public class InvoiceExtension
             {
                 _document.Declaration = new XDeclaration("1.0", "UTF-8", null);
             }
-            // Use StringWriter to properly include the declaration
-            using var writer = new System.IO.StringWriter();
+            // Use Utf8StringWriter so XDocument.Save() emits encoding="utf-8"
+            // instead of StringWriter's default encoding="utf-16".
+            // The API client Base64-encodes the XML as UTF-8 bytes, so the
+            // declaration must match to avoid ZATCA "Content is not allowed in prolog".
+            using var writer = new Utf8StringWriter();
             _document.Save(writer, SaveOptions.DisableFormatting);
             return writer.ToString();
         }
@@ -158,6 +161,15 @@ public class InvoiceExtension
         {
             return _document.Root?.ToString(SaveOptions.DisableFormatting) ?? string.Empty;
         }
+    }
+
+    /// <summary>
+    /// StringWriter subclass that reports UTF-8 encoding so that
+    /// XDocument.Save() writes encoding="utf-8" in the XML declaration.
+    /// </summary>
+    private sealed class Utf8StringWriter : System.IO.StringWriter
+    {
+        public override Encoding Encoding => Encoding.UTF8;
     }
 
     /// <summary>
