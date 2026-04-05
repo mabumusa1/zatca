@@ -91,6 +91,129 @@ public class InvoiceExtension
     }
 
     /// <summary>
+    /// Ensures the ext namespace declaration exists on the root element.
+    /// This must be called before hashing so that the C14N form includes it,
+    /// matching what ZATCA computes after stripping the signed XML.
+    /// </summary>
+    /// <returns>The current instance for method chaining.</returns>
+    public InvoiceExtension EnsureExtNamespace()
+    {
+        var root = _document.Root;
+        if (root == null) return this;
+
+        XNamespace ext = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2";
+        // Add xmlns:ext if not already declared on the root
+        if (root.Attribute(XNamespace.Xmlns + "ext") == null)
+        {
+            root.Add(new XAttribute(XNamespace.Xmlns + "ext", ext));
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Inserts a UBLExtensions element (parsed from XML string) as the first child of the root.
+    /// The element is inserted before cbc:ProfileID so ZATCA sees it in the expected position.
+    /// </summary>
+    /// <param name="ublExtensionInnerXml">The XML string for the ext:UBLExtension content.</param>
+    /// <returns>The current instance for method chaining.</returns>
+    public InvoiceExtension InsertUblExtension(string ublExtensionInnerXml)
+    {
+        var root = _document.Root;
+        if (root == null) return this;
+
+        XNamespace ext = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2";
+        XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+
+        // Parse the extension XML fragment
+        var extensionContent = XElement.Parse(ublExtensionInnerXml);
+
+        // Build ext:UBLExtensions > ext:UBLExtension
+        // If the parsed content is already an ext:UBLExtension, wrap in UBLExtensions
+        var ublExtensions = new XElement(ext + "UBLExtensions", extensionContent);
+
+        // Insert before cbc:ProfileID (first child in the expected position)
+        var profileId = root.Element(cbc + "ProfileID");
+        if (profileId != null)
+        {
+            profileId.AddBeforeSelf(ublExtensions);
+        }
+        else
+        {
+            root.AddFirst(ublExtensions);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Inserts a QR code AdditionalDocumentReference element before cac:Signature.
+    /// If cac:Signature doesn't exist, inserts before cac:AccountingSupplierParty.
+    /// </summary>
+    /// <param name="qrCode">The Base64-encoded QR code.</param>
+    /// <returns>The current instance for method chaining.</returns>
+    public InvoiceExtension InsertQrCode(string qrCode)
+    {
+        var root = _document.Root;
+        if (root == null) return this;
+
+        XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+        XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+
+        var qrElement = new XElement(cac + "AdditionalDocumentReference",
+            new XElement(cbc + "ID", "QR"),
+            new XElement(cac + "Attachment",
+                new XElement(cbc + "EmbeddedDocumentBinaryObject",
+                    new XAttribute("mimeCode", "text/plain"),
+                    qrCode)));
+
+        // Insert before cac:Signature or cac:AccountingSupplierParty
+        var signature = root.Element(cac + "Signature");
+        if (signature != null)
+        {
+            signature.AddBeforeSelf(qrElement);
+        }
+        else
+        {
+            var supplier = root.Element(cac + "AccountingSupplierParty");
+            if (supplier != null)
+            {
+                supplier.AddBeforeSelf(qrElement);
+            }
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Inserts or re-inserts the cac:Signature element before cac:AccountingSupplierParty.
+    /// </summary>
+    /// <returns>The current instance for method chaining.</returns>
+    public InvoiceExtension InsertSignatureElement()
+    {
+        var root = _document.Root;
+        if (root == null) return this;
+
+        XNamespace cac = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2";
+        XNamespace cbc = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2";
+
+        // Only add if not already present
+        if (root.Element(cac + "Signature") != null) return this;
+
+        var signatureElement = new XElement(cac + "Signature",
+            new XElement(cbc + "ID", "urn:oasis:names:specification:ubl:signature:Invoice"),
+            new XElement(cbc + "SignatureMethod", "urn:oasis:names:specification:ubl:dsig:enveloped:xades"));
+
+        var supplier = root.Element(cac + "AccountingSupplierParty");
+        if (supplier != null)
+        {
+            supplier.AddBeforeSelf(signatureElement);
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Removes elements by local name and namespace.
     /// </summary>
     private void RemoveElementsByName(string localName, string namespaceUri)

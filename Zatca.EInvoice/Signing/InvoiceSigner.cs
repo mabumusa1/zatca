@@ -50,6 +50,13 @@ public static partial class InvoiceSigner
             .RemoveSignature()
             .RemoveQrCodeReference();
 
+        // Step 2b: Ensure xmlns:ext is declared on the root element BEFORE hashing.
+        // InsertSignatureAndQrCode will add ext:UBLExtensions later, which requires
+        // xmlns:ext on the root. C14N includes all in-scope namespace declarations,
+        // so if we add xmlns:ext after hashing, ZATCA's recomputed hash (which strips
+        // elements but keeps xmlns:ext on root) won't match ours.
+        invoiceExtension.EnsureExtNamespace();
+
         // Step 3: Compute the invoice hash (SHA-256 of canonicalized XML)
         var hash = invoiceExtension.ComputeHash();
         var hashBytes = Convert.FromBase64String(hash);
@@ -81,21 +88,16 @@ public static partial class InvoiceSigner
         var qrCodeGenerator = QrCodeGenerator.CreateFromTags(qrTags);
         var qrCode = qrCodeGenerator.EncodeBase64();
 
-        // Step 8: Insert UBL Extension and QR Code into the serialized stripped XML
-        // We use the XDocument-serialized XML (after stripping UBLExtensions/Signature/QR)
-        // so that the signed XML is derived from the same DOM used for hashing.
-        // Using the original raw string would cause a hash mismatch because
-        // InsertSignatureAndQrCode adds xmlns:ext to the root element, which C14N
-        // preserves even after ZATCA strips the ext: elements back out.
-        var strippedXml = invoiceExtension.ToXmlString();
-        var signedXml = InsertSignatureAndQrCode(
-            strippedXml,
-            ublExtensionXml,
-            qrCode
-        );
+        // Step 8: Insert UBL Extension, QR Code, and Signature into the SAME XDocument
+        // used for hashing. Using DOM manipulation (not string replacement) ensures that
+        // when ZATCA strips these elements, the remaining XML produces the exact same
+        // C14N form we hashed — no whitespace artifacts from string insertion.
+        invoiceExtension
+            .InsertUblExtension(ublExtensionXml)
+            .InsertQrCode(qrCode)
+            .InsertSignatureElement();
 
-        // Step 9: Clean up extra blank lines
-        signedXml = BlankLinesRegex().Replace(signedXml, "");
+        var signedXml = invoiceExtension.ToXmlString();
 
         return new SignedInvoiceResult
         {
