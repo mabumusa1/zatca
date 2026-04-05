@@ -22,7 +22,7 @@ namespace Zatca.EInvoice.Api
         /// <summary>
         /// Gets or sets whether to allow warnings in responses.
         /// </summary>
-        public bool AllowWarnings { get; set; }
+        public bool AllowWarnings { get; set; } = true;
 
         /// <summary>
         /// Gets or sets custom DelegatingHandlers to inject into the HTTP pipeline.
