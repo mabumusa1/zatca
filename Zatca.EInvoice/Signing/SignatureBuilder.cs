@@ -233,10 +233,9 @@ public partial class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute hash of signed properties in ZATCA format: base64(hex(sha256(...)))
+        // Compute hash of signed properties per XMLDSig spec: base64(sha256(canonicalized_xml))
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(signedPropertiesXml));
-        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
-        var digestValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
+        var digestValue = Convert.ToBase64String(hashBytes);
 
         var reference = new XElement(dsNs2 + "Reference",
             new XAttribute("Type", "http://www.w3.org/2000/09/xmldsig#SignatureProperties"),
@@ -295,7 +294,7 @@ public partial class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute certificate hash in ZATCA format: base64(hex(sha256(DER)))
+        // Compute certificate hash: base64(sha256(certificate_base64))
         var certHash = ComputeCertificateHash(_certificate!);
 
         // Get issuer and serial number (convert hex to decimal for XML)
@@ -337,7 +336,7 @@ public partial class SignatureBuilder
     private string CreateSignedPropertiesXml(string signingTime)
     {
 
-        // Compute certificate hash in ZATCA format: base64(hex(sha256(DER)))
+        // Compute certificate hash: base64(sha256(certificate_base64))
         var certHash = ComputeCertificateHash(_certificate!);
 
         // Get issuer and serial number (convert hex to decimal for XML)
@@ -382,18 +381,15 @@ public partial class SignatureBuilder
     }
 
     /// <summary>
-    /// Computes the certificate hash in ZATCA format.
-    /// ZATCA expects: base64(hex(sha256(base64_certificate_string)))
-    /// where the input is the base64-encoded certificate content (not DER bytes).
+    /// Computes the certificate hash per XMLDSig/XAdES spec: base64(sha256(certificate_bytes)).
+    /// The input is the base64-encoded certificate content (not DER bytes).
     /// </summary>
     private static string ComputeCertificateHash(X509Certificate2 certificate)
     {
         // Get the base64 string representation of the certificate
         var certBase64 = Convert.ToBase64String(certificate.RawData);
 
-        // ZATCA format: base64(hex(sha256(base64_certificate_string)))
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(certBase64));
-        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
-        return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
+        return Convert.ToBase64String(hashBytes);
     }
 }
