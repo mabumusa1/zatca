@@ -233,9 +233,10 @@ public partial class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute hash of signed properties per XMLDSig spec: base64(sha256(canonicalized_xml))
+        // ZATCA format: base64(hex(sha256(signed_properties_xml)))
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(signedPropertiesXml));
-        var digestValue = Convert.ToBase64String(hashBytes);
+        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+        var digestValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
 
         var reference = new XElement(dsNs2 + "Reference",
             new XAttribute("Type", "http://www.w3.org/2000/09/xmldsig#SignatureProperties"),
@@ -289,18 +290,22 @@ public partial class SignatureBuilder
 
     /// <summary>
     /// Creates the xades:SignedProperties element.
+    /// The namespace declarations MUST match exactly what ZATCA expects for proper hash computation.
+    /// xmlns:ds is declared on each ds: element individually to ensure consistent serialization.
     /// </summary>
     private XElement CreateSignedProperties(string signingTime, XNamespace xadesNs2)
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // Compute certificate hash: base64(sha256(certificate_base64))
+        // Compute certificate hash: base64(hex(sha256(certificate_base64)))
         var certHash = ComputeCertificateHash(_certificate!);
 
         // Get issuer and serial number (convert hex to decimal for XML)
         var issuer = _certificate!.IssuerName.Name;
         var serialNumber = GetSerialNumberAsDecimal(_certificate);
 
+        // IMPORTANT: xmlns:ds must be declared on EACH ds: element individually
+        // This ensures the serialized XML matches the template used for hash computation
         var signedProps = new XElement(xadesNs2 + "SignedProperties",
             new XAttribute(XNamespace.Xmlns + "xades", XadesNs),
             new XAttribute("Id", "xadesSignedProperties"),
@@ -310,8 +315,11 @@ public partial class SignatureBuilder
                     new XElement(xadesNs2 + "Cert",
                         new XElement(xadesNs2 + "CertDigest",
                             new XElement(dsNs2 + "DigestMethod",
+                                new XAttribute(XNamespace.Xmlns + "ds", DsNs),
                                 new XAttribute(Algorithm, "http://www.w3.org/2001/04/xmlenc#sha256")),
-                            new XElement(dsNs2 + "DigestValue", certHash)
+                            new XElement(dsNs2 + "DigestValue",
+                                new XAttribute(XNamespace.Xmlns + "ds", DsNs),
+                                certHash)
                         ),
                         new XElement(xadesNs2 + "IssuerSerial",
                             new XElement(dsNs2 + "X509IssuerName",
@@ -331,42 +339,20 @@ public partial class SignatureBuilder
 
     /// <summary>
     /// Creates the signed properties XML string for hash computation.
-    /// The spacing must be exact to match the expected hash.
+    /// Uses a template string to ensure exact format matching ZATCA's expected canonical form.
+    /// The ds: prefix must be used consistently with xmlns:ds declared on X509IssuerName and X509SerialNumber.
     /// </summary>
     private string CreateSignedPropertiesXml(string signingTime)
     {
-
-        // Compute certificate hash: base64(sha256(certificate_base64))
+        // Compute certificate hash and get certificate details
         var certHash = ComputeCertificateHash(_certificate!);
-
-        // Get issuer and serial number (convert hex to decimal for XML)
         var issuer = _certificate!.IssuerName.Name;
         var serialNumber = GetSerialNumberAsDecimal(_certificate);
 
-        // Build the XML with exact spacing as per ZATCA requirements
-        var template = @"<xades:SignedProperties xmlns:xades=""http://uri.etsi.org/01903/v1.3.2#"" Id=""xadesSignedProperties"">
-                                <xades:SignedSignatureProperties>
-                                    <xades:SigningTime>SIGNING_TIME_PLACEHOLDER</xades:SigningTime>
-                                    <xades:SigningCertificate>
-                                        <xades:Cert>
-                                            <xades:CertDigest>
-                                                <ds:DigestMethod xmlns:ds=""http://www.w3.org/2000/09/xmldsig#"" Algorithm=""http://www.w3.org/2001/04/xmlenc#sha256""/>
-                                                <ds:DigestValue xmlns:ds=""http://www.w3.org/2000/09/xmldsig#"">DIGEST_PLACEHOLDER</ds:DigestValue>
-                                            </xades:CertDigest>
-                                            <xades:IssuerSerial>
-                                                <ds:X509IssuerName xmlns:ds=""http://www.w3.org/2000/09/xmldsig#"">ISSUER_PLACEHOLDER</ds:X509IssuerName>
-                                                <ds:X509SerialNumber xmlns:ds=""http://www.w3.org/2000/09/xmldsig#"">SERIAL_PLACEHOLDER</ds:X509SerialNumber>
-                                            </xades:IssuerSerial>
-                                        </xades:Cert>
-                                    </xades:SigningCertificate>
-                                </xades:SignedSignatureProperties>
-                            </xades:SignedProperties>";
-
-        return template
-            .Replace("SIGNING_TIME_PLACEHOLDER", signingTime)
-            .Replace("DIGEST_PLACEHOLDER", certHash)
-            .Replace("ISSUER_PLACEHOLDER", issuer)
-            .Replace("SERIAL_PLACEHOLDER", serialNumber);
+        // Template matching ZATCA expected format exactly
+        // Critical: ds: prefix on DigestMethod/DigestValue (no xmlns:ds needed - inherited from document)
+        // xmlns:ds declared only on X509IssuerName and X509SerialNumber (matches working samples)
+        return $"""<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties"><xades:SignedSignatureProperties><xades:SigningTime>{signingTime}</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod><ds:DigestValue xmlns:ds="http://www.w3.org/2000/09/xmldsig#">{certHash}</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName xmlns:ds="http://www.w3.org/2000/09/xmldsig#">{issuer}</ds:X509IssuerName><ds:X509SerialNumber xmlns:ds="http://www.w3.org/2000/09/xmldsig#">{serialNumber}</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties>""";
     }
 
     /// <summary>
@@ -381,15 +367,17 @@ public partial class SignatureBuilder
     }
 
     /// <summary>
-    /// Computes the certificate hash per XMLDSig/XAdES spec: base64(sha256(certificate_bytes)).
-    /// The input is the base64-encoded certificate content (not DER bytes).
+    /// Computes the certificate hash in ZATCA format: base64(hex(sha256(certificate_base64_string))).
+    /// Returns 88 characters (base64 of 64-char hex string).
     /// </summary>
     private static string ComputeCertificateHash(X509Certificate2 certificate)
     {
         // Get the base64 string representation of the certificate
         var certBase64 = Convert.ToBase64String(certificate.RawData);
 
+        // ZATCA format: base64(hex(sha256(base64_string)))
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(certBase64));
-        return Convert.ToBase64String(hashBytes);
+        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
     }
 }
