@@ -623,8 +623,9 @@ namespace Zatca.EInvoice.Tests.Signing
                 .RemoveQrCodeReference();
             var recomputedHash = zatcaView.ComputeHash();
 
-            // Debug: Check if EnsureExtNamespace is reflected in C14N
+            // Debug: Check if EnsureExtNamespace and EnsureIssueTimeHasUtcSuffix are reflected in C14N
             var verifyView = InvoiceExtension.FromString(TestInvoiceXml);
+            verifyView.EnsureIssueTimeHasUtcSuffix(); // Must match what Sign() does
             verifyView.RemoveUblExtensions().RemoveSignature().RemoveQrCodeReference();
             verifyView.EnsureExtNamespace();
             var verifyC14N = verifyView.GetCanonicalXml();
