@@ -44,6 +44,10 @@ public static partial class InvoiceSigner
         // Extract UUID before any modifications
         var uuid = invoiceExtension.GetUuid();
 
+        // Step 1b: Ensure IssueTime has UTC 'Z' suffix for ZATCA KSA-25 compliance.
+        // This must happen before hashing so the hash includes the correct time format.
+        invoiceExtension.EnsureIssueTimeHasUtcSuffix();
+
         // Step 2: Remove elements that should not be included in the hash
         invoiceExtension
             .RemoveUblExtensions()
