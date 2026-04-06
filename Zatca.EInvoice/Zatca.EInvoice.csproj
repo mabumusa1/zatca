@@ -46,7 +46,7 @@
     <PackageReference Include="System.Text.Json" Version="8.0.*" />
     <!-- PDF Generation -->
     <PackageReference Include="QuestPDF" Version="2024.12.3" />
-    <PackageReference Include="QRCoder" Version="1.7.0" />
+    <PackageReference Include="QRCoder" Version="1.8.0" />
     <!-- SourceLink for debugging -->
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
