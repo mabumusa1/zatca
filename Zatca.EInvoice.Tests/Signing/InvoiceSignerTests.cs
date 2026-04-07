@@ -85,7 +85,8 @@ namespace Zatca.EInvoice.Tests.Signing
         }
 
         /// <summary>
-        /// Test that GetHash() returns a valid SHA-256 hash.
+        /// Test that GetHash() returns a valid SHA-256 hash in ZATCA format.
+        /// ZATCA format: base64(hex(sha256())) = 88 characters, decodes to 64-byte hex string.
         /// </summary>
         [Fact]
         public void TestGetHash()
@@ -97,11 +98,18 @@ namespace Zatca.EInvoice.Tests.Signing
             Assert.NotNull(hash);
             Assert.NotEmpty(hash);
 
-            // Hash should be base64 encoded
+            // ZATCA format: base64(hex(sha256())) = 88 characters
+            Assert.Equal(88, hash.Length);
+
+            // Hash should be base64 encoded hex string
             var hashBytes = Convert.FromBase64String(hash);
 
-            // SHA-256 produces 32 bytes
-            Assert.Equal(32, hashBytes.Length);
+            // Decodes to 64 bytes (hex representation of SHA-256)
+            Assert.Equal(64, hashBytes.Length);
+
+            // The decoded bytes should be valid lowercase hex characters
+            var hexString = Encoding.UTF8.GetString(hashBytes);
+            Assert.Matches("^[0-9a-f]{64}$", hexString);
         }
 
         /// <summary>
@@ -560,7 +568,7 @@ namespace Zatca.EInvoice.Tests.Signing
         }
 
         /// <summary>
-        /// Test that hash length is consistent (SHA-256 = 32 bytes).
+        /// Test that hash length is consistent (ZATCA format: 88 chars, decodes to 64-byte hex).
         /// </summary>
         [Fact]
         public void TestHashLengthConsistency()
@@ -572,8 +580,12 @@ namespace Zatca.EInvoice.Tests.Signing
             foreach (var invoice in invoices)
             {
                 var hash = InvoiceSigner.GetHash(invoice);
+
+                // ZATCA format: base64(hex(sha256())) = 88 characters
+                Assert.Equal(88, hash.Length);
+
                 var hashBytes = Convert.FromBase64String(hash);
-                Assert.Equal(32, hashBytes.Length); // SHA-256 produces 32 bytes
+                Assert.Equal(64, hashBytes.Length); // Hex representation of SHA-256
             }
         }
 
