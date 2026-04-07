@@ -112,6 +112,30 @@ public class InvoiceExtension
     }
 
     /// <summary>
+    /// Ensures the IssueTime element has a UTC 'Z' suffix.
+    /// ZATCA KSA-25 requires the QR timestamp to match the invoice IssueTime exactly.
+    /// If the invoice IssueTime lacks the 'Z' suffix, this method adds it.
+    /// This must be called before hashing so the hash includes the correct time format.
+    /// </summary>
+    /// <returns>The current instance for method chaining.</returns>
+    public InvoiceExtension EnsureIssueTimeHasUtcSuffix()
+    {
+        var cbc = XNamespace.Get("urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
+        var issueTimeElement = _document.Descendants(cbc + "IssueTime").FirstOrDefault();
+
+        if (issueTimeElement != null && !string.IsNullOrEmpty(issueTimeElement.Value))
+        {
+            var time = issueTimeElement.Value;
+            if (!time.EndsWith('Z'))
+            {
+                issueTimeElement.Value = time + "Z";
+            }
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Inserts a UBLExtensions element (parsed from XML string) as the first child of the root.
     /// The element is inserted before cbc:ProfileID so ZATCA sees it in the expected position.
     /// </summary>
