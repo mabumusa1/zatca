@@ -253,13 +253,16 @@ public class InvoiceExtension
 
     /// <summary>
     /// Computes the SHA-256 hash of the canonicalized XML (C14N).
+    /// ZATCA requires base64(hex(sha256())) format which produces 88-character hashes.
     /// </summary>
-    /// <returns>Base64-encoded hash string.</returns>
+    /// <returns>Base64-encoded hex hash string (88 characters).</returns>
     public string ComputeHash()
     {
         var canonicalXml = GetCanonicalXml();
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(canonicalXml));
-        return Convert.ToBase64String(hashBytes);
+        // ZATCA format: base64(hex(sha256()))
+        var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
     }
 
     /// <summary>
