@@ -775,6 +775,9 @@ namespace Zatca.EInvoice.Xml
             if (line.TryGetValue(LineExtensionAmountKey, out var lineExtensionAmountValue))
                 element.Add(XmlSerializationExtensions.CreateAmountElement(_cbc + "LineExtensionAmount", GetDecimal(lineExtensionAmountValue), _currencyId));
 
+            // Line-level AllowanceCharge elements (UBL ordering: after LineExtensionAmount, before TaxTotal)
+            AddListElements(element, line, "allowanceCharges", GenerateAllowanceCharge);
+
             AddLineTaxTotal(element, line);
             AddOptionalElement(element, line, "item", GenerateItem);
             AddOptionalElement(element, line, "price", GeneratePrice);
