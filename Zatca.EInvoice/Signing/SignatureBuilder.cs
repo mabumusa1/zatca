@@ -233,7 +233,7 @@ public partial class SignatureBuilder
     {
         var dsNs2 = XNamespace.Get(DsNs);
 
-        // ZATCA format: base64(hex(sha256(signed_properties_xml)))
+        // ZATCA requires base64(hex(sha256())) for signed properties digest
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(signedPropertiesXml));
         var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
         var digestValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
@@ -368,14 +368,11 @@ public partial class SignatureBuilder
 
     /// <summary>
     /// Computes the certificate hash in ZATCA format: base64(hex(sha256(certificate_base64_string))).
-    /// Returns 88 characters (base64 of 64-char hex string).
     /// </summary>
     private static string ComputeCertificateHash(X509Certificate2 certificate)
     {
-        // Get the base64 string representation of the certificate
         var certBase64 = Convert.ToBase64String(certificate.RawData);
-
-        // ZATCA format: base64(hex(sha256(base64_string)))
+        // ZATCA requires base64(hex(sha256())) for certificate digest
         var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(certBase64));
         var hexHash = Convert.ToHexString(hashBytes).ToLowerInvariant();
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(hexHash));
