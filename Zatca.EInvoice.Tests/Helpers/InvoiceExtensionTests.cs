@@ -179,7 +179,7 @@ public class InvoiceExtensionTests
     }
 
     [Fact]
-    public void TestComputeHash_ReturnsBase64HexHash()
+    public void TestComputeHash_ReturnsBase64Hash()
     {
         // Arrange
         var invoiceExt = InvoiceExtension.FromString(SampleInvoiceXml);
@@ -193,15 +193,11 @@ public class InvoiceExtensionTests
         // Assert
         Assert.NotNull(hash);
         Assert.NotEmpty(hash);
-        Assert.Equal(88, hash.Length); // ZATCA format: base64(hex(sha256())) = 88 chars
+        Assert.Equal(44, hash.Length); // base64(sha256()) = 44 chars
 
-        // Verify it's valid base64 containing hex string
+        // Verify it's valid base64
         var hashBytes = Convert.FromBase64String(hash);
-        Assert.Equal(64, hashBytes.Length); // hex(sha256) = 64 chars (32 bytes * 2)
-
-        // Verify the decoded content is a valid hex string
-        var hexString = System.Text.Encoding.UTF8.GetString(hashBytes);
-        Assert.Matches("^[0-9a-f]{64}$", hexString);
+        Assert.Equal(32, hashBytes.Length); // SHA-256 produces 32 bytes
     }
 
     [Fact]
