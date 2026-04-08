@@ -23,6 +23,19 @@ using Zatca.EInvoice.Helpers;
 namespace Zatca.EInvoice.Certificates
 {
     /// <summary>
+    /// ZATCA environment mode for CSR template OID selection.
+    /// </summary>
+    public enum ZatcaEnvironmentMode
+    {
+        /// <summary>Sandbox/Testing — uses TSTZATCA-Code-Signing</summary>
+        Sandbox = 0,
+        /// <summary>Simulation — uses PREZATCA-Code-Signing</summary>
+        Simulation = 1,
+        /// <summary>Production — uses ZATCA-Code-Signing</summary>
+        Production = 2
+    }
+
+    /// <summary>
     /// Custom X509NameEntryConverter that uses appropriate encoding for certificate fields.
     /// Country code (C) uses PrintableString as required by ZATCA.
     /// Other fields use UTF8String to support Arabic and Unicode characters.
@@ -50,7 +63,8 @@ namespace Zatca.EInvoice.Certificates
         [GeneratedRegex(@"^3\d{13}3$")]
         private static partial Regex OrganizationIdRegex();
         private const string OidProduction = "ZATCA-Code-Signing";
-        private const string OidTest = "ZATCA-Code-Signing"; // Same for test/simulation
+        private const string OidSimulation = "PREZATCA-Code-Signing";
+        private const string OidSandbox = "TSTZATCA-Code-Signing";
         private const string TemplateIdentifierOid = "1.3.6.1.4.1.311.20.2";
 
         private string _organizationIdentifier = string.Empty;
@@ -61,7 +75,7 @@ namespace Zatca.EInvoice.Certificates
         private string _organizationalUnitName = string.Empty;
         private string _address = string.Empty;
         private int _invoiceType = 1100;
-        private bool _production = false;
+        private ZatcaEnvironmentMode _environmentMode = ZatcaEnvironmentMode.Sandbox;
         private string _businessCategory = string.Empty;
 
         private AsymmetricCipherKeyPair? _keyPair;
@@ -174,9 +188,23 @@ namespace Zatca.EInvoice.Certificates
         /// </summary>
         /// <param name="production">True for production environment, false for testing.</param>
         /// <returns>The current builder instance.</returns>
+        /// <summary>
+        /// Sets the production flag. For backward compatibility.
+        /// Use <see cref="SetEnvironmentMode"/> for full control (Sandbox/Simulation/Production).
+        /// </summary>
         public CertificateBuilder SetProduction(bool production)
         {
-            _production = production;
+            _environmentMode = production ? ZatcaEnvironmentMode.Production : ZatcaEnvironmentMode.Sandbox;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the environment mode which determines the CSR template OID:
+        /// Sandbox = TSTZATCA-Code-Signing, Simulation = PREZATCA-Code-Signing, Production = ZATCA-Code-Signing.
+        /// </summary>
+        public CertificateBuilder SetEnvironmentMode(ZatcaEnvironmentMode mode)
+        {
+            _environmentMode = mode;
             return this;
         }
 
@@ -367,7 +395,12 @@ namespace Zatca.EInvoice.Certificates
 
             // 1. Add template identifier extension (1.3.6.1.4.1.311.20.2)
             // ZATCA requires UTF8String encoding
-            var templateId = _production ? OidProduction : OidTest;
+            var templateId = _environmentMode switch
+            {
+                ZatcaEnvironmentMode.Production => OidProduction,
+                ZatcaEnvironmentMode.Simulation => OidSimulation,
+                _ => OidSandbox
+            };
             extensionsGen.AddExtension(
                 new DerObjectIdentifier(TemplateIdentifierOid),
                 false,
